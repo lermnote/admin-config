@@ -160,8 +160,10 @@ final class BootstrapTest extends TestCase {
 			dirname( __DIR__, 2 ) . '/examples/schema-demo-plugin/schema-demo-plugin.php'
 		);
 
+		$package_dir_name = basename( dirname( __DIR__, 2 ) );
+
 		self::assertSame(
-			'https://example.test/plugins/AdminConfig/assets/admin-config.js',
+			'https://example.test/plugins/' . $package_dir_name . '/assets/admin-config.js',
 			$resolver->url( 'admin-config.js' )
 		);
 	}
