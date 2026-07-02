@@ -239,6 +239,12 @@ jobs:
           name: admin-config-build-assets
           path: assets/build
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
 
@@ -324,6 +330,12 @@ jobs:
           name: admin-config-build-assets
           path: assets/build
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
 
@@ -404,6 +416,12 @@ jobs:
         with:
           name: admin-config-build-assets
           path: assets/build
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
