@@ -202,6 +202,9 @@ jobs:
     name: WordPress E2E
     runs-on: ubuntu-latest
     needs: build-assets
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      PLAYWRIGHT_CHANNEL: 'chrome'
 
     steps:
       - name: Check out repository
@@ -238,18 +241,6 @@ jobs:
         with:
           name: admin-config-build-assets
           path: assets/build
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Playwright system dependencies
-        run: npx playwright install-deps chromium
-
-      - name: Install Playwright browser
-        run: npx playwright install chromium
 
       - name: Start wp-env
         run: npm run wp-env:start
@@ -296,6 +287,9 @@ jobs:
     name: WordPress Multisite
     runs-on: ubuntu-latest
     needs: build-assets
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      PLAYWRIGHT_CHANNEL: 'chrome'
 
     steps:
       - name: Check out repository
@@ -332,18 +326,6 @@ jobs:
         with:
           name: admin-config-build-assets
           path: assets/build
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Playwright system dependencies
-        run: npx playwright install-deps chromium
-
-      - name: Install Playwright browser
-        run: npx playwright install chromium
 
       - name: Start multisite wp-env
         run: npm run wp-env:start:multisite
@@ -386,6 +368,9 @@ jobs:
     name: WordPress REST contract
     runs-on: ubuntu-latest
     needs: build-assets
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      PLAYWRIGHT_CHANNEL: 'chrome'
 
     steps:
       - name: Check out repository
@@ -422,18 +407,6 @@ jobs:
         with:
           name: admin-config-build-assets
           path: assets/build
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Playwright system dependencies
-        run: npx playwright install-deps chromium
-
-      - name: Install Playwright browser
-        run: npx playwright install chromium
 
       - name: Run REST contract browser suite
         run: npm run test:wp:rest-contract
