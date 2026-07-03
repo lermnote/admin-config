@@ -4,6 +4,11 @@
 /.wp-env.override.json
 /playwright-report/
 /test-results/
+/vendor/
+/docs/_site/
+/docs/.jekyll-cache/
+/docs/.sass-cache/
+/docs/Gemfile.lock
 !phpcs.xml.dist
 !phpstan.neon.dist
 !phpunit.xml.dist

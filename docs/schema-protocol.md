@@ -1,3 +1,9 @@
+---
+title: Schema Protocol
+nav_order: 3
+description: Schema protocol v1 stable client payload.
+---
+
 # Schema Protocol
 
 Schema protocol v1 is the stable client payload returned by

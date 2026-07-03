@@ -1,3 +1,9 @@
+---
+title: Release Checklist
+nav_order: 10
+description: Checklist before cutting an alpha, beta, or stable tag.
+---
+
 # Release Checklist
 
 Use this checklist before cutting an alpha, beta, or stable package tag.

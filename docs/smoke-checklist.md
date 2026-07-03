@@ -1,3 +1,9 @@
+---
+title: Smoke Checklist
+nav_order: 9
+description: Manual regression checklist before tagging or merging.
+---
+
 # Smoke Checklist
 
 Use this checklist before tagging an alpha or merging larger Admin Config changes.

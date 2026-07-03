@@ -1,10 +1,16 @@
+---
+title: Extension Recipes
+nav_order: 5
+description: Smallest possible examples for extending the runtime.
+---
+
 # Extension Recipes
 
 Use this guide when you are already comfortable registering schemas and now need
 the smallest possible examples for extending the runtime.
 
 If you want a runnable plugin instead of isolated snippets, start with
-[examples/minimal-extension-plugin/README.md](/examples/minimal-extension-plugin/README.md).
+[Minimal Extension Plugin](https://github.com/lermnote/admin-config/tree/master/examples/minimal-extension-plugin) on GitHub.
 
 ## Recipe 1: register a minimal custom field
 

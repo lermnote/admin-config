@@ -1,3 +1,9 @@
+---
+title: Quick Start
+nav_order: 2
+description: Smallest copyable setup for lerm/admin-config.
+---
+
 # Quick Start
 
 Use this guide when you want the smallest copyable setup for `lerm/admin-config`.

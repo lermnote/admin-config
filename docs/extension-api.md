@@ -1,10 +1,16 @@
+---
+title: Extension API
+nav_order: 4
+description: Public integration surface for extending Admin Config.
+---
+
 # Extension API
 
 `Lerm\AdminConfig\WordPress\Runtime` is the public integration surface for extending Admin Config.
 
-If you are wiring the package into a plugin or theme for the first time, start with [quick-start.md](/docs/quick-start.md) and come back here when you need custom field types, stores, containers, or data sources.
+If you are wiring the package into a plugin or theme for the first time, start with [Quick Start](quick-start) and come back here when you need custom field types, stores, containers, or data sources.
 
-For the smallest runnable example, see [examples/minimal-extension-plugin/README.md](/examples/minimal-extension-plugin/README.md). For copyable focused snippets, see [extension-recipes.md](/docs/extension-recipes.md).
+For the smallest runnable example, see [Minimal Extension Plugin](https://github.com/lermnote/admin-config/tree/master/examples/minimal-extension-plugin) on GitHub. For copyable focused snippets, see [Extension Recipes](extension-recipes).
 
 ## Runtime methods
 

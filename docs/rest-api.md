@@ -1,3 +1,9 @@
+---
+title: REST API
+nav_order: 6
+description: REST transport contract for JavaScript clients.
+---
+
 # REST API
 
 AdminConfig exposes a REST transport for JavaScript clients while keeping the

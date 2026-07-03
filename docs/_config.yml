@@ -1,0 +1,59 @@
+# Jekyll configuration for GitHub Pages
+# Theme: just-the-docs (https://just-the-docs.com)
+
+title: Lerm AdminConfig
+description: Schema-driven WordPress admin configuration infrastructure.
+url: "https://lermnote.github.io"
+baseurl: "/admin-config"
+
+# Build settings
+theme: just-the-docs
+plugins:
+  - jekyll-relative-links
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Just the Docs settings
+search_enabled: true
+search:
+  heading_level: 3
+  previews: 2
+  preview_words_before: 3
+  preview_words_after: 3
+  tokenizer_separator: /[\s/]+/
+  rel_url: true
+  button: false
+
+heading_anchors: true
+
+# Navigation aux links
+aux_links:
+  "GitHub":
+    - "https://github.com/lermnote/admin-config"
+
+# Footer content
+footer_content: "Copyright &copy; 2026 Lerm. Distributed under GPL-2.0-or-later."
+
+# Color scheme
+color_scheme: light
+
+# Callouts
+callouts:
+  warning:
+    title: Warning
+    color: red
+  note:
+    title: Note
+    color: blue
+  tip:
+    title: Tip
+    color: green
+
+# Exclude unnecessary files from build
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - .sass-cache
+  - .jekyll-cache
