@@ -28,7 +28,7 @@ npm run test:e2e:multisite
 - `npm run test:e2e:local` targets an existing WordPress site; set `LERM_ADMIN_CONFIG_BASE_URL`, `LERM_ADMIN_CONFIG_ADMIN_USER`, and `LERM_ADMIN_CONFIG_ADMIN_PASS` first
 - for local multisite browser smoke runs, also set `LERM_ADMIN_CONFIG_MULTISITE=1` and pass `tests/E2E/network-mode.spec.js` after `--`
 
-If a local multisite run is interrupted and leaves `packages/AdminConfig/.wp-env.override.json` behind, remove that generated file before running default single-site `wp-env` commands.
+If a local multisite run is interrupted and leaves `.wp-env.override.json` behind, remove that generated file before running default single-site `wp-env` commands.
 
 4. Update docs or examples whenever the public API changes.
 5. Add or extend tests for compiler behavior, runtime contracts, bundled example registrations, or WordPress integration flows as appropriate.
