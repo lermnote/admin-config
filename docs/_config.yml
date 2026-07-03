@@ -34,8 +34,6 @@ aux_links:
 # Footer content
 footer_content: "Copyright &copy; 2026 Lerm. Distributed under GPL-2.0-or-later."
 
-# Color scheme
-color_scheme: minimal
 
 # Callouts
 callouts:
