@@ -1,0 +1,252 @@
+// ============================================================
+// Modern Minimal White Theme — Custom Overrides
+// Auto-imported by just-the-docs after theme styles
+// ============================================================
+
+// --- Typography ---
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-feature-settings: "cv11", "ss01";
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1.25rem;
+}
+
+h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+h3 {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+p {
+  line-height: 1.7;
+}
+
+// --- Header ---
+
+.site-header {
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+  padding: 0.75rem 1.5rem;
+}
+
+.site-title {
+  font-size: 1.05rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+// --- Sidebar Navigation ---
+
+.side-bar {
+  border-right: 1px solid #e5e7eb;
+  background: #ffffff;
+  padding-top: 1rem;
+}
+
+.nav-list .nav-list-item {
+  margin: 0.5rem 0;
+}
+
+.nav-list .nav-list-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.35rem 1rem;
+  border-radius: 6px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav-list .nav-list-link:hover {
+  background: #f0eeff;
+}
+
+.nav-list .nav-list-link.active {
+  background: #f0eeff;
+  color: #6c5ce7;
+  font-weight: 600;
+}
+
+// --- Main Content ---
+
+.main-content {
+  padding: 2rem 3rem;
+  max-width: 900px;
+}
+
+.main-content a {
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.main-content a:hover {
+  text-decoration: underline;
+}
+
+// --- Code Blocks ---
+
+pre, pre.highlight {
+  background: #f6f8fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+code {
+  font-family: "JetBrains Mono", "SF Mono", "Fira Code", Consolas, monospace;
+  font-size: 0.85em;
+}
+
+:not(pre) > code {
+  background: #f0f0f5;
+  color: #6c5ce7;
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+// --- Tables ---
+
+table {
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+
+th {
+  background: #fafafb;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+td {
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+// --- Buttons ---
+
+.btn {
+  border-radius: 8px;
+  font-weight: 550;
+  letter-spacing: -0.01em;
+  transition: all 0.15s ease;
+  padding: 0.55rem 1.25rem;
+}
+
+.btn-primary {
+  background: #6c5ce7;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(108, 92, 231, 0.25);
+}
+
+.btn-primary:hover {
+  background: #5a4bd1;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(108, 92, 231, 0.25);
+}
+
+// --- Search ---
+
+.search-input {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #6c5ce7;
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.12);
+}
+
+.search-result {
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  transition: background 0.1s ease;
+}
+
+.search-result:hover {
+  background: #f0eeff;
+}
+
+// --- Blockquotes ---
+
+blockquote {
+  border-left: 3px solid #6c5ce7;
+  background: #f8f7ff;
+  border-radius: 0 6px 6px 0;
+  padding: 0.75rem 1.25rem;
+  margin: 1.25rem 0;
+}
+
+// --- Footer ---
+
+.site-footer {
+  border-top: 1px solid #e5e7eb;
+  padding: 1.5rem;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+// --- Misc ---
+
+hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 2rem 0;
+}
+
+img {
+  border-radius: 8px;
+}
+
+// Scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d1d5db;
+}
