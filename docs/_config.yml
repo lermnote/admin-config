@@ -57,3 +57,16 @@ exclude:
   - vendor
   - .sass-cache
   - .jekyll-cache
+
+# Default layout for all pages
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+  - scope:
+      path: "index.md"
+      type: "pages"
+    values:
+      layout: "home"
