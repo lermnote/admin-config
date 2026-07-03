@@ -28,12 +28,15 @@ heading_anchors: true
 
 # Navigation aux links
 aux_links:
-  "GitHub":
+  "Lerm AdminConfig on GitHub":
     - "https://github.com/lermnote/admin-config"
 
 # Footer content
 footer_content: "Copyright &copy; 2026 Lerm. Distributed under GPL-2.0-or-later."
 
+# Back to top link
+back_to_top: true
+back_to_top_text: "Back to top"
 
 # Callouts
 callouts:
