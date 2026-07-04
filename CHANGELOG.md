@@ -6,6 +6,8 @@ The format follows Keep a Changelog and the package uses Semantic Versioning onc
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-07-04
+
 ### Added
 - `docs/field-types/` — usage examples for every built-in field type, grouped by category.
 - `.gitattributes` with `export-ignore` rules so `docs/`, `examples/`, `tests/`, `tools/`, and dev tooling files are excluded from the Composer distribution archive.
@@ -13,6 +15,7 @@ The format follows Keep a Changelog and the package uses Semantic Versioning onc
 
 ### Changed
 - Moved the manual smoke checklist and release checklist out of the public documentation site (`docs/smoke-checklist.md`, `docs/release-checklist.md`) into `MAINTAINING.md`.
+- Updated documentation and code examples; removed translation functions for labels.
 
 ## [0.4.0] - 2026-07-02
 
