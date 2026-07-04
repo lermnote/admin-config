@@ -1,6 +1,6 @@
 ---
 title: Block Editor Field Matrix
-nav_order: 8
+nav_order: 9
 description: Phase 3 block-panel contract for AdminConfig field types.
 ---
 

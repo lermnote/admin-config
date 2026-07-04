@@ -66,6 +66,7 @@ Browse the full documentation:
 - [Schema Protocol](schema-protocol) — Schema structure and compilation rules
 - [Extension API](extension-api) — Custom field types, validators, data sources
 - [Extension Recipes](extension-recipes) — Minimal extension snippets
+- [Field Types](field-types) — Usage examples for every built-in field type
 - [REST API](rest-api) — REST transport contract
 - [Support Matrix](support-matrix) — Compatibility snapshot
 - [Block Editor Field Matrix](block-editor-field-matrix) — Block-panel field type support

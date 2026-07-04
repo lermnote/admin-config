@@ -1,0 +1,885 @@
+diff --git a/docs/block-editor-field-matrix.md b/docs/block-editor-field-matrix.md
+index 4255caf..7abb9e8 100644
+--- a/docs/block-editor-field-matrix.md
++++ b/docs/block-editor-field-matrix.md
+@@ -1,6 +1,6 @@
+ ---
+ title: Block Editor Field Matrix
+-nav_order: 8
++nav_order: 9
+ description: Phase 3 block-panel contract for AdminConfig field types.
+ ---
+ 
+diff --git a/docs/field-types.md b/docs/field-types.md
+new file mode 100644
+index 0000000..b30052c
+--- /dev/null
++++ b/docs/field-types.md
+@@ -0,0 +1,27 @@
++---
++title: Field Types
++nav_order: 8
++has_children: true
++---
++
++# Field Types
++
++Usage examples for every built-in field type, grouped by purpose. Each
++example is a single field definition you can drop into a `sections.*.fields`
++array — see [Quick Start](/quick-start) for the surrounding schema
++boilerplate (`id`, `container`, `store`, `sections`).
++
++All examples on these pages are adapted from the working demo plugin at
++`examples/schema-demo-plugin/`, so every snippet is exercised by the
++project's own smoke tests.
++
++- [Basic Input](field-types/basic-input) — text, url, textarea, number, slider, spinner, date, color
++- [Choice](field-types/choice) — select, radio, button_set, checkbox, checkbox_list, switcher
++- [Media](field-types/media) — upload, media, gallery, image_select, palette
++- [Structural](field-types/structural) — fieldset, group, accordion, tabbed, dimensions, spacing, border, link_color, sorter
++- [Advanced](field-types/advanced) — typography, background, icon
++- [Async](field-types/async) — ajax_select
++- [Presentation & Tools](field-types/presentation-and-tools) — heading, subheading, content, notice, code_editor, wp_editor, backup_tools
++
++For registering an entirely new field type (not listed here), see
++[Extension Recipes](/extension-recipes).
+diff --git a/docs/field-types/advanced.md b/docs/field-types/advanced.md
+new file mode 100644
+index 0000000..560b103
+--- /dev/null
++++ b/docs/field-types/advanced.md
+@@ -0,0 +1,88 @@
++---
++title: Advanced
++parent: Field Types
++nav_order: 5
++---
++
++# Advanced Field Types
++
++## typography
++
++Composite font object. `style`, `letter_spacing`, `align`, and `units`
++toggle which sub-controls are rendered; `default` must supply every key the
++enabled sub-controls expect.
++
++```php
++array(
++    'id'             => 'brand_typography',
++    'type'           => 'typography',
++    'label'          => __( 'Brand Typography', 'my-plugin' ),
++    'style'          => true,
++    'letter_spacing' => true,
++    'align'          => true,
++    'units'          => array( 'px', 'rem' ),
++    'default'        => array(
++        'font-family'    => 'Inter, system-ui, sans-serif',
++        'font-weight'    => '700',
++        'font-style'     => 'normal',
++        'font-size'      => '2.25',
++        'unit'           => 'rem',
++        'line-height'    => '1.15',
++        'letter-spacing' => '0',
++        'text-align'     => 'left',
++        'color'          => '#0f172a',
++    ),
++),
++```
++
++## background
++
++Composite object covering color, gradient, image, and positioning.
++Individual capability flags (`background_gradient`, `background_origin`,
++`background_clip`, `background_blend_mode`) opt into extra sub-controls; only
++enable the ones you actually use to keep the UI compact.
++
++```php
++array(
++    'id'                           => 'entry_background',
++    'type'                         => 'background',
++    'label'                        => __( 'Entry background', 'my-plugin' ),
++    'background_gradient'          => true,
++    'background_origin'            => true,
++    'background_clip'              => true,
++    'background_blend_mode'        => true,
++    'background_image_button_text' => __( 'Choose background image', 'my-plugin' ),
++    'default'                      => array(
++        'background-color'              => '#f8fafc',
++        'background-gradient-color'     => '#e0f2fe',
++        'background-gradient-direction' => 'to right',
++        'background-image'              => array(),
++        'background-position'           => 'center center',
++        'background-repeat'             => 'no-repeat',
++        'background-attachment'         => 'scroll',
++        'background-size'               => 'cover',
++        'background-origin'             => 'padding-box',
++        'background-clip'               => 'border-box',
++        'background-blend-mode'         => 'normal',
++    ),
++),
++```
++
++## icon
++
++Choice field rendered as a curated Dashicons picker. `choices` maps a
++`dashicons-*` class name to a label.
++
++```php
++array(
++    'id'      => 'feature_icon',
++    'type'    => 'icon',
++    'label'   => __( 'Feature Icon', 'my-plugin' ),
++    'choices' => array(
++        'dashicons-lightbulb' => __( 'Idea', 'my-plugin' ),
++        'dashicons-megaphone' => __( 'Launch', 'my-plugin' ),
++        'dashicons-chart-bar' => __( 'Analytics', 'my-plugin' ),
++    ),
++    'default' => 'dashicons-lightbulb',
++),
++```
+diff --git a/docs/field-types/async.md b/docs/field-types/async.md
+new file mode 100644
+index 0000000..b6b0ffe
+--- /dev/null
++++ b/docs/field-types/async.md
+@@ -0,0 +1,47 @@
++---
++title: Async
++parent: Field Types
++nav_order: 6
++---
++
++# Async Field Types
++
++## ajax_select
++
++Search-as-you-type select backed by a registered data source. Requires a
++`source` key matching a data source registered via
++`$runtime->register_data_source()` — see
++[Extension Recipes](/extension-recipes) for how to register one. Add
++`'multiple' => true` for a multi-select variant.
++
++```php
++// Single select
++array(
++    'id'                => 'featured_campaign',
++    'type'              => 'ajax_select',
++    'source'            => 'campaign_library',
++    'label'             => __( 'Featured Campaign', 'my-plugin' ),
++    'placeholder'       => __( 'Search campaigns...', 'my-plugin' ),
++    'min_search_length' => 1,
++    'per_page'          => 4,
++    'default'           => 'spring-launch',
++),
++
++// Multi-select
++array(
++    'id'                => 'supporting_campaigns',
++    'type'              => 'ajax_select',
++    'source'            => 'campaign_library',
++    'multiple'          => true,
++    'label'             => __( 'Supporting Campaigns', 'my-plugin' ),
++    'placeholder'       => __( 'Search campaigns...', 'my-plugin' ),
++    'min_search_length' => 1,
++    'per_page'          => 4,
++    'default'           => array( 'creator-series', 'audio-week' ),
++),
++```
++
++`min_search_length` sets how many characters trigger a search request;
++`per_page` caps results per page for the paged dropdown. Both requests and
++hydration of the stored value go through the REST transport documented in
++[REST API](/rest-api).
+diff --git a/docs/field-types/basic-input.md b/docs/field-types/basic-input.md
+new file mode 100644
+index 0000000..ba7a44b
+--- /dev/null
++++ b/docs/field-types/basic-input.md
+@@ -0,0 +1,113 @@
++---
++title: Basic Input
++parent: Field Types
++nav_order: 1
++---
++
++# Basic Input Field Types
++
++## text
++
++```php
++array(
++    'id'          => 'entry_slug',
++    'type'        => 'text',
++    'label'       => __( 'Entry slug', 'my-plugin' ),
++    'description' => __( 'A plain single-line text value.', 'my-plugin' ),
++    'default'     => 'featured-entry',
++    'placeholder' => 'featured-entry',
++),
++```
++
++## url
++
++```php
++array(
++    'id'          => 'template_endpoint',
++    'type'        => 'url',
++    'label'       => __( 'Template endpoint', 'my-plugin' ),
++    'description' => __( 'Sanitized with esc_url_raw().', 'my-plugin' ),
++    'default'     => 'https://example.com/templates.json',
++),
++```
++
++## textarea
++
++```php
++array(
++    'id'      => 'summary',
++    'type'    => 'textarea',
++    'label'   => __( 'Summary', 'my-plugin' ),
++    'default' => __( 'Use one PHP schema to drive defaults, UI, and storage.', 'my-plugin' ),
++),
++```
++
++## number
++
++```php
++array(
++    'id'      => 'retry_limit',
++    'type'    => 'number',
++    'label'   => __( 'Retry limit', 'my-plugin' ),
++    'min'     => 0,
++    'max'     => 10,
++    'step'    => 1,
++    'default' => 3,
++),
++```
++
++## slider
++
++Range input backed by `min` / `max` / `step`, same options shape as `number`.
++
++```php
++array(
++    'id'          => 'entry_priority',
++    'type'        => 'slider',
++    'label'       => __( 'Entry priority', 'my-plugin' ),
++    'description' => __( 'Rendered as a range input.', 'my-plugin' ),
++    'min'         => 1,
++    'max'         => 5,
++    'step'        => 1,
++    'default'     => 3,
++),
++```
++
++## spinner
++
++Stepper input, same `min` / `max` / `step` options as `slider`.
++
++```php
++array(
++    'id'          => 'entry_score',
++    'type'        => 'spinner',
++    'label'       => __( 'Entry score', 'my-plugin' ),
++    'min'         => 0,
++    'max'         => 10,
++    'step'        => 1,
++    'default'     => 2,
++),
++```
++
++## date
++
++```php
++array(
++    'id'          => 'entry_review_date',
++    'type'        => 'date',
++    'label'       => __( 'Entry review date', 'my-plugin' ),
++    'default'     => '2026-04-26',
++),
++```
++
++## color
++
++```php
++array(
++    'id'          => 'accent_color',
++    'type'        => 'color',
++    'label'       => __( 'Accent color', 'my-plugin' ),
++    'description' => __( 'Rendered with the WP color picker.', 'my-plugin' ),
++    'default'     => '#2271b1',
++),
++```
+diff --git a/docs/field-types/choice.md b/docs/field-types/choice.md
+new file mode 100644
+index 0000000..5de1814
+--- /dev/null
++++ b/docs/field-types/choice.md
+@@ -0,0 +1,120 @@
++---
++title: Choice
++parent: Field Types
++nav_order: 2
++---
++
++# Choice Field Types
++
++`select`, `radio`, `button_set`, and `checkbox_list` all share the same
++`choices` shape: an associative array of `value => label`.
++
++## select
++
++```php
++array(
++    'id'          => 'entry_layout',
++    'type'        => 'select',
++    'label'       => __( 'Entry layout', 'my-plugin' ),
++    'choices'     => array(
++        'compact' => __( 'Compact', 'my-plugin' ),
++        'feature' => __( 'Feature', 'my-plugin' ),
++        'wide'    => __( 'Wide', 'my-plugin' ),
++    ),
++    'default'     => 'compact',
++),
++```
++
++Choices can also come from a runtime data source instead of a literal array:
++
++```php
++array(
++    'id'      => 'tone_preset',
++    'type'    => 'select',
++    'label'   => __( 'Tone preset', 'my-plugin' ),
++    'choices' => $runtime->resolve_data_source( 'tone_presets' ),
++    'default' => 'calm',
++),
++```
++
++## radio
++
++```php
++array(
++    'id'      => 'entry_format',
++    'type'    => 'radio',
++    'label'   => __( 'Entry format', 'my-plugin' ),
++    'choices' => array(
++        'standard'  => __( 'Standard', 'my-plugin' ),
++        'editorial' => __( 'Editorial', 'my-plugin' ),
++        'alert'     => __( 'Alert', 'my-plugin' ),
++    ),
++    'default' => 'standard',
++),
++```
++
++## button_set
++
++Same shape as `radio`, rendered as a segmented control.
++
++```php
++array(
++    'id'      => 'entry_emphasis',
++    'type'    => 'button_set',
++    'label'   => __( 'Entry emphasis', 'my-plugin' ),
++    'choices' => array(
++        'normal'    => __( 'Normal', 'my-plugin' ),
++        'spotlight' => __( 'Spotlight', 'my-plugin' ),
++        'quiet'     => __( 'Quiet', 'my-plugin' ),
++    ),
++    'default' => 'normal',
++),
++```
++
++## checkbox_list
++
++Multi-value choices. `default` is an array of selected keys.
++
++```php
++array(
++    'id'      => 'entry_channels',
++    'type'    => 'checkbox_list',
++    'label'   => __( 'Entry channels', 'my-plugin' ),
++    'choices' => array(
++        'homepage'   => __( 'Homepage', 'my-plugin' ),
++        'newsletter' => __( 'Newsletter', 'my-plugin' ),
++        'rss'        => __( 'RSS', 'my-plugin' ),
++    ),
++    'default' => array( 'homepage' ),
++),
++```
++
++## checkbox
++
++Without `choices`, renders a single boolean checkbox. With `choices`, behaves
++like `checkbox_list`.
++
++```php
++// Single boolean checkbox
++array(
++    'id'      => 'accept_terms',
++    'type'    => 'checkbox',
++    'label'   => __( 'Accept terms', 'my-plugin' ),
++    'default' => 0,
++),
++```
++
++## switcher
++
++Boolean toggle, functionally equivalent to a single `checkbox` but rendered
++as a switch.
++
++```php
++array(
++    'id'          => 'feature_enabled',
++    'type'        => 'switcher',
++    'label'       => __( 'Enable demo feature', 'my-plugin' ),
++    'description' => __( 'Turns the demo feature on or off.', 'my-plugin' ),
++    'default'     => 1,
++),
++```
+diff --git a/docs/field-types/media.md b/docs/field-types/media.md
+new file mode 100644
+index 0000000..576ee99
+--- /dev/null
++++ b/docs/field-types/media.md
+@@ -0,0 +1,94 @@
++---
++title: Media
++parent: Field Types
++nav_order: 3
++---
++
++# Media Field Types
++
++## upload
++
++URL-based upload field backed by the WP media picker. `library` restricts
++the media modal to a mime type group (`image`, `video`, `audio`, or omit for
++any file type).
++
++```php
++array(
++    'id'          => 'entry_upload',
++    'type'        => 'upload',
++    'label'       => __( 'Entry upload', 'my-plugin' ),
++    'library'     => 'image',
++    'button_text' => __( 'Choose uploaded file', 'my-plugin' ),
++    'remove_text' => __( 'Remove file', 'my-plugin' ),
++    'default'     => '',
++),
++```
++
++## media
++
++Single attachment field. Stores an attachment array (id, url, sizes) rather
++than a raw URL string.
++
++```php
++array(
++    'id'          => 'entry_media',
++    'type'        => 'media',
++    'label'       => __( 'Entry media', 'my-plugin' ),
++    'button_text' => __( 'Choose image', 'my-plugin' ),
++    'remove_text' => __( 'Remove image', 'my-plugin' ),
++    'default'     => array(),
++),
++```
++
++## gallery
++
++Ordered list of attachments.
++
++```php
++array(
++    'id'          => 'entry_gallery',
++    'type'        => 'gallery',
++    'label'       => __( 'Entry gallery', 'my-plugin' ),
++    'button_text' => __( 'Choose gallery images', 'my-plugin' ),
++    'remove_text' => __( 'Clear gallery', 'my-plugin' ),
++    'default'     => array(),
++),
++```
++
++## image_select
++
++Choice field where each option is illustrated with an image instead of text.
++`choices` maps `value => image URL`.
++
++```php
++array(
++    'id'      => 'entry_image_style',
++    'type'    => 'image_select',
++    'label'   => __( 'Entry image style', 'my-plugin' ),
++    'choices' => array(
++        'cover'  => 'https://example.test/cover.png',
++        'split'  => 'https://example.test/split.png',
++        'poster' => 'https://example.test/poster.png',
++    ),
++    'default' => 'cover',
++),
++```
++
++## palette
++
++Choice field where each option is a small set of swatch colors instead of a
++single value. `choices` maps `value => array of hex colors`.
++
++```php
++array(
++    'id'      => 'entry_palette',
++    'type'    => 'palette',
++    'label'   => __( 'Entry palette', 'my-plugin' ),
++    'choices' => array(
++        'cool' => array( '#0f172a', '#38bdf8', '#e0f2fe' ),
++        'warm' => array( '#7c2d12', '#fb923c', '#fed7aa' ),
++        'mono' => array( '#111827', '#6b7280', '#f9fafb' ),
++    ),
++    'default' => 'cool',
++),
++```
+diff --git a/docs/field-types/presentation-and-tools.md b/docs/field-types/presentation-and-tools.md
+new file mode 100644
+index 0000000..2c60b42
+--- /dev/null
++++ b/docs/field-types/presentation-and-tools.md
+@@ -0,0 +1,82 @@
++---
++title: Presentation & Tools
++parent: Field Types
++nav_order: 7
++---
++
++# Presentation & Tools Field Types
++
++## heading / subheading / content
++
++Display-only fields — nothing is persisted (`persist: false`), so no
++`default` is needed. Supply either `label` (auto-wrapped in `<h3>`/`<h4>`/`<p>`
++depending on variant) or a raw `content` HTML string.
++
++```php
++array(
++    'id'    => 'section_intro',
++    'type'  => 'heading',
++    'label' => __( 'Display Settings', 'my-plugin' ),
++),
++
++array(
++    'id'      => 'section_note',
++    'type'    => 'content',
++    'content' => '<p>' . esc_html__( 'These options only affect the public-facing archive.', 'my-plugin' ) . '</p>',
++),
++```
++
++## notice
++
++Same non-persisted display pattern as `content`, styled as an admin notice.
++
++```php
++array(
++    'id'      => 'beta_notice',
++    'type'    => 'notice',
++    'content' => '<p>' . esc_html__( 'This section is in beta and may change.', 'my-plugin' ) . '</p>',
++),
++```
++
++## code_editor
++
++Plain-text code entry. `rows` controls the textarea height (defaults to 10).
++
++```php
++array(
++    'id'          => 'custom_css',
++    'type'        => 'code_editor',
++    'label'       => __( 'Custom CSS', 'my-plugin' ),
++    'rows'        => 14,
++    'placeholder' => '.my-plugin { }',
++    'default'     => '',
++),
++```
++
++## wp_editor
++
++Full `wp_editor()` rich text field.
++
++```php
++array(
++    'id'      => 'welcome_message',
++    'type'    => 'wp_editor',
++    'label'   => __( 'Welcome message', 'my-plugin' ),
++    'default' => '',
++),
++```
++
++## backup_tools
++
++Renders export/import controls for the current schema's stored values. Set
++`'save' => false` to omit backup_tools' own save button when it shares a
++section with fields that already have one.
++
++```php
++array(
++    'id'      => 'backup',
++    'type'    => 'backup_tools',
++    'label'   => __( 'Backup', 'my-plugin' ),
++    'save'    => false,
++),
++```
+diff --git a/docs/field-types/structural.md b/docs/field-types/structural.md
+new file mode 100644
+index 0000000..5346fc2
+--- /dev/null
++++ b/docs/field-types/structural.md
+@@ -0,0 +1,242 @@
++---
++title: Structural
++parent: Field Types
++nav_order: 4
++---
++
++# Structural Field Types
++
++## fieldset
++
++Nests a fixed set of named sub-fields under one parent key. `default` mirrors
++the nested field IDs.
++
++```php
++array(
++    'id'          => 'entry_badge',
++    'type'        => 'fieldset',
++    'label'       => __( 'Entry badge', 'my-plugin' ),
++    'description' => __( 'Nested validation blocks the parent save if a nested value is invalid.', 'my-plugin' ),
++    'fields'      => array(
++        array(
++            'id'      => 'label',
++            'type'    => 'text',
++            'label'   => __( 'Label', 'my-plugin' ),
++            'default' => __( 'Featured', 'my-plugin' ),
++        ),
++        array(
++            'id'      => 'slug',
++            'type'    => 'slug_text',
++            'label'   => __( 'Badge slug', 'my-plugin' ),
++            'default' => 'featured-entry',
++        ),
++    ),
++    'default'     => array(
++        'label' => __( 'Featured', 'my-plugin' ),
++        'slug'  => 'featured-entry',
++    ),
++),
++```
++
++## group
++
++Repeatable list of the same sub-field set — the user can add/remove rows.
++`default` is an array of rows, each shaped like `fields`.
++
++```php
++array(
++    'id'          => 'entry_links',
++    'type'        => 'group',
++    'label'       => __( 'Entry links', 'my-plugin' ),
++    'fields'      => array(
++        array(
++            'id'      => 'label',
++            'type'    => 'text',
++            'label'   => __( 'Link label', 'my-plugin' ),
++            'default' => __( 'Read more', 'my-plugin' ),
++        ),
++        array(
++            'id'      => 'url',
++            'type'    => 'url',
++            'label'   => __( 'Link URL', 'my-plugin' ),
++            'default' => 'https://example.test/read-more',
++        ),
++    ),
++    'default'     => array(
++        array(
++            'label' => __( 'Read more', 'my-plugin' ),
++            'url'   => 'https://example.test/read-more',
++        ),
++    ),
++),
++```
++
++## accordion
++
++Groups related fields into collapsible panels within one field slot. Each
++`items` entry is its own mini fieldset with `id`, `title`, optional `open`,
++and its own `fields`.
++
++```php
++array(
++    'id'      => 'launch_accordion',
++    'type'    => 'accordion',
++    'label'   => __( 'Launch Accordion', 'my-plugin' ),
++    'items'   => array(
++        array(
++            'id'     => 'intro',
++            'title'  => __( 'Intro Panel', 'my-plugin' ),
++            'open'   => true,
++            'fields' => array(
++                array(
++                    'id'      => 'eyebrow',
++                    'type'    => 'text',
++                    'label'   => __( 'Eyebrow', 'my-plugin' ),
++                    'default' => __( 'New release', 'my-plugin' ),
++                ),
++            ),
++        ),
++        array(
++            'id'     => 'cta',
++            'title'  => __( 'CTA Panel', 'my-plugin' ),
++            'fields' => array(
++                array(
++                    'id'      => 'button_label',
++                    'type'    => 'text',
++                    'label'   => __( 'Button Label', 'my-plugin' ),
++                    'default' => __( 'Try the demo', 'my-plugin' ),
++                ),
++            ),
++        ),
++    ),
++    'default' => array(
++        'intro' => array( 'eyebrow' => __( 'New release', 'my-plugin' ) ),
++        'cta'   => array( 'button_label' => __( 'Try the demo', 'my-plugin' ) ),
++    ),
++),
++```
++
++## tabbed
++
++Same shape as `accordion`, rendered as tabs instead of collapsible panels.
++Add `default_tab` to control which tab opens first.
++
++```php
++array(
++    'id'          => 'card_tabs',
++    'type'        => 'tabbed',
++    'label'       => __( 'Card Tabs', 'my-plugin' ),
++    'default_tab' => 'primary',
++    'items'       => array(
++        array(
++            'id'     => 'primary',
++            'title'  => __( 'Primary Card', 'my-plugin' ),
++            'fields' => array(
++                array(
++                    'id'      => 'title',
++                    'type'    => 'text',
++                    'label'   => __( 'Title', 'my-plugin' ),
++                    'default' => __( 'Fast setup', 'my-plugin' ),
++                ),
++            ),
++        ),
++    ),
++    'default'     => array(
++        'primary' => array( 'title' => __( 'Fast setup', 'my-plugin' ) ),
++    ),
++),
++```
++
++## dimensions
++
++Nested width/height object with a shared unit.
++
++```php
++array(
++    'id'      => 'entry_dimensions',
++    'type'    => 'dimensions',
++    'label'   => __( 'Entry card size', 'my-plugin' ),
++    'units'   => array( 'px', '%', 'rem' ),
++    'default' => array(
++        'width'  => '320',
++        'height' => '180',
++        'unit'   => 'px',
++    ),
++),
++```
++
++## spacing
++
++Nested top/right/bottom/left object with a shared unit — same shape used for
++margin/padding-style controls.
++
++```php
++array(
++    'id'      => 'entry_spacing',
++    'type'    => 'spacing',
++    'label'   => __( 'Entry card spacing', 'my-plugin' ),
++    'units'   => array( 'px', 'rem' ),
++    'default' => array(
++        'top'    => '8',
++        'right'  => '12',
++        'bottom' => '8',
++        'left'   => '12',
++        'unit'   => 'px',
++    ),
++),
++```
++
++## border
++
++Composite width/style/color object per side, plus a shared style and color.
++
++```php
++array(
++    'id'      => 'entry_border',
++    'type'    => 'border',
++    'label'   => __( 'Entry card border', 'my-plugin' ),
++    'default' => array(
++        'top'    => '1',
++        'right'  => '1',
++        'bottom' => '1',
++        'left'   => '1',
++        'style'  => 'solid',
++        'color'  => '#2271b1',
++    ),
++),
++```
++
++## link_color
++
++Normal and hover color pair.
++
++```php
++array(
++    'id'      => 'entry_link_colors',
++    'type'    => 'link_color',
++    'label'   => __( 'Entry link colors', 'my-plugin' ),
++    'default' => array(
++        'color' => '#2271b1',
++        'hover' => '#135e96',
++    ),
++),
++```
++
++## sorter
++
++Drag-to-reorder list. Cannot be nested inside a `fieldset` or `group` — it
++must be a top-level field in a section.
++
++```php
++array(
++    'id'      => 'display_order',
++    'type'    => 'sorter',
++    'label'   => __( 'Display order', 'my-plugin' ),
++    'choices' => array(
++        'hero'     => __( 'Hero', 'my-plugin' ),
++        'features' => __( 'Features', 'my-plugin' ),
++        'pricing'  => __( 'Pricing', 'my-plugin' ),
++    ),
++    'default' => array( 'hero', 'features', 'pricing' ),
++),
++```
+diff --git a/docs/index.md b/docs/index.md
+index 9429722..595999c 100644
+--- a/docs/index.md
++++ b/docs/index.md
+@@ -66,6 +66,7 @@ Browse the full documentation:
+ - [Schema Protocol](schema-protocol) — Schema structure and compilation rules
+ - [Extension API](extension-api) — Custom field types, validators, data sources
+ - [Extension Recipes](extension-recipes) — Minimal extension snippets
++- [Field Types](field-types) — Usage examples for every built-in field type
+ - [REST API](rest-api) — REST transport contract
+ - [Support Matrix](support-matrix) — Compatibility snapshot
+ - [Block Editor Field Matrix](block-editor-field-matrix) — Block-panel field type support
