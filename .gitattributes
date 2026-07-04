@@ -1,0 +1,23 @@
+# 打包分发时排除的开发态目录/文件
+/tests                        export-ignore
+/docs                         export-ignore
+/examples                     export-ignore
+/tools                        export-ignore
+/.github                      export-ignore
+/.wp-env.json                 export-ignore
+.gitattributes                export-ignore
+.gitignore                    export-ignore
+phpunit.xml.dist              export-ignore
+phpunit.integration.xml.dist  export-ignore
+phpcs.xml.dist                export-ignore
+phpstan.neon.dist             export-ignore
+jest.config.js                export-ignore
+playwright.config.js          export-ignore
+package.json                  export-ignore
+package-lock.json             export-ignore
+webpack.config.js             export-ignore
+CONTRIBUTING.md               export-ignore
+CHANGELOG.md                  export-ignore
+
+# diff 输出优化
+*.php diff=php
