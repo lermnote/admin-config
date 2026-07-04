@@ -143,7 +143,7 @@ $runtime->register_validator(
 
 Late registration is supported: if you register a schema after `boot()`, or register a container after some schemas were already compiled, the runtime will mount matching schemas when the needed container becomes available.
 
-See [docs/quick-start.md](/docs/quick-start.md) for the copyable onboarding path, [docs/extension-api.md](/docs/extension-api.md) for the extension surface, [docs/extension-recipes.md](/docs/extension-recipes.md) for minimal custom field/validator/data-source snippets, [docs/rest-api.md](/docs/rest-api.md) for the REST transport contract, and [docs/smoke-checklist.md](/docs/smoke-checklist.md) for the current manual regression pass.
+See [docs/quick-start.md](/docs/quick-start.md) for the copyable onboarding path, [docs/extension-api.md](/docs/extension-api.md) for the extension surface, [docs/extension-recipes.md](/docs/extension-recipes.md) for minimal custom field/validator/data-source snippets, and [docs/rest-api.md](/docs/rest-api.md) for the REST transport contract.
 
 ## Recommended lifecycle
 
@@ -341,7 +341,7 @@ admin, also set `LERM_ADMIN_CONFIG_MULTISITE=1` and pass the spec path after `--
 - Breaking runtime changes should land with changelog notes, migration guidance,
   and updated examples
 
-See [docs/support-matrix.md](/docs/support-matrix.md) for the compatibility snapshot, [docs/rest-api.md](/docs/rest-api.md) for the REST API contract, [CONTRIBUTING.md](/CONTRIBUTING.md) for the local development flow, and [release-checklist.md](/docs/release-checklist.md) for the alpha cut process.
+See [docs/support-matrix.md](/docs/support-matrix.md) for the compatibility snapshot, [docs/rest-api.md](/docs/rest-api.md) for the REST API contract, [CONTRIBUTING.md](/CONTRIBUTING.md) for the local development flow, and [MAINTAINING.md](/MAINTAINING.md) for the alpha cut process.
 
 ## Reading meta-backed schemas
 

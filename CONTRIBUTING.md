@@ -2,6 +2,10 @@
 
 Thanks for helping improve `lerm/admin-config`.
 
+Cutting a release or running the manual regression pass? See
+[MAINTAINING.md](/MAINTAINING.md) instead — this file covers contributing
+changes, not the release process.
+
 ## Development Flow
 
 1. Make focused changes inside `src/`, `assets/`, `docs/`, `examples/`, or `tests/`.

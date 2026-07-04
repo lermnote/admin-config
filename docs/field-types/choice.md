@@ -15,11 +15,11 @@ nav_order: 2
 array(
     'id'          => 'entry_layout',
     'type'        => 'select',
-    'label'       => __( 'Entry layout', 'my-plugin' ),
+    'label'       => 'Entry layout',
     'choices'     => array(
-        'compact' => __( 'Compact', 'my-plugin' ),
-        'feature' => __( 'Feature', 'my-plugin' ),
-        'wide'    => __( 'Wide', 'my-plugin' ),
+        'compact' => 'Compact',
+        'feature' => 'Feature',
+        'wide'    => 'Wide',
     ),
     'default'     => 'compact',
 ),
@@ -31,7 +31,7 @@ Choices can also come from a runtime data source instead of a literal array:
 array(
     'id'      => 'tone_preset',
     'type'    => 'select',
-    'label'   => __( 'Tone preset', 'my-plugin' ),
+    'label'   => 'Tone preset',
     'choices' => $runtime->resolve_data_source( 'tone_presets' ),
     'default' => 'calm',
 ),
@@ -43,11 +43,11 @@ array(
 array(
     'id'      => 'entry_format',
     'type'    => 'radio',
-    'label'   => __( 'Entry format', 'my-plugin' ),
+    'label'   => 'Entry format',
     'choices' => array(
-        'standard'  => __( 'Standard', 'my-plugin' ),
-        'editorial' => __( 'Editorial', 'my-plugin' ),
-        'alert'     => __( 'Alert', 'my-plugin' ),
+        'standard'  => 'Standard',
+        'editorial' => 'Editorial',
+        'alert'     => 'Alert',
     ),
     'default' => 'standard',
 ),
@@ -61,11 +61,11 @@ Same shape as `radio`, rendered as a segmented control.
 array(
     'id'      => 'entry_emphasis',
     'type'    => 'button_set',
-    'label'   => __( 'Entry emphasis', 'my-plugin' ),
+    'label'   => 'Entry emphasis',
     'choices' => array(
-        'normal'    => __( 'Normal', 'my-plugin' ),
-        'spotlight' => __( 'Spotlight', 'my-plugin' ),
-        'quiet'     => __( 'Quiet', 'my-plugin' ),
+        'normal'    => 'Normal',
+        'spotlight' => 'Spotlight',
+        'quiet'     => 'Quiet',
     ),
     'default' => 'normal',
 ),
@@ -79,11 +79,11 @@ Multi-value choices. `default` is an array of selected keys.
 array(
     'id'      => 'entry_channels',
     'type'    => 'checkbox_list',
-    'label'   => __( 'Entry channels', 'my-plugin' ),
+    'label'   => 'Entry channels',
     'choices' => array(
-        'homepage'   => __( 'Homepage', 'my-plugin' ),
-        'newsletter' => __( 'Newsletter', 'my-plugin' ),
-        'rss'        => __( 'RSS', 'my-plugin' ),
+        'homepage'   => 'Homepage',
+        'newsletter' => 'Newsletter',
+        'rss'        => 'RSS',
     ),
     'default' => array( 'homepage' ),
 ),
@@ -99,7 +99,7 @@ like `checkbox_list`.
 array(
     'id'      => 'accept_terms',
     'type'    => 'checkbox',
-    'label'   => __( 'Accept terms', 'my-plugin' ),
+    'label'   => 'Accept terms',
     'default' => 0,
 ),
 ```
@@ -113,8 +113,8 @@ as a switch.
 array(
     'id'          => 'feature_enabled',
     'type'        => 'switcher',
-    'label'       => __( 'Enable demo feature', 'my-plugin' ),
-    'description' => __( 'Turns the demo feature on or off.', 'my-plugin' ),
+    'label'       => 'Enable demo feature',
+    'description' => 'Turns the demo feature on or off.',
     'default'     => 1,
 ),
 ```

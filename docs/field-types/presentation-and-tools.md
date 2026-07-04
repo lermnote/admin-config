@@ -16,13 +16,13 @@ depending on variant) or a raw `content` HTML string.
 array(
     'id'    => 'section_intro',
     'type'  => 'heading',
-    'label' => __( 'Display Settings', 'my-plugin' ),
+    'label' => 'Display Settings',
 ),
 
 array(
     'id'      => 'section_note',
     'type'    => 'content',
-    'content' => '<p>' . esc_html__( 'These options only affect the public-facing archive.', 'my-plugin' ) . '</p>',
+    'content' => '<p>These options only affect the public-facing archive.</p>',
 ),
 ```
 
@@ -34,7 +34,7 @@ Same non-persisted display pattern as `content`, styled as an admin notice.
 array(
     'id'      => 'beta_notice',
     'type'    => 'notice',
-    'content' => '<p>' . esc_html__( 'This section is in beta and may change.', 'my-plugin' ) . '</p>',
+    'content' => '<p>This section is in beta and may change.</p>',
 ),
 ```
 
@@ -46,9 +46,9 @@ Plain-text code entry. `rows` controls the textarea height (defaults to 10).
 array(
     'id'          => 'custom_css',
     'type'        => 'code_editor',
-    'label'       => __( 'Custom CSS', 'my-plugin' ),
+    'label'       => 'Custom CSS',
     'rows'        => 14,
-    'placeholder' => '.my-plugin { }',
+    'placeholder' => '.acme-widget { }',
     'default'     => '',
 ),
 ```
@@ -61,7 +61,7 @@ Full `wp_editor()` rich text field.
 array(
     'id'      => 'welcome_message',
     'type'    => 'wp_editor',
-    'label'   => __( 'Welcome message', 'my-plugin' ),
+    'label'   => 'Welcome message',
     'default' => '',
 ),
 ```
@@ -76,7 +76,7 @@ section with fields that already have one.
 array(
     'id'      => 'backup',
     'type'    => 'backup_tools',
-    'label'   => __( 'Backup', 'my-plugin' ),
+    'label'   => 'Backup',
     'save'    => false,
 ),
 ```

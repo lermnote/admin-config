@@ -16,10 +16,10 @@ any file type).
 array(
     'id'          => 'entry_upload',
     'type'        => 'upload',
-    'label'       => __( 'Entry upload', 'my-plugin' ),
+    'label'       => 'Entry upload',
     'library'     => 'image',
-    'button_text' => __( 'Choose uploaded file', 'my-plugin' ),
-    'remove_text' => __( 'Remove file', 'my-plugin' ),
+    'button_text' => 'Choose uploaded file',
+    'remove_text' => 'Remove file',
     'default'     => '',
 ),
 ```
@@ -33,9 +33,9 @@ than a raw URL string.
 array(
     'id'          => 'entry_media',
     'type'        => 'media',
-    'label'       => __( 'Entry media', 'my-plugin' ),
-    'button_text' => __( 'Choose image', 'my-plugin' ),
-    'remove_text' => __( 'Remove image', 'my-plugin' ),
+    'label'       => 'Entry media',
+    'button_text' => 'Choose image',
+    'remove_text' => 'Remove image',
     'default'     => array(),
 ),
 ```
@@ -48,9 +48,9 @@ Ordered list of attachments.
 array(
     'id'          => 'entry_gallery',
     'type'        => 'gallery',
-    'label'       => __( 'Entry gallery', 'my-plugin' ),
-    'button_text' => __( 'Choose gallery images', 'my-plugin' ),
-    'remove_text' => __( 'Clear gallery', 'my-plugin' ),
+    'label'       => 'Entry gallery',
+    'button_text' => 'Choose gallery images',
+    'remove_text' => 'Clear gallery',
     'default'     => array(),
 ),
 ```
@@ -64,7 +64,7 @@ Choice field where each option is illustrated with an image instead of text.
 array(
     'id'      => 'entry_image_style',
     'type'    => 'image_select',
-    'label'   => __( 'Entry image style', 'my-plugin' ),
+    'label'   => 'Entry image style',
     'choices' => array(
         'cover'  => 'https://example.test/cover.png',
         'split'  => 'https://example.test/split.png',
@@ -83,7 +83,7 @@ single value. `choices` maps `value => array of hex colors`.
 array(
     'id'      => 'entry_palette',
     'type'    => 'palette',
-    'label'   => __( 'Entry palette', 'my-plugin' ),
+    'label'   => 'Entry palette',
     'choices' => array(
         'cool' => array( '#0f172a', '#38bdf8', '#e0f2fe' ),
         'warm' => array( '#7c2d12', '#fb923c', '#fed7aa' ),

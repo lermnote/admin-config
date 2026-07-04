@@ -9,30 +9,31 @@ nav_order: 4
 ## fieldset
 
 Nests a fixed set of named sub-fields under one parent key. `default` mirrors
-the nested field IDs.
+the nested field IDs. (`badge_text` below is a custom type, not a built-in
+one — see [Extension Recipes](/extension-recipes) for how it's registered.)
 
 ```php
 array(
     'id'          => 'entry_badge',
     'type'        => 'fieldset',
-    'label'       => __( 'Entry badge', 'my-plugin' ),
-    'description' => __( 'Nested validation blocks the parent save if a nested value is invalid.', 'my-plugin' ),
+    'label'       => 'Entry badge',
+    'description' => 'Nested validation blocks the parent save if a nested value is invalid.',
     'fields'      => array(
         array(
             'id'      => 'label',
             'type'    => 'text',
-            'label'   => __( 'Label', 'my-plugin' ),
-            'default' => __( 'Featured', 'my-plugin' ),
+            'label'   => 'Label',
+            'default' => 'Featured',
         ),
         array(
             'id'      => 'slug',
-            'type'    => 'slug_text',
-            'label'   => __( 'Badge slug', 'my-plugin' ),
+            'type'    => 'badge_text',
+            'label'   => 'Badge slug',
             'default' => 'featured-entry',
         ),
     ),
     'default'     => array(
-        'label' => __( 'Featured', 'my-plugin' ),
+        'label' => 'Featured',
         'slug'  => 'featured-entry',
     ),
 ),
@@ -47,24 +48,24 @@ Repeatable list of the same sub-field set — the user can add/remove rows.
 array(
     'id'          => 'entry_links',
     'type'        => 'group',
-    'label'       => __( 'Entry links', 'my-plugin' ),
+    'label'       => 'Entry links',
     'fields'      => array(
         array(
             'id'      => 'label',
             'type'    => 'text',
-            'label'   => __( 'Link label', 'my-plugin' ),
-            'default' => __( 'Read more', 'my-plugin' ),
+            'label'   => 'Link label',
+            'default' => 'Read more',
         ),
         array(
             'id'      => 'url',
             'type'    => 'url',
-            'label'   => __( 'Link URL', 'my-plugin' ),
+            'label'   => 'Link URL',
             'default' => 'https://example.test/read-more',
         ),
     ),
     'default'     => array(
         array(
-            'label' => __( 'Read more', 'my-plugin' ),
+            'label' => 'Read more',
             'url'   => 'https://example.test/read-more',
         ),
     ),
@@ -81,37 +82,37 @@ and its own `fields`.
 array(
     'id'      => 'launch_accordion',
     'type'    => 'accordion',
-    'label'   => __( 'Launch Accordion', 'my-plugin' ),
+    'label'   => 'Launch Accordion',
     'items'   => array(
         array(
             'id'     => 'intro',
-            'title'  => __( 'Intro Panel', 'my-plugin' ),
+            'title'  => 'Intro Panel',
             'open'   => true,
             'fields' => array(
                 array(
                     'id'      => 'eyebrow',
                     'type'    => 'text',
-                    'label'   => __( 'Eyebrow', 'my-plugin' ),
-                    'default' => __( 'New release', 'my-plugin' ),
+                    'label'   => 'Eyebrow',
+                    'default' => 'New release',
                 ),
             ),
         ),
         array(
             'id'     => 'cta',
-            'title'  => __( 'CTA Panel', 'my-plugin' ),
+            'title'  => 'CTA Panel',
             'fields' => array(
                 array(
                     'id'      => 'button_label',
                     'type'    => 'text',
-                    'label'   => __( 'Button Label', 'my-plugin' ),
-                    'default' => __( 'Try the demo', 'my-plugin' ),
+                    'label'   => 'Button Label',
+                    'default' => 'Try the demo',
                 ),
             ),
         ),
     ),
     'default' => array(
-        'intro' => array( 'eyebrow' => __( 'New release', 'my-plugin' ) ),
-        'cta'   => array( 'button_label' => __( 'Try the demo', 'my-plugin' ) ),
+        'intro' => array( 'eyebrow' => 'New release' ),
+        'cta'   => array( 'button_label' => 'Try the demo' ),
     ),
 ),
 ```
@@ -125,24 +126,24 @@ Add `default_tab` to control which tab opens first.
 array(
     'id'          => 'card_tabs',
     'type'        => 'tabbed',
-    'label'       => __( 'Card Tabs', 'my-plugin' ),
+    'label'       => 'Card Tabs',
     'default_tab' => 'primary',
     'items'       => array(
         array(
             'id'     => 'primary',
-            'title'  => __( 'Primary Card', 'my-plugin' ),
+            'title'  => 'Primary Card',
             'fields' => array(
                 array(
                     'id'      => 'title',
                     'type'    => 'text',
-                    'label'   => __( 'Title', 'my-plugin' ),
-                    'default' => __( 'Fast setup', 'my-plugin' ),
+                    'label'   => 'Title',
+                    'default' => 'Fast setup',
                 ),
             ),
         ),
     ),
     'default'     => array(
-        'primary' => array( 'title' => __( 'Fast setup', 'my-plugin' ) ),
+        'primary' => array( 'title' => 'Fast setup' ),
     ),
 ),
 ```
@@ -155,7 +156,7 @@ Nested width/height object with a shared unit.
 array(
     'id'      => 'entry_dimensions',
     'type'    => 'dimensions',
-    'label'   => __( 'Entry card size', 'my-plugin' ),
+    'label'   => 'Entry card size',
     'units'   => array( 'px', '%', 'rem' ),
     'default' => array(
         'width'  => '320',
@@ -174,7 +175,7 @@ margin/padding-style controls.
 array(
     'id'      => 'entry_spacing',
     'type'    => 'spacing',
-    'label'   => __( 'Entry card spacing', 'my-plugin' ),
+    'label'   => 'Entry card spacing',
     'units'   => array( 'px', 'rem' ),
     'default' => array(
         'top'    => '8',
@@ -194,7 +195,7 @@ Composite width/style/color object per side, plus a shared style and color.
 array(
     'id'      => 'entry_border',
     'type'    => 'border',
-    'label'   => __( 'Entry card border', 'my-plugin' ),
+    'label'   => 'Entry card border',
     'default' => array(
         'top'    => '1',
         'right'  => '1',
@@ -214,7 +215,7 @@ Normal and hover color pair.
 array(
     'id'      => 'entry_link_colors',
     'type'    => 'link_color',
-    'label'   => __( 'Entry link colors', 'my-plugin' ),
+    'label'   => 'Entry link colors',
     'default' => array(
         'color' => '#2271b1',
         'hover' => '#135e96',
@@ -231,11 +232,11 @@ must be a top-level field in a section.
 array(
     'id'      => 'display_order',
     'type'    => 'sorter',
-    'label'   => __( 'Display order', 'my-plugin' ),
+    'label'   => 'Display order',
     'choices' => array(
-        'hero'     => __( 'Hero', 'my-plugin' ),
-        'features' => __( 'Features', 'my-plugin' ),
-        'pricing'  => __( 'Pricing', 'my-plugin' ),
+        'hero'     => 'Hero',
+        'features' => 'Features',
+        'pricing'  => 'Pricing',
     ),
     'default' => array( 'hero', 'features', 'pricing' ),
 ),

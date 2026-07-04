@@ -16,7 +16,7 @@ enabled sub-controls expect.
 array(
     'id'             => 'brand_typography',
     'type'           => 'typography',
-    'label'          => __( 'Brand Typography', 'my-plugin' ),
+    'label'          => 'Brand Typography',
     'style'          => true,
     'letter_spacing' => true,
     'align'          => true,
@@ -46,12 +46,12 @@ enable the ones you actually use to keep the UI compact.
 array(
     'id'                           => 'entry_background',
     'type'                         => 'background',
-    'label'                        => __( 'Entry background', 'my-plugin' ),
+    'label'                        => 'Entry background',
     'background_gradient'          => true,
     'background_origin'            => true,
     'background_clip'              => true,
     'background_blend_mode'        => true,
-    'background_image_button_text' => __( 'Choose background image', 'my-plugin' ),
+    'background_image_button_text' => 'Choose background image',
     'default'                      => array(
         'background-color'              => '#f8fafc',
         'background-gradient-color'     => '#e0f2fe',
@@ -77,11 +77,11 @@ Choice field rendered as a curated Dashicons picker. `choices` maps a
 array(
     'id'      => 'feature_icon',
     'type'    => 'icon',
-    'label'   => __( 'Feature Icon', 'my-plugin' ),
+    'label'   => 'Feature Icon',
     'choices' => array(
-        'dashicons-lightbulb' => __( 'Idea', 'my-plugin' ),
-        'dashicons-megaphone' => __( 'Launch', 'my-plugin' ),
-        'dashicons-chart-bar' => __( 'Analytics', 'my-plugin' ),
+        'dashicons-lightbulb' => 'Idea',
+        'dashicons-megaphone' => 'Launch',
+        'dashicons-chart-bar' => 'Analytics',
     ),
     'default' => 'dashicons-lightbulb',
 ),

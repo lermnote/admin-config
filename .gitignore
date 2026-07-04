@@ -9,6 +9,7 @@
 /docs/.jekyll-cache/
 /docs/.sass-cache/
 /docs/Gemfile.lock
+*.patch
 !phpcs.xml.dist
 !phpstan.neon.dist
 !phpunit.xml.dist

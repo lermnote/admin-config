@@ -12,8 +12,8 @@ nav_order: 1
 array(
     'id'          => 'entry_slug',
     'type'        => 'text',
-    'label'       => __( 'Entry slug', 'my-plugin' ),
-    'description' => __( 'A plain single-line text value.', 'my-plugin' ),
+    'label'       => 'Entry slug',
+    'description' => 'A plain single-line text value.',
     'default'     => 'featured-entry',
     'placeholder' => 'featured-entry',
 ),
@@ -25,8 +25,8 @@ array(
 array(
     'id'          => 'template_endpoint',
     'type'        => 'url',
-    'label'       => __( 'Template endpoint', 'my-plugin' ),
-    'description' => __( 'Sanitized with esc_url_raw().', 'my-plugin' ),
+    'label'       => 'Template endpoint',
+    'description' => 'Sanitized with esc_url_raw().',
     'default'     => 'https://example.com/templates.json',
 ),
 ```
@@ -37,8 +37,8 @@ array(
 array(
     'id'      => 'summary',
     'type'    => 'textarea',
-    'label'   => __( 'Summary', 'my-plugin' ),
-    'default' => __( 'Use one PHP schema to drive defaults, UI, and storage.', 'my-plugin' ),
+    'label'   => 'Summary',
+    'default' => 'Use one PHP schema to drive defaults, UI, and storage.',
 ),
 ```
 
@@ -48,7 +48,7 @@ array(
 array(
     'id'      => 'retry_limit',
     'type'    => 'number',
-    'label'   => __( 'Retry limit', 'my-plugin' ),
+    'label'   => 'Retry limit',
     'min'     => 0,
     'max'     => 10,
     'step'    => 1,
@@ -64,8 +64,8 @@ Range input backed by `min` / `max` / `step`, same options shape as `number`.
 array(
     'id'          => 'entry_priority',
     'type'        => 'slider',
-    'label'       => __( 'Entry priority', 'my-plugin' ),
-    'description' => __( 'Rendered as a range input.', 'my-plugin' ),
+    'label'       => 'Entry priority',
+    'description' => 'Rendered as a range input.',
     'min'         => 1,
     'max'         => 5,
     'step'        => 1,
@@ -81,7 +81,7 @@ Stepper input, same `min` / `max` / `step` options as `slider`.
 array(
     'id'          => 'entry_score',
     'type'        => 'spinner',
-    'label'       => __( 'Entry score', 'my-plugin' ),
+    'label'       => 'Entry score',
     'min'         => 0,
     'max'         => 10,
     'step'        => 1,
@@ -95,7 +95,7 @@ array(
 array(
     'id'          => 'entry_review_date',
     'type'        => 'date',
-    'label'       => __( 'Entry review date', 'my-plugin' ),
+    'label'       => 'Entry review date',
     'default'     => '2026-04-26',
 ),
 ```
@@ -106,8 +106,8 @@ array(
 array(
     'id'          => 'accent_color',
     'type'        => 'color',
-    'label'       => __( 'Accent color', 'my-plugin' ),
-    'description' => __( 'Rendered with the WP color picker.', 'my-plugin' ),
+    'label'       => 'Accent color',
+    'description' => 'Rendered with the WP color picker.',
     'default'     => '#2271b1',
 ),
 ```
