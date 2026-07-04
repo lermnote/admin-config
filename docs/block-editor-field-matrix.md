@@ -6,8 +6,6 @@ description: Phase 3 block-panel contract for AdminConfig field types.
 
 # Block Editor Field Matrix
 
-Date: 2026-05-02
-
 This matrix defines the Phase 3 block-panel contract for AdminConfig field
 types. The block editor is not the limiting factor; the status describes how far
 the AdminConfig block-panel runtime has migrated each field family.
@@ -85,14 +83,3 @@ Unknown field types or extension controls are shown as unsupported notices until
 the extension registers a block-panel control or AdminConfig adds a first-party
 mapping.
 
-## Phase 3 Completion Boundary
-
-Phase 3 is complete when:
-
-- All built-in field families are classified in this matrix.
-- Editable fields have browser coverage for render, dirty/discard/save, reload,
-  validation-error replay, and no AdminConfig `admin-ajax.php` requests.
-- Read-only and unsupported fields are visible in the panel instead of silently
-  disappearing.
-- Phase 4 fields remain visible as read-only until their collection and ordering
-  UI infrastructure lands.

@@ -69,5 +69,3 @@ Browse the full documentation:
 - [REST API](rest-api) — REST transport contract
 - [Support Matrix](support-matrix) — Compatibility snapshot
 - [Block Editor Field Matrix](block-editor-field-matrix) — Block-panel field type support
-- [Smoke Checklist](smoke-checklist) — Manual regression checklist
-- [Release Checklist](release-checklist) — Alpha/beta/stable release process
