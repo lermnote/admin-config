@@ -4,6 +4,7 @@
 /.wp-env.override.json
 /playwright-report/
 /test-results/
+/node_modules/
 /vendor/
 /docs/_site/
 /docs/.jekyll-cache/

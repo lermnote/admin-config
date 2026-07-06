@@ -236,6 +236,11 @@ So third-party extensions can wait for a ready runtime in either boot path.
 
 ### Plugin-install mode
 
+**Before activating:** the plugin entry point requires a Composer autoloader.
+Run `composer dump-autoload` in the plugin directory to generate
+`vendor/autoload.php`. The package has no runtime Composer dependencies;
+only PSR-4 autoloading is needed.
+
 Standalone plugin builds boot the runtime with:
 
 ```php
