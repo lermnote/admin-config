@@ -11,7 +11,7 @@ nav_order: 6
 Search-as-you-type select backed by a registered data source. Requires a
 `source` key matching a data source registered via
 `$runtime->register_data_source()` — see
-[Extension Recipes](/extension-recipes) for how to register one. Add
+[Extension Recipes](../extension-recipes) for how to register one. Add
 `'multiple' => true` for a multi-select variant.
 
 ```php
@@ -44,4 +44,4 @@ array(
 `min_search_length` sets how many characters trigger a search request;
 `per_page` caps results per page for the paged dropdown. Both requests and
 hydration of the stored value go through the REST transport documented in
-[REST API](/rest-api).
+[REST API](../rest-api).
