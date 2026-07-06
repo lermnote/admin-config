@@ -10,7 +10,7 @@ nav_order: 4
 
 Nests a fixed set of named sub-fields under one parent key. `default` mirrors
 the nested field IDs. (`badge_text` below is a custom type, not a built-in
-one — see [Extension Recipes](/extension-recipes) for how it's registered.)
+one — see [Extension Recipes](../extension-recipes) for how it's registered.)
 
 ```php
 array(
