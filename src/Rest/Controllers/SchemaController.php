@@ -350,8 +350,7 @@ final class SchemaController {
 		try {
 			$response = $this->runtime->resolve_data_source( $source_id, $args );
 		} catch ( \Throwable $e ) {
-			/** @phpstan-ignore booleanAnd.alwaysTrue, booleanAnd.rightAlwaysTrue */
-			if ( defined( 'WP_DEBUG' ) && (bool) constant( 'WP_DEBUG' ) ) {
+			if ( defined( 'WP_DEBUG' ) && (bool) constant( 'WP_DEBUG' ) ) { // @phpstan-ignore-line
 				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 				error_log( sprintf( 'Admin Config data source "%s" error: %s', $source_id, $e->getMessage() ) );
 			}
