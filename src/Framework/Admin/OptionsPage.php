@@ -202,11 +202,14 @@ final class OptionsPage {
 			return;
 		}
 
-		$view        = is_array( $this->definition['view'] ?? null ) ? $this->definition['view'] : array();
-		$sections    = PageSchema::sections( $this->definition );
-		$current_tab = $this->submission->current_tab();
-		$values      = $this->store->all();
-		$flash       = ValidationFlash::consume( 'options_page', $this->schema_id(), $this->submission->flash_resource_key() );
+		$view           = is_array( $this->definition['view'] ?? null ) ? $this->definition['view'] : array();
+		$sections       = PageSchema::sections( $this->definition );
+		$current_tab    = $this->submission->current_tab();
+		$values         = $this->store->all();
+		$flash          = ValidationFlash::consume( 'options_page', $this->schema_id(), $this->submission->flash_resource_key() );
+		$render_control = function ( array $f, array $ctx, array $errs ): void {
+			$this->render_field_control( $f, $ctx, $errs );
+		};
 		?>
 		<div class="wrap lerm-settings-wrap">
 			<div class="lerm-settings-shell">
@@ -339,7 +342,7 @@ final class OptionsPage {
 												<?php echo esc_attr( (string) $group['id'] !== $current_subsection ? 'hidden' : '' ); ?>>
 												<div class="lerm-settings-stack" role="group" aria-label="<?php echo esc_attr( (string) $group['label'] ); ?>">
 													<?php if ( ! empty( $group['fields'] ) ) : ?>
-														<?php $this->container_field_renderer()->render_fields( (array) $group['fields'], $section_values, function ( array $f, array $ctx, array $errs ): void { $this->render_field_control( $f, $ctx, $errs ); }, (string) $section_id, $this->subsection_uses_group_headings( (array) $group['fields'], (string) $group['label'] ), 'stack', $section_errors ); ?>
+														<?php $this->container_field_renderer()->render_fields( (array) $group['fields'], $section_values, $render_control, (string) $section_id, $this->subsection_uses_group_headings( (array) $group['fields'], (string) $group['label'] ), 'stack', $section_errors ); ?>
 													<?php else : ?>
 														<div class="lerm-settings-empty-group"><?php esc_html_e( 'No settings in this group yet.', 'lerm-admin-config' ); ?></div>
 													<?php endif; ?>
@@ -349,7 +352,7 @@ final class OptionsPage {
 									</div>
 								<?php else : ?>
 									<div class="lerm-settings-stack" role="group" aria-label="<?php echo esc_attr( (string) ( $section['title'] ?? __( 'Section', 'lerm-admin-config' ) ) ); ?>">
-										<?php $this->container_field_renderer()->render_fields( $section_fields, $section_values, function ( array $f, array $ctx, array $errs ): void { $this->render_field_control( $f, $ctx, $errs ); }, (string) $section_id, true, 'stack', $section_errors ); ?>
+										<?php $this->container_field_renderer()->render_fields( $section_fields, $section_values, $render_control, (string) $section_id, true, 'stack', $section_errors ); ?>
 									</div>
 								<?php endif; ?>
 
