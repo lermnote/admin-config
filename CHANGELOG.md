@@ -6,6 +6,15 @@ The format follows Keep a Changelog and the package uses Semantic Versioning onc
 
 ## [Unreleased]
 
+### Changed
+- **Decomposed `OptionsPage` (~1500 lines, ~55 methods) into six focused classes** under `src/Framework/Admin/`:
+  - `OptionsPage` — core orchestrator (659 lines, 23 methods; -58%).
+  - `ContainerFieldRenderer` — nested containers + flat field rows.
+  - `FieldDependencyEvaluator` — pure dependency-matching logic (no WP globals).
+  - `SubmissionStateResolver` — flash/validation/tab routing.
+  - `SchemaDebugPanel` — runtime debug introspection panel.
+  - `OptionsPageLifecycle` — menu registration + asset enqueueing.
+
 ## [0.4.2] - 2026-07-04
 
 ### Added
