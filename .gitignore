@@ -10,6 +10,7 @@
 /docs/.sass-cache/
 /docs/Gemfile.lock
 *.patch
+CLAUDE.md
 !phpcs.xml.dist
 !phpstan.neon.dist
 !phpunit.xml.dist
