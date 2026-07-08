@@ -6,6 +6,8 @@ The format follows Keep a Changelog and the package uses Semantic Versioning onc
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-08
+
 ### Changed
 - **Decomposed `OptionsPage` (~1500 lines, ~55 methods) into six focused classes** under `src/Framework/Admin/`:
   - `OptionsPage` — core orchestrator (659 lines, 23 methods; -58%).
@@ -14,6 +16,7 @@ The format follows Keep a Changelog and the package uses Semantic Versioning onc
   - `SubmissionStateResolver` — flash/validation/tab routing.
   - `SchemaDebugPanel` — runtime debug introspection panel.
   - `OptionsPageLifecycle` — menu registration + asset enqueueing.
+- **Extracted `FieldAttributeHelpers` trait** to deduplicate field attribute escaping, boolean flag reading, nested warning rendering, and number input action buttons across six field type classes.
 
 ## [0.4.2] - 2026-07-04
 
