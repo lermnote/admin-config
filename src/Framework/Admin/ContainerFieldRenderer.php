@@ -10,6 +10,7 @@ declare( strict_types=1 );
 namespace Lerm\AdminConfig\Framework\Admin;
 
 use Lerm\AdminConfig\Framework\Support\FieldPath;
+use Lerm\AdminConfig\Framework\Support\PageSchema;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -30,14 +31,25 @@ final class ContainerFieldRenderer {
 	private array $field_errors;
 	private string $current_path;
 
+	private FieldDependencyEvaluator $dep_evaluator;
+	private string $option_name;
+
 	/**
-	 * @param callable              $nested_render Callback to render a nested sub-field.
-	 * @param array<string, mixed>  $field_errors
+	 * @param callable             $nested_render Callback to render a nested sub-field.
+	 * @param array<string, mixed> $field_errors
 	 */
-	public function __construct( callable $nested_render, array $field_errors = array(), string $current_path = '' ) {
+	public function __construct(
+		callable $nested_render,
+		array $field_errors = array(),
+		string $current_path = '',
+		FieldDependencyEvaluator $dep_evaluator = null,
+		string $option_name = ''
+	) {
 		$this->nested_render = $nested_render;
 		$this->field_errors  = $field_errors;
 		$this->current_path  = $current_path;
+		$this->dep_evaluator = $dep_evaluator ?? new FieldDependencyEvaluator( array() );
+		$this->option_name   = $option_name;
 	}
 
 	/**
@@ -362,5 +374,185 @@ final class ContainerFieldRenderer {
 		}
 
 		return $normalized;
+	}
+
+	// ── Flat field rendering ──────────────────────────────────────────
+
+	/**
+	 * Render all fields for a section.
+	 *
+	 * @param array<int, array<string, mixed>> $fields          Field definitions.
+	 * @param array<string, mixed>             $values          Saved values.
+	 * @param callable                         $render_control  Callback to render the field control.
+	 * @param string                           $section_id      Current section ID.
+	 * @param bool                             $show_group_headings Whether group headings should be rendered.
+	 * @param string                           $layout          Layout mode ('table' or 'stack').
+	 * @param array<string, mixed>             $field_errors    Field error map.
+	 */
+	public function render_fields(
+		array $fields,
+		array $values,
+		callable $render_control,
+		string $section_id = '',
+		bool $show_group_headings = true,
+		string $layout = 'table',
+		array $field_errors = array()
+	): void {
+		$current_group_heading = '';
+
+		foreach ( $fields as $field ) {
+			$group_heading = (string) ( $field['group_heading'] ?? '' );
+
+			if ( $show_group_headings && $group_heading && $group_heading !== $current_group_heading ) {
+				$current_group_heading = $group_heading;
+
+				if ( 'stack' === $layout ) {
+					printf(
+						'<div class="lerm-settings-group lerm-settings-group--stack"><h3>%s</h3></div>',
+						esc_html( $group_heading )
+					);
+				} else {
+					printf(
+						'<tr class="lerm-settings-group"><td colspan="2"><h3>%s</h3></td></tr>',
+						esc_html( $group_heading )
+					);
+				}
+			}
+
+			$this->render_field( $field, $values, $render_control, $layout, $field_errors );
+		}
+	}
+
+	/**
+	 * Render a single field row.
+	 *
+	 * @param array<string, mixed> $field          Field definition.
+	 * @param array<string, mixed> $values         Saved values.
+	 * @param callable             $render_control Callback to render the field control.
+	 * @param string               $layout         Layout mode.
+	 * @param array<string, mixed> $field_errors   Field error map.
+	 */
+	public function render_field(
+		array $field,
+		array $values,
+		callable $render_control,
+		string $layout = 'table',
+		array $field_errors = array()
+	): void {
+		if ( 'stack' === $layout ) {
+			$this->render_stack_field_row( $field, $values, $render_control, $field_errors );
+			return;
+		}
+
+		$this->render_table_field_row( $field, $values, $render_control, $field_errors );
+	}
+
+	/**
+	 * @param array<string, mixed> $field
+	 * @param array<string, mixed> $values
+	 * @param callable             $render_control
+	 * @param array<string, mixed> $field_errors
+	 */
+	private function render_stack_field_row( array $field, array $values, callable $render_control, array $field_errors ): void {
+		$context   = $this->field_row_context( $field, $values, $field_errors );
+		$row_attrs = $context['row_attrs'];
+
+		if ( '' === $context['label'] ) {
+			$row_attrs[0] = 'class="lerm-settings-row lerm-settings-row--nolabel' . ( $context['has_errors'] ? ' is-invalid' : '' ) . '"';
+		}
+
+		echo '<div ' . implode( ' ', $row_attrs ) . '>';
+
+		if ( '' !== $context['label'] ) {
+			printf(
+				'<div class="lerm-settings-row__head"><label for="%1$s">%2$s</label></div>',
+				esc_attr( $context['field_id'] ),
+				esc_html( $context['label'] )
+			);
+		}
+
+		echo '<div class="lerm-settings-row__body">';
+
+		$render_control( $field, $context, $field_errors );
+		$this->render_field_notes( $context['description'], $context['field_error'] );
+
+		echo '</div></div>';
+	}
+
+	/**
+	 * @param array<string, mixed> $field
+	 * @param array<string, mixed> $values
+	 * @param callable             $render_control
+	 * @param array<string, mixed> $field_errors
+	 */
+	private function render_table_field_row( array $field, array $values, callable $render_control, array $field_errors ): void {
+		$context = $this->field_row_context( $field, $values, $field_errors );
+
+		echo '<tr ' . implode( ' ', $context['row_attrs'] ) . '>';
+
+		if ( '' !== $context['label'] ) {
+			printf(
+				'<th scope="row"><label for="%1$s">%2$s</label></th>',
+				esc_attr( $context['field_id'] ),
+				esc_html( $context['label'] )
+			);
+		} else {
+			echo '<th scope="row"></th>';
+		}
+
+		echo '<td>';
+
+		$render_control( $field, $context, $field_errors );
+		$this->render_field_notes( $context['description'], $context['field_error'] );
+
+		echo '</td></tr>';
+	}
+
+	/**
+	 * Build the rendering context for a single field row.
+	 *
+	 * @param array<string, mixed> $field        Field definition.
+	 * @param array<string, mixed> $values       Saved values.
+	 * @param array<string, mixed> $field_errors Field error map.
+	 * @return array{field_id: string, field_type: string, field_name: string, field_value: mixed, description: string, field_error: string, has_errors: bool, label: string, row_attrs: array<int, string>}
+	 */
+	private function field_row_context( array $field, array $values, array $field_errors ): array {
+		$field_id    = (string) $field['id'];
+		$field_type  = sanitize_key( (string) ( $field['type'] ?? 'text' ) );
+		$field_name  = $this->option_name . '[' . $field_id . ']';
+		$field_value = $values[ $field_id ] ?? ( $field['default'] ?? '' );
+		$description = (string) ( $field['description'] ?? '' );
+		$field_error = $this->field_error_message( $field_errors, $field_id );
+		$has_errors  = $this->field_has_errors( $field_errors, $field_id, true );
+		$dependency  = $this->dep_evaluator->field_dependency( $field );
+		$label       = isset( $field['label'] ) ? (string) $field['label'] : '';
+		$row_attrs   = array(
+			'class="lerm-settings-row' . ( $has_errors ? ' is-invalid' : '' ) . '"',
+			'data-field-id="' . esc_attr( $field_id ) . '"',
+			'data-field-path="' . esc_attr( $field_id ) . '"',
+			'data-field-type="' . esc_attr( $field_type ) . '"',
+		);
+
+		if ( ! empty( $dependency ) ) {
+			$row_attrs[] = 'data-dependency-field="' . esc_attr( (string) $dependency['field'] ) . '"';
+			$row_attrs[] = 'data-dependency-operator="' . esc_attr( (string) $dependency['operator'] ) . '"';
+			$row_attrs[] = 'data-dependency-value="' . esc_attr( $this->dep_evaluator->attribute_value( $dependency['value'] ) ) . '"';
+
+			if ( ! $this->dep_evaluator->is_satisfied( $field, $values ) ) {
+				$row_attrs[] = 'hidden';
+			}
+		}
+
+		return array(
+			'field_id'    => $field_id,
+			'field_type'  => $field_type,
+			'field_name'  => $field_name,
+			'field_value' => $field_value,
+			'description' => $description,
+			'field_error' => $field_error,
+			'has_errors'  => $has_errors,
+			'label'       => $label,
+			'row_attrs'   => $row_attrs,
+		);
 	}
 }

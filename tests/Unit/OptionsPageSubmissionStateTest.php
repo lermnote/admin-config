@@ -146,10 +146,14 @@ final class OptionsPageSubmissionStateTest extends TestCase {
 	 * @return array<string, mixed>
 	 */
 	private function merge_section_submitted_values( OptionsPage $page, string $section_id, array $values, array $submitted ): array {
-		$method = new \ReflectionMethod( $page, 'merge_section_submitted_values' );
+		$property = new \ReflectionProperty( $page, 'submission' );
+		$property->setAccessible( true );
+		$resolver = $property->getValue( $page );
+
+		$method = new \ReflectionMethod( $resolver, 'merge_section_submitted_values' );
 		$method->setAccessible( true );
 
-		$result = $method->invoke( $page, $section_id, $values, $submitted );
+		$result = $method->invoke( $resolver, $section_id, $values, $submitted );
 
 		return is_array( $result ) ? $result : array();
 	}
