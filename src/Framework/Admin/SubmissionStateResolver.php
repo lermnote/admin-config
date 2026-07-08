@@ -14,7 +14,6 @@ declare( strict_types=1 );
 namespace Lerm\AdminConfig\Framework\Admin;
 
 use Lerm\AdminConfig\Framework\FieldTypes\FieldTypeRegistry;
-use Lerm\AdminConfig\Framework\Storage\OptionStore;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,7 +29,6 @@ final class SubmissionStateResolver {
 	 */
 	private array $definition;
 
-	private OptionStore $store;
 	private FieldTypeRegistry $field_types;
 	private string $page_slug;
 
@@ -46,12 +44,10 @@ final class SubmissionStateResolver {
 	 */
 	public function __construct(
 		array $definition,
-		OptionStore $store,
 		FieldTypeRegistry $field_types,
 		string $page_slug
 	) {
 		$this->definition  = $definition;
-		$this->store       = $store;
 		$this->field_types = $field_types;
 		$this->page_slug   = $page_slug;
 	}

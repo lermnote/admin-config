@@ -12,7 +12,6 @@ declare( strict_types=1 );
 
 namespace Lerm\AdminConfig\Framework\Admin;
 
-use Lerm\AdminConfig\Framework\FieldTypes\FieldTypeRegistry;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
 use Lerm\AdminConfig\Registry\FieldModuleRegistry;
 
@@ -30,7 +29,6 @@ final class SchemaDebugPanel {
 	private array $definition;
 
 	private ?FieldModuleRegistry $field_modules;
-	private FieldTypeRegistry $field_types;
 
 	private string $schema_id;
 	private string $page_slug;
@@ -44,21 +42,19 @@ final class SchemaDebugPanel {
 	public function __construct(
 		array $definition,
 		?FieldModuleRegistry $field_modules,
-		FieldTypeRegistry $field_types,
 		string $schema_id,
 		string $page_slug,
 		string $option_name,
 		string $capability,
 		bool $network_admin
 	) {
-		$this->definition     = $definition;
-		$this->field_modules  = $field_modules;
-		$this->field_types    = $field_types;
-		$this->schema_id      = $schema_id;
-		$this->page_slug      = $page_slug;
-		$this->option_name    = $option_name;
-		$this->capability     = $capability;
-		$this->network_admin  = $network_admin;
+		$this->definition    = $definition;
+		$this->field_modules = $field_modules;
+		$this->schema_id     = $schema_id;
+		$this->page_slug     = $page_slug;
+		$this->option_name   = $option_name;
+		$this->capability    = $capability;
+		$this->network_admin = $network_admin;
 	}
 
 	/**

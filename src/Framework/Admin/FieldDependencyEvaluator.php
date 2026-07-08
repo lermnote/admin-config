@@ -132,7 +132,7 @@ final class FieldDependencyEvaluator {
 	 * Extract the dependency tuple from a field definition.
 	 *
 	 * @param array<string, mixed> $field Field definition.
-	 * @return array{field: string, operator: string, value: mixed}
+	 * @return array<string, mixed>
 	 */
 	public function field_dependency( array $field ): array {
 		$dependency = $field['dependency'] ?? null;

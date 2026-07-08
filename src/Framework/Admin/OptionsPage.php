@@ -75,7 +75,6 @@ final class OptionsPage {
 		$this->debug_panel    = new SchemaDebugPanel(
 			$this->definition,
 			$this->field_modules,
-			$this->field_types,
 			$this->schema_id(),
 			$this->page_slug(),
 			$this->option_name(),
@@ -84,7 +83,6 @@ final class OptionsPage {
 		);
 		$this->submission     = new SubmissionStateResolver(
 			$this->definition,
-			$this->store,
 			$this->field_types,
 			$this->page_slug()
 		);
@@ -477,6 +475,25 @@ final class OptionsPage {
 	}
 
 	/**
+	 * Delegates to ContainerFieldRenderer for external containers.
+	 *
+	 * @deprecated 0.5.0 Use container_field_renderer()->render_fields() instead.
+	 *
+	 * @param array<int, array<string, mixed>> $fields     Field definitions.
+	 * @param array<string, mixed>             $values     Saved values.
+	 * @param string                           $section_id Current section ID.
+	 * @param bool                             $show_group_headings Whether group headings should be rendered.
+	 * @param string                           $layout     Layout mode.
+	 * @param array<string, mixed>             $field_errors Field error map.
+	 */
+	public function render_fields( array $fields, array $values, string $section_id = '', bool $show_group_headings = true, string $layout = 'table', array $field_errors = array() ): void {
+		$render_control = function ( array $f, array $ctx, array $errs ): void {
+			$this->render_field_control( $f, $ctx, $errs );
+		};
+		$this->container_field_renderer()->render_fields( $fields, $values, $render_control, $section_id, $show_group_headings, $layout, $field_errors );
+	}
+
+	/**
 	 * @param array<string, mixed> $field
 	 * @param array{field_id: string, field_type: string, field_name: string, field_value: mixed} $context
 	 * @param array<string, mixed> $field_errors
@@ -655,5 +672,4 @@ final class OptionsPage {
 	public function dependency_controller_attribute( array $field ): string {
 		return $this->dep_evaluator->controller_attribute( $field );
 	}
-
 }
