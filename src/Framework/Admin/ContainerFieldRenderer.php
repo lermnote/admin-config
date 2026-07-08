@@ -42,7 +42,7 @@ final class ContainerFieldRenderer {
 		callable $nested_render,
 		array $field_errors = array(),
 		string $current_path = '',
-		FieldDependencyEvaluator $dep_evaluator = null,
+		?FieldDependencyEvaluator $dep_evaluator = null,
 		string $option_name = ''
 	) {
 		$this->nested_render = $nested_render;
