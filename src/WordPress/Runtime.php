@@ -264,6 +264,14 @@ final class Runtime {
 		}
 	}
 
+	/**
+	 * Mount a compiled schema onto its configured container.
+	 *
+	 * @param CompiledSchema $compiled The compiled schema to mount.
+	 * @param bool           $force    If true, re-mount the schema even when it has already been
+	 *                                 mounted. Reserved for container re-registration workflows;
+	 *                                 internal callers currently always use the default (false).
+	 */
 	private function mount_schema( CompiledSchema $compiled, bool $force = false ): void {
 		if ( ! $force && isset( $this->mounted[ $compiled->id() ] ) ) {
 			return;

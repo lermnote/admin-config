@@ -8,7 +8,7 @@ has_children: true
 
 Usage examples for every built-in field type, grouped by purpose. Each
 example is a single field definition you can drop into a `sections.*.fields`
-array — see [Quick Start](/quick-start) for the surrounding schema
+array — see [Quick Start](quick-start) for the surrounding schema
 boilerplate (`id`, `container`, `store`, `sections`).
 
 All examples on these pages are adapted from the working demo plugin at
@@ -24,4 +24,4 @@ project's own smoke tests.
 - [Presentation & Tools](field-types/presentation-and-tools) — heading, subheading, content, notice, code_editor, wp_editor, backup_tools
 
 For registering an entirely new field type (not listed here), see
-[Extension Recipes](/extension-recipes).
+[Extension Recipes](extension-recipes).
