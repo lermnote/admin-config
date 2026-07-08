@@ -14,12 +14,14 @@ use Lerm\AdminConfig\Framework\FieldTypes\Support\NestedFieldSanitizer;
 use Lerm\AdminConfig\Framework\Storage\OptionStore;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
 use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldRenderHelpers;
+use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldAttributeHelpers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 final class StructuredFieldTypes {
+	use FieldAttributeHelpers;
 
 	/**
 	 * @return array<string, array<string, mixed>>
@@ -373,8 +375,8 @@ final class StructuredFieldTypes {
 			'<textarea id="%1$s" name="%2$s" class="large-text lerm-code-editor" rows="%3$s" placeholder="%4$s"%5$s%6$s>%7$s</textarea>',
 			esc_attr( $input_id ),
 			esc_attr( $field_name ),
-			esc_attr( (string) ( $field['rows'] ?? 10 ) ),
-			esc_attr( (string) ( $field['placeholder'] ?? '' ) ),
+			self::numeric_attr( $field, 'rows', 10 ),
+			self::numeric_attr( $field, 'placeholder' ),
 			FieldRenderHelpers::name_attr( $name_template ),
 			FieldRenderHelpers::id_attr( $id_template ),
 			esc_textarea( PageSchema::scalar_value( $value ) )
@@ -391,7 +393,7 @@ final class StructuredFieldTypes {
 				'<textarea id="%1$s" name="%2$s" class="large-text" rows="%3$s"%4$s%5$s>%6$s</textarea>',
 				esc_attr( $input_id ),
 				esc_attr( $field_name ),
-				esc_attr( (string) ( $field['rows'] ?? 6 ) ),
+				self::numeric_attr( $field, 'rows', 6 ),
 				FieldRenderHelpers::name_attr( $name_template ),
 				FieldRenderHelpers::id_attr( $id_template ),
 				esc_textarea( PageSchema::scalar_value( $value ) )
@@ -643,12 +645,5 @@ final class StructuredFieldTypes {
 	 */
 	private static function sanitize_wp_editor_value( $value ): string {
 		return wp_kses_post( PageSchema::scalar_value( $value ) );
-	}
-
-	private static function render_nested_warning( string $message ): void {
-		printf(
-			'<p class="description" style="color:#b91c1c;font-style:italic">%s</p>',
-			esc_html( $message )
-		);
 	}
 }

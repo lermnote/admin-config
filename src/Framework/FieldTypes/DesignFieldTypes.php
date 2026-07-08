@@ -13,12 +13,14 @@ use Lerm\AdminConfig\Framework\Admin\OptionsPage;
 use Lerm\AdminConfig\Framework\Storage\OptionStore;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
 use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldRenderHelpers;
+use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldAttributeHelpers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 final class DesignFieldTypes {
+	use FieldAttributeHelpers;
 
 	/**
 	 * @return array<string, array<string, mixed>>
@@ -603,10 +605,6 @@ final class DesignFieldTypes {
 			return array();
 		}
 		return array();
-	}
-
-	private static function flag( array $field, string $key, bool $fallback ): bool {
-		return array_key_exists( $key, $field ) ? ! empty( $field[ $key ] ) : $fallback;
 	}
 
 	private static function numeric_fragment( $value ): string {

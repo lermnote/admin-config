@@ -14,12 +14,14 @@ use Lerm\AdminConfig\Framework\FieldTypes\Support\NestedFieldSanitizer;
 use Lerm\AdminConfig\Framework\Storage\OptionStore;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
 use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldRenderHelpers;
+use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldAttributeHelpers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 final class AdvancedFieldTypes {
+	use FieldAttributeHelpers;
 
 	/**
 	 * @return array<string, array<string, mixed>>
@@ -505,16 +507,5 @@ final class AdvancedFieldTypes {
 		);
 
 		return $parts[0] ?? '';
-	}
-
-	private static function flag( array $field, string $key, bool $fallback ): bool {
-		return array_key_exists( $key, $field ) ? ! empty( $field[ $key ] ) : $fallback;
-	}
-
-	private static function render_nested_warning( string $message ): void {
-		printf(
-			'<p class="description" style="color:#b91c1c;font-style:italic">%s</p>',
-			esc_html( $message )
-		);
 	}
 }

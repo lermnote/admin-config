@@ -14,12 +14,14 @@ use Lerm\AdminConfig\Framework\Storage\OptionStore;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
 use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldRenderHelpers;
 use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldValueHelper;
+use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldAttributeHelpers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 final class ExtendedPrimitiveFieldTypes {
+	use FieldAttributeHelpers;
 
 	/**
 	 * @return array<string, array<string, mixed>>
@@ -436,9 +438,9 @@ final class ExtendedPrimitiveFieldTypes {
 		printf(
 			'<input type="range" value="%1$s" min="%2$s" max="%3$s" step="%4$s" class="lerm-range-input__range"%5$s>',
 			esc_attr( $current ),
-			esc_attr( (string) ( $field['min'] ?? 0 ) ),
-			esc_attr( (string) ( $field['max'] ?? 100 ) ),
-			esc_attr( (string) ( $field['step'] ?? 1 ) ),
+			self::numeric_attr( $field, 'min', 0 ),
+			self::numeric_attr( $field, 'max', 100 ),
+			self::numeric_attr( $field, 'step', 1 ),
 			$extra_attrs
 		);
 		printf(
@@ -446,9 +448,9 @@ final class ExtendedPrimitiveFieldTypes {
 			esc_attr( $input_id ),
 			esc_attr( $field_name ),
 			esc_attr( $current ),
-			esc_attr( (string) ( $field['min'] ?? 0 ) ),
-			esc_attr( (string) ( $field['max'] ?? 100 ) ),
-			esc_attr( (string) ( $field['step'] ?? 1 ) ),
+			self::numeric_attr( $field, 'min', 0 ),
+			self::numeric_attr( $field, 'max', 100 ),
+			self::numeric_attr( $field, 'step', 1 ),
 			$extra_attrs,
 			$name_attr,
 			$id_attr,
@@ -469,16 +471,12 @@ final class ExtendedPrimitiveFieldTypes {
 			esc_attr( $input_id ),
 			esc_attr( $field_name ),
 			esc_attr( $current ),
-			esc_attr( (string) ( $field['min'] ?? '' ) ),
-			esc_attr( (string) ( $field['max'] ?? '' ) ),
-			esc_attr( (string) ( $field['step'] ?? 1 ) ),
+			self::numeric_attr( $field, 'min' ),
+			self::numeric_attr( $field, 'max' ),
+			self::numeric_attr( $field, 'step', 1 ),
 			$extra_attrs
 		);
-		printf(
-			'<span class="lerm-number-input__actions"><button type="button" class="lerm-number-input__button" data-lerm-number-step="up" aria-label="%1$s"><span aria-hidden="true">&#9650;</span></button><button type="button" class="lerm-number-input__button" data-lerm-number-step="down" aria-label="%2$s"><span aria-hidden="true">&#9660;</span></button></span>',
-			esc_attr__( 'Increase value', 'lerm-admin-config' ),
-			esc_attr__( 'Decrease value', 'lerm-admin-config' )
-		);
+		self::number_input_actions();
 		echo '</span>';
 	}
 

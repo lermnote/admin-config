@@ -10,12 +10,14 @@ declare( strict_types=1 );
 namespace Lerm\AdminConfig\Framework\FieldTypes;
 
 use Lerm\AdminConfig\Framework\Admin\OptionsPage;
+use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldAttributeHelpers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 final class ToolFieldTypes {
+	use FieldAttributeHelpers;
 
 	/**
 	 * @return array<string, array<string, mixed>>
