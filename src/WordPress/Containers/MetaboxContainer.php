@@ -12,7 +12,6 @@ namespace Lerm\AdminConfig\WordPress\Containers;
 use Lerm\AdminConfig\Compiler\CompiledSchema;
 use Lerm\AdminConfig\Contracts\Container;
 use Lerm\AdminConfig\Stores\StoreResolver;
-use Lerm\AdminConfig\Framework\Admin\OptionsPage;
 use Lerm\AdminConfig\Framework\Framework;
 use Lerm\AdminConfig\Framework\Storage\OptionStore;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
@@ -110,14 +109,7 @@ final class MetaboxContainer implements Container, BlockEditorPanelContext {
 
 		$schema     = $this->schemas[ $schema_id ];
 		$store      = $this->stores->store( $schema, array( 'post_id' => $post->ID ) );
-		$renderer   = new OptionsPage(
-			$schema->definition(),
-			$store,
-			$this->framework->field_types(),
-			$this->framework->asset_resolver(),
-			false,
-			$this->framework->field_modules()
-		);
+		$renderer   = $this->framework->render_options_page( $schema->definition(), $store );
 		$sections   = PageSchema::sections( $schema->definition() );
 		$section_id = (string) array_key_first( $sections );
 		$section    = '' !== $section_id ? ( $sections[ $section_id ] ?? null ) : null;

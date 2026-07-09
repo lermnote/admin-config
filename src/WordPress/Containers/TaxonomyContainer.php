@@ -232,14 +232,7 @@ final class TaxonomyContainer implements Container {
 			new ArrayBackend( 'taxonomy_defaults_' . $schema->id() )
 		);
 
-		return new OptionsPage(
-			$schema->definition(),
-			$resolved_store,
-			$this->framework->field_types(),
-			$this->framework->asset_resolver(),
-			false,
-			$this->framework->field_modules()
-		);
+		return $this->framework->render_options_page( $schema->definition(), $resolved_store );
 	}
 
 	/**
