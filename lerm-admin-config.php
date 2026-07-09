@@ -3,7 +3,7 @@
  * Plugin Name: Lerm Admin Config
  * Plugin URI:  https://lerm.net
  * Description: Schema-driven WordPress admin configuration infrastructure for options, metadata, and profile surfaces.
- * Version:           0.5.0
+ * Version:           0.5.1
  * Requires at least: 6.6
  * Requires PHP:      8.0
  * Author:            Lerm
