@@ -140,10 +140,27 @@ final class Framework implements FrameworkContract {
 		$cache_key = $this->cache_key( $definition, $backend );
 
 		if ( ! isset( $this->pages[ $cache_key ] ) ) {
-			$this->pages[ $cache_key ] = new OptionsPage( $definition, $this->store( $definition, $backend ), $this->field_types, $this->asset_resolver, true, $this->field_modules );
+			$this->pages[ $cache_key ] = $this->render_options_page( $definition, $this->store( $definition, $backend ), true );
 		}
 
 		return $this->pages[ $cache_key ];
+	}
+
+	/**
+	 * Build an OptionsPage against an already-resolved store.
+	 *
+	 * Used by containers (comment/profile/taxonomy/metabox) that need a
+	 * per-entity store `mount_options_page()`'s definition+backend cache
+	 * cannot key on. `mount_options_page()` itself delegates here too.
+	 *
+	 * @param array<string, mixed> $definition Page definition.
+	 * @param OptionStore          $store      Already-resolved store.
+	 * @param bool                 $network    Whether this is a network-admin page.
+	 */
+	public function render_options_page( array $definition, OptionStore $store, bool $network = false ): OptionsPage {
+		$this->prepare_definition( $definition );
+
+		return new OptionsPage( $definition, $store, $this->field_types, $this->asset_resolver, $network, $this->field_modules );
 	}
 
 	/**

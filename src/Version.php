@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class Version {
 
-	public const PACKAGE = '0.5.0';
+	public const PACKAGE = '0.5.1';
 
 	public static function from_constant( string $constant_name ): string {
 		return defined( $constant_name ) ? (string) constant( $constant_name ) : self::PACKAGE;

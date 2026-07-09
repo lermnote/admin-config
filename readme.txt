@@ -5,7 +5,7 @@ Tags: admin, options, schema, fields
 Requires at least: 6.6
 Requires PHP: 8.0
 Tested up to: 6.8
-Stable tag: 0.5.0
+Stable tag: 0.5.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -54,6 +54,27 @@ Yes, use `FieldTypeRegistry::register()` to add custom types with render,
 sanitize, validate, and serialize callbacks.
 
 == Changelog ==
+
+= 0.5.1 =
+* `Framework::render_options_page()` factory so containers stop hand-constructing `OptionsPage` individually.
+
+= 0.5.0 =
+* Decomposed the ~1500-line `OptionsPage` god class into six focused classes (rendering, dependency evaluation, submission state, debug panel, lifecycle).
+* Extracted a shared `FieldAttributeHelpers` trait across the field type classes.
+
+= 0.4.2 =
+* Added `docs/field-types/` usage examples for every built-in field type.
+* Added `.gitattributes` so dev-only directories are excluded from the Composer distribution archive.
+* Added `MAINTAINING.md` for maintainer-only release/regression checklists.
+
+= 0.4.0 =
+* First standalone-package release: REST contract browser coverage, package-local test bootstrap, and CI entry points for the extracted package.
+* Async `ajax_select` fields backed by the REST data-source registry.
+* Debug-mode runtime panel with schema, store, module, and data-source summaries.
+* Block editor panel coverage across basic, choice, media, structured, design, typography, and background field types.
+* Schema protocol v1 documents at `/schemas` and `/schemas/{schema_id}`.
+* `wp-env` fixtures, multisite coverage, and Playwright smoke specs for plugin mode and embedded mode.
+* Contributor-facing extension recipes for custom fields, validators, and data sources.
 
 = 0.3.0 =
 * Initial extraction slice: compiler, registry, framework, WordPress runtime.

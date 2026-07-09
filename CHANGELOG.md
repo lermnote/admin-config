@@ -6,6 +6,12 @@ The format follows Keep a Changelog and the package uses Semantic Versioning onc
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-07-09
+
+### Changed
+- `Framework` gained `render_options_page( $definition, OptionStore $store, bool $network = false )`, a factory that builds an `OptionsPage` against an already-resolved store. `mount_options_page()` now delegates to it internally.
+- `CommentContainer`, `ProfileContainer`, `TaxonomyContainer`, and `MetaboxContainer` no longer each hand-construct `OptionsPage` with the same six constructor arguments — they call `Framework::render_options_page()` instead. `OptionsPage`'s constructor now has a single call site outside `Framework` itself, so future signature changes touch one file instead of five.
+
 ## [0.5.0] - 2026-07-08
 
 ### Changed

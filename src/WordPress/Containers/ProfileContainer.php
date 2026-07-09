@@ -157,13 +157,9 @@ final class ProfileContainer implements Container {
 	}
 
 	private function renderer( CompiledSchema $schema, int $user_id ): OptionsPage {
-		return new OptionsPage(
+		return $this->framework->render_options_page(
 			$schema->definition(),
-			$this->stores->store( $schema, array( 'user_id' => $user_id ) ),
-			$this->framework->field_types(),
-			$this->framework->asset_resolver(),
-			false,
-			$this->framework->field_modules()
+			$this->stores->store( $schema, array( 'user_id' => $user_id ) )
 		);
 	}
 }
