@@ -1,4 +1,4 @@
-<?php // phpcs:disable WordPress.Files.FileName
+<?php
 /**
  * Configuration-driven meta storage backend.
  *

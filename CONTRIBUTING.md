@@ -54,6 +54,6 @@ If a local multisite run is interrupted and leaves `.wp-env.override.json` behin
 
 - Update `CHANGELOG.md` for user-visible changes.
 - Reflect new compatibility guarantees in `docs/support-matrix.md`.
-- Keep `docs/release-checklist.md` in sync with the actual release gate.
+- Keep the release checklist in `MAINTAINING.md` in sync with the actual release gate.
 - Keep examples runnable and aligned with the public onboarding flow.
 - Keep `.wp-env.json`, `tests/fixtures/wp-env/`, and Playwright smoke coverage aligned with the example plugin and embedded fixture theme.

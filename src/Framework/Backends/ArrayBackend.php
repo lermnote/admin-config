@@ -1,4 +1,4 @@
-<?php // phpcs:disable WordPress.Files.FileName
+<?php
 /**
  * Ephemeral in-memory storage backend.
  *

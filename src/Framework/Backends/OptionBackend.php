@@ -1,4 +1,4 @@
-<?php // phpcs:disable WordPress.Files.FileName
+<?php
 /**
  * Storage backend backed by WordPress options (get_option / update_option).
  *

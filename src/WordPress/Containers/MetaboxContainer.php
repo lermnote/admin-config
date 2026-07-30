@@ -74,6 +74,9 @@ final class MetaboxContainer implements Container, BlockEditorPanelContext {
 		$this->hooks_registered = true;
 	}
 
+	/**
+	 * @param \WP_Post $post
+	 */
 	public function register_meta_boxes( string $post_type, $post = null ): void {
 		if ( $this->post_context_uses_block_editor( $post_type, $post instanceof \WP_Post ? $post : null ) ) {
 			return;
@@ -87,13 +90,16 @@ final class MetaboxContainer implements Container, BlockEditorPanelContext {
 				continue;
 			}
 
+			$priority = (string) ( $container['priority'] ?? 'default' );
+			$priority = in_array( $priority, array( 'core', 'default', 'high', 'low' ), true ) ? $priority : 'default';
+
 			add_meta_box(
 				$this->meta_box_id( $schema ),
 				(string) ( $container['title'] ?? $schema->definition()['title'] ?? __( 'Settings', 'lerm-admin-config' ) ),
 				array( $this, 'render_meta_box' ),
 				$post_type,
 				(string) ( $container['context'] ?? 'advanced' ),
-				(string) ( $container['priority'] ?? 'default' ),
+				$priority,
 				array(
 					'schema_id' => $schema->id(),
 				)

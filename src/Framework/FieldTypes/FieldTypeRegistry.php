@@ -1,4 +1,4 @@
-<?php // phpcs:disable WordPress.Files.FileName
+<?php
 /**
  * Registry for built-in and custom field types.
  *

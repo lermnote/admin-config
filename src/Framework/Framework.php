@@ -1,4 +1,4 @@
-<?php // phpcs:disable WordPress.Files.FileName
+<?php
 /**
  * Core entry point for the admin config runtime.
  *

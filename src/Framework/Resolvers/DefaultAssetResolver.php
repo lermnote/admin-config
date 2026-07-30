@@ -1,4 +1,4 @@
-<?php // phpcs:disable WordPress.Files.FileName
+<?php
 /**
  * Default asset resolver implementation, resolving relative to the framework's
  * own directory, reading the host's version constant when available.

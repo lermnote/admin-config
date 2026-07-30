@@ -1,4 +1,4 @@
-<?php // phpcs:disable WordPress.Files.FileName
+<?php
 /**
  * Generic native options page container.
  *
@@ -191,6 +191,7 @@ final class OptionsPage {
 	 * @deprecated 0.5.0 Use the lifecycle instance instead.
 	 */
 	public function enqueue_support_assets( string $handle_suffix = '' ): void {
+		_deprecated_function( __METHOD__, '0.5.0', 'OptionsPageLifecycle::enqueue_support_assets' );
 		$this->lifecycle->enqueue_support_assets( $handle_suffix );
 	}
 
@@ -208,6 +209,7 @@ final class OptionsPage {
 		$values         = $this->store->all();
 		$flash          = ValidationFlash::consume( 'options_page', $this->schema_id(), $this->submission->flash_resource_key() );
 		$render_control = function ( array $f, array $ctx, array $errs ): void {
+			/** @var array{field_id: string, field_type: string, field_name: string, field_value: mixed} $ctx */
 			$this->render_field_control( $f, $ctx, $errs );
 		};
 		?>
@@ -471,7 +473,9 @@ final class OptionsPage {
 	 * @param array<string, mixed> $field_errors Field error map.
 	 */
 	public function render_field( array $field, array $values, string $layout = 'table', array $field_errors = array() ): void {
+		_deprecated_function( __METHOD__, '0.5.0', 'ContainerFieldRenderer::render_field' );
 		$render_control = function ( array $f, array $ctx, array $errs ): void {
+			/** @var array{field_id: string, field_type: string, field_name: string, field_value: mixed} $ctx */
 			$this->render_field_control( $f, $ctx, $errs );
 		};
 		$this->container_field_renderer()->render_field( $field, $values, $render_control, $layout, $field_errors );
@@ -490,7 +494,9 @@ final class OptionsPage {
 	 * @param array<string, mixed>             $field_errors Field error map.
 	 */
 	public function render_fields( array $fields, array $values, string $section_id = '', bool $show_group_headings = true, string $layout = 'table', array $field_errors = array() ): void {
+		_deprecated_function( __METHOD__, '0.5.0', 'ContainerFieldRenderer::render_fields' );
 		$render_control = function ( array $f, array $ctx, array $errs ): void {
+			/** @var array{field_id: string, field_type: string, field_name: string, field_value: mixed} $ctx */
 			$this->render_field_control( $f, $ctx, $errs );
 		};
 		$this->container_field_renderer()->render_fields( $fields, $values, $render_control, $section_id, $show_group_headings, $layout, $field_errors );

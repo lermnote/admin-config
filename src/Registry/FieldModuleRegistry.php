@@ -118,6 +118,7 @@ final class FieldModuleRegistry {
 	 * @return array<int, string>
 	 */
 	public function field_types_for_definition( array $definition ): array {
+		/** @var array<string, bool> $types */
 		$types = array();
 
 		foreach ( PageSchema::sections( $definition ) as $section ) {
@@ -134,7 +135,7 @@ final class FieldModuleRegistry {
 			}
 		}
 
-		return array_keys( $types );
+		return array_map( 'strval', array_keys( $types ) );
 	}
 
 	/**

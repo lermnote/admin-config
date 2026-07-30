@@ -531,7 +531,7 @@ final class ExtendedPrimitiveFieldTypes {
 	/**
 	 * @param mixed $value
 	 */
-	private static function sanitize_select_value( array $field, $value, bool $strict ) {
+	private static function sanitize_select_value( array $field, $value, bool $strict ): string {
 		$default = is_scalar( $field['default'] ?? null ) ? (string) $field['default'] : '';
 		$choice  = is_scalar( $value ) ? (string) $value : '';
 
@@ -594,6 +594,9 @@ final class ExtendedPrimitiveFieldTypes {
 		return '<a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( $label ) . '</a>';
 	}
 
+	/**
+	 * @param mixed $value
+	 */
 	private static function numeric_display_value( array $field, $value ): string {
 		if ( is_scalar( $value ) && '' !== (string) $value ) {
 			return (string) $value;

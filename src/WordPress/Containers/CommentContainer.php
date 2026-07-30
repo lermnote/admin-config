@@ -62,6 +62,8 @@ final class CommentContainer implements Container {
 	public function register_meta_boxes( ?\WP_Comment $comment = null ): void {
 		foreach ( $this->schemas as $schema ) {
 			$container = $schema->container();
+			$priority  = (string) ( $container['priority'] ?? 'default' );
+			$priority  = in_array( $priority, array( 'core', 'default', 'high', 'low' ), true ) ? $priority : 'default';
 
 			add_meta_box(
 				$this->meta_box_id( $schema ),
@@ -69,7 +71,7 @@ final class CommentContainer implements Container {
 				array( $this, 'render_meta_box' ),
 				'comment',
 				(string) ( $container['context'] ?? 'normal' ),
-				(string) ( $container['priority'] ?? 'default' ),
+				$priority,
 				array(
 					'schema_id' => $schema->id(),
 				)

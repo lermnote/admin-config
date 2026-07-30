@@ -54,7 +54,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.0', '8.1', '8.2', '8.3']
+        php-version: ['8.0', '8.1', '8.2', '8.3', '8.4']
 
     steps:
       - name: Check out repository
@@ -91,6 +91,12 @@ jobs:
 
       - name: Validate composer.json
         run: composer validate --strict
+
+      - name: Audit Composer dependencies
+        run: composer audit
+
+      - name: Audit Node dependencies
+        run: npm audit --audit-level=high
 
       - name: Check plugin version literals
         run: php tools/sync-version.php --check

@@ -1,5 +1,5 @@
 parameters:
-  level: 5
+  level: 7
   phpVersion: 80000
   paths:
     - src
@@ -10,3 +10,36 @@ parameters:
   scanFiles:
     - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
     - tools/wp-tool-stubs.php
+  ignoreErrors:
+    # Array generics require full docblock annotations across 60+ methods;
+    # tracked for incremental adoption.
+    - identifier: missingType.iterableValue
+    # Test bootstrap stubs intentionally omit parameter types.
+    -
+      message: '#has parameter \$\w+ with no type specified#'
+      path: tests/bootstrap.php
+    -
+      message: '#has no return type specified#'
+      path: tests/bootstrap.php
+    -
+      message: '#expects int<1, max>, int given#'
+      path: tests/bootstrap.php
+    # Test files use mock objects and WP stubs with imperfect signatures.
+    -
+      message: '#Parameter \#1 \$commentdata of function wp_insert_comment#'
+      path: tests/Integration/StoreBackendsIntegrationTest.php
+    -
+      message: '#Parameter \#2 \$post of method#'
+      path: tests/Unit/BlockEditorPanelTest.php
+    -
+      message: '#Offset 1 does not exist on#'
+      path: tests/Unit/BlockEditorPanelTest.php
+    -
+      message: '#has parameter \$args with no type specified#'
+      path: tests/Unit/ThemeConsumerContractTest.php
+    -
+      message: '#expects callable\(\): mixed, array\{string, string\} given#'
+      path: tests/Unit/ThemeConsumerContractTest.php
+    -
+      message: '#Cannot access offset 0 on#'
+      path: tests/fixtures/wp-env/bin/setup.php
