@@ -547,6 +547,29 @@ final class OptionsPage {
 	}
 
 	/**
+	 * Return the lifecycle instance for asset enqueueing.
+	 */
+	public function lifecycle(): OptionsPageLifecycle {
+		return $this->lifecycle;
+	}
+
+	/**
+	 * Return a render-control callable suitable for ContainerFieldRenderer.
+	 *
+	 * Containers that render fields outside the main options page should use
+	 * this together with container_field_renderer() instead of the deprecated
+	 * render_field()/render_fields() bridge methods.
+	 *
+	 * @return callable(array<string, mixed>, array<string, mixed>, array<string, mixed>): void
+	 */
+	public function field_control_renderer(): callable {
+		return function ( array $f, array $ctx, array $errs ): void {
+			/** @var array{field_id: string, field_type: string, field_name: string, field_value: mixed} $ctx */
+			$this->render_field_control( $f, $ctx, $errs );
+		};
+	}
+
+	/**
 	 * Proxy for rendering a nested sub-field inside a structured container.
 	 *
 	 * Contains the FieldTypeRegistry lookup and fallback rendering logic that

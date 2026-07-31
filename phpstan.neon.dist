@@ -11,10 +11,15 @@ parameters:
     - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
     - tools/wp-tool-stubs.php
   ignoreErrors:
-    # Array generics require full docblock annotations across 60+ methods;
-    # tracked for incremental adoption.
-    - identifier: missingType.iterableValue
+    # Array generics require full docblock annotations across 60+ src/ methods;
+    # tracked for incremental adoption. Scoped to src/ so tests remain strict.
+    -
+      identifier: missingType.iterableValue
+      path: src
     # Test bootstrap stubs intentionally omit parameter types.
+    -
+      identifier: missingType.iterableValue
+      path: tests/bootstrap.php
     -
       message: '#has parameter \$\w+ with no type specified#'
       path: tests/bootstrap.php

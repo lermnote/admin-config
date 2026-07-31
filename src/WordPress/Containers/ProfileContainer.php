@@ -68,7 +68,7 @@ final class ProfileContainer implements Container {
 		}
 
 		foreach ( $this->schemas as $schema ) {
-			$this->renderer( $schema, get_current_user_id() )->enqueue_support_assets( 'profile-' . $schema->id() );
+			$this->renderer( $schema, get_current_user_id() )->lifecycle()->enqueue_support_assets( 'profile-' . $schema->id() );
 		}
 	}
 
@@ -104,9 +104,10 @@ final class ProfileContainer implements Container {
 					);
 				}
 
-				$renderer->render_fields(
+				$renderer->container_field_renderer()->render_fields(
 					PageSchema::section_fields( $section ),
 					$values,
+					$renderer->field_control_renderer(),
 					(string) $section_id,
 					false,
 					'table',

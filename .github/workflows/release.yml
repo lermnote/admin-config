@@ -48,14 +48,8 @@ jobs:
       - name: Create distribution archive
         run: |
           mkdir -p dist
+          # .gitattributes export-ignore rules exclude dev-only paths automatically.
           git archive --format=zip --prefix="admin-config/" HEAD \
-            -x "tests/*" "docs/*" "tools/*" "examples/*" \
-               ".github/*" "node_modules/*" "*.patch" \
-               "package.json" "package-lock.json" "webpack.config.js" \
-               "playwright.config.js" "phpunit*.xml.dist" \
-               "phpcs.xml.dist" "phpstan.neon.dist" ".wp-env.json" \
-               "CONTRIBUTING.md" "MAINTAINING.md" "SECURITY.md" \
-               "CLAUDE.md" "AGENTS.md" \
             -o dist/admin-config-${{ steps.version.outputs.version }}.zip
 
           # Add built assets to the archive

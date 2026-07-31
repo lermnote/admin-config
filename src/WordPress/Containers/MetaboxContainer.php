@@ -93,12 +93,15 @@ final class MetaboxContainer implements Container, BlockEditorPanelContext {
 			$priority = (string) ( $container['priority'] ?? 'default' );
 			$priority = in_array( $priority, array( 'core', 'default', 'high', 'low' ), true ) ? $priority : 'default';
 
+			$context = (string) ( $container['context'] ?? 'advanced' );
+			$context = in_array( $context, array( 'normal', 'side', 'advanced' ), true ) ? $context : 'advanced';
+
 			add_meta_box(
 				$this->meta_box_id( $schema ),
 				(string) ( $container['title'] ?? $schema->definition()['title'] ?? __( 'Settings', 'lerm-admin-config' ) ),
 				array( $this, 'render_meta_box' ),
 				$post_type,
-				(string) ( $container['context'] ?? 'advanced' ),
+				$context,
 				$priority,
 				array(
 					'schema_id' => $schema->id(),
@@ -150,9 +153,10 @@ final class MetaboxContainer implements Container, BlockEditorPanelContext {
 		if ( '' !== $description ) {
 			printf( '<p class="description">%s</p>', esc_html( $description ) );
 		}
-		$renderer->render_fields(
+		$renderer->container_field_renderer()->render_fields(
 			PageSchema::section_fields( $section ),
 			$values,
+			$renderer->field_control_renderer(),
 			$section_id,
 			false,
 			'stack',
