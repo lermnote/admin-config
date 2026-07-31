@@ -26,7 +26,7 @@ final class RestEndpoints {
 	 * isolated runtimes. Keep weak runtime references so long-lived test and
 	 * worker processes do not retain stale runtime instances between requests.
 	 *
-	 * @var array<int, \WeakReference>
+	 * @var array<int, \WeakReference<\Lerm\AdminConfig\WordPress\Runtime>>
 	 */
 	private static array $runtimes = array();
 

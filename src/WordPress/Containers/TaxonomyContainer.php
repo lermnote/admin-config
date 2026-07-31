@@ -111,7 +111,7 @@ final class TaxonomyContainer implements Container {
 		$schemas  = $this->schemas_for_taxonomy( $taxonomy );
 
 		foreach ( $schemas as $schema ) {
-			$this->renderer( $schema, null )->enqueue_support_assets( 'taxonomy-' . $schema->id() );
+			$this->renderer( $schema, null )->lifecycle()->enqueue_support_assets( 'taxonomy-' . $schema->id() );
 		}
 	}
 
@@ -144,7 +144,7 @@ final class TaxonomyContainer implements Container {
 
 				foreach ( PageSchema::section_fields( $section ) as $field ) {
 					echo '<div class="form-field term-admin-config-field">';
-					$renderer->render_field( $field, $values, 'stack', $errors );
+					$renderer->container_field_renderer()->render_field( $field, $values, $renderer->field_control_renderer(), 'stack', $errors );
 					echo '</div>';
 				}
 			}
@@ -180,9 +180,10 @@ final class TaxonomyContainer implements Container {
 					);
 				}
 
-				$renderer->render_fields(
+				$renderer->container_field_renderer()->render_fields(
 					PageSchema::section_fields( $section ),
 					$values,
+					$renderer->field_control_renderer(),
 					(string) $section_id,
 					false,
 					'table',

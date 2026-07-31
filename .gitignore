@@ -16,3 +16,4 @@ CLAUDE.md
 !phpstan.neon.dist
 !phpunit.xml.dist
 !phpunit.integration.xml.dist
+.workbuddy/

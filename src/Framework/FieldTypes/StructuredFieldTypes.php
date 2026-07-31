@@ -634,7 +634,19 @@ final class StructuredFieldTypes {
 	}
 
 	/**
-	 * @param mixed $value
+	 * Sanitize a code_editor field value to a trimmed string.
+	 *
+	 * Security note: This method intentionally does NOT strip markup or apply
+	 * kses filtering. Code editor content (CSS, JS, HTML snippets) must be
+	 * stored verbatim so it remains functional. Consumers that output this
+	 * value on the frontend MUST escape it appropriately, e.g.:
+	 *
+	 *     echo esc_html( $value );        // display as text
+	 *     echo wp_strip_all_tags( $value ); // strip tags if needed
+	 *
+	 * Admin-side rendering is safe (uses esc_textarea).
+	 *
+	 * @param mixed $value Raw submitted value.
 	 */
 	private static function sanitize_code_editor_value( $value ): string {
 		return PageSchema::scalar_value( $value, '', true );

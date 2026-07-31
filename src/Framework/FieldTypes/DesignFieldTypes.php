@@ -555,27 +555,42 @@ final class DesignFieldTypes {
 		return self::flag( $field, 'unit', true ) && self::flag( $field, 'show_units', true ) && count( $units ) > 1;
 	}
 
+	/**
+	 * @param mixed $value
+	 */
 	private static function sanitize_unit( array $field, $value ): string {
 		$units = self::units( $field );
 		$unit  = is_scalar( $value ) ? trim( (string) $value ) : '';
 		return in_array( $unit, $units, true ) ? $unit : ( $units[0] ?? 'px' );
 	}
 
+	/**
+	 * @param mixed $value
+	 */
 	private static function sanitize_border_style( $value ): string {
 		$style = is_scalar( $value ) ? (string) $value : '';
 		return array_key_exists( $style, self::border_styles() ) ? $style : 'solid';
 	}
 
+	/**
+	 * @param mixed $value
+	 */
 	private static function sanitize_color( $value ): string {
 		$color = sanitize_hex_color( PageSchema::scalar_value( $value ) );
 		return $color ? $color : '';
 	}
 
+	/**
+	 * @param mixed $value
+	 */
 	private static function sanitize_choice( array $choices, $value ): string {
 		$choice = is_scalar( $value ) ? (string) $value : '';
 		return array_key_exists( $choice, $choices ) ? $choice : '';
 	}
 
+	/**
+	 * @param mixed $value
+	 */
 	private static function sanitize_media_like( $value ): array {
 		if ( is_array( $value ) ) {
 			$attachment_id = absint( $value['id'] ?? 0 );
@@ -607,6 +622,9 @@ final class DesignFieldTypes {
 		return array();
 	}
 
+	/**
+	 * @param mixed $value
+	 */
 	private static function numeric_fragment( $value ): string {
 		if ( ! is_scalar( $value ) ) {
 			return '';

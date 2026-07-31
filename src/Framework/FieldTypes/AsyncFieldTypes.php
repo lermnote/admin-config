@@ -137,7 +137,7 @@ final class AsyncFieldTypes {
 					printf(
 						'<input type="hidden" name="%1$s[]" value="%2$s" data-lerm-ajax-select-input="1"%3$s>',
 						esc_attr( $field_name ),
-						esc_attr( $selected_value ),
+						esc_attr( (string) $selected_value ),
 						$name_attr
 					);
 				}
@@ -147,7 +147,7 @@ final class AsyncFieldTypes {
 				'<input type="hidden" id="%1$s" name="%2$s" value="%3$s" data-lerm-ajax-select-input="1"%4$s%5$s>',
 				esc_attr( $input_id ),
 				esc_attr( $field_name ),
-				esc_attr( $selected_values[0] ?? '' ),
+				esc_attr( (string) ( $selected_values[0] ?? '' ) ),
 				$name_attr,
 				$id_attr
 			);

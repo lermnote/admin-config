@@ -168,7 +168,7 @@ final class SchemaSerializer {
 	/**
 	 * Return the pre-v1 client config shape (server-only keys stripped).
 	 *
-	 * @return array<string, mixed>
+	 * @return array<string|int, mixed>
 	 */
 	public static function legacy_client_config( CompiledSchema $schema ): array {
 		return self::without_server_only_keys( $schema->client_config() );
@@ -228,7 +228,7 @@ final class SchemaSerializer {
 	}
 
 	/**
-	 * @return array<string, mixed>
+	 * @return array<string|int, mixed>
 	 */
 	private static function sections( CompiledSchema $schema ): array {
 		return self::without_server_only_keys( (array) ( $schema->client_config()['sections'] ?? array() ) );

@@ -62,14 +62,19 @@ final class CommentContainer implements Container {
 	public function register_meta_boxes( ?\WP_Comment $comment = null ): void {
 		foreach ( $this->schemas as $schema ) {
 			$container = $schema->container();
+			$priority  = (string) ( $container['priority'] ?? 'default' );
+			$priority  = in_array( $priority, array( 'core', 'default', 'high', 'low' ), true ) ? $priority : 'default';
+
+			$context = (string) ( $container['context'] ?? 'normal' );
+			$context = in_array( $context, array( 'normal', 'side', 'advanced' ), true ) ? $context : 'normal';
 
 			add_meta_box(
 				$this->meta_box_id( $schema ),
 				(string) ( $container['title'] ?? $schema->definition()['title'] ?? __( 'Comment Settings', 'lerm-admin-config' ) ),
 				array( $this, 'render_meta_box' ),
 				'comment',
-				(string) ( $container['context'] ?? 'normal' ),
-				(string) ( $container['priority'] ?? 'default' ),
+				$context,
+				$priority,
 				array(
 					'schema_id' => $schema->id(),
 				)
@@ -85,7 +90,7 @@ final class CommentContainer implements Container {
 		}
 
 		foreach ( $this->schemas as $schema ) {
-			$this->renderer( $schema )->enqueue_support_assets( 'comment-' . $schema->id() );
+			$this->renderer( $schema )->lifecycle()->enqueue_support_assets( 'comment-' . $schema->id() );
 		}
 	}
 
@@ -128,9 +133,10 @@ final class CommentContainer implements Container {
 				printf( '<p class="description">%s</p>', esc_html( $description ) );
 			}
 
-			$renderer->render_fields(
+			$renderer->container_field_renderer()->render_fields(
 				PageSchema::section_fields( $section ),
 				$values,
+				$renderer->field_control_renderer(),
 				(string) $section_id,
 				false,
 				'stack',
