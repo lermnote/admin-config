@@ -96,8 +96,7 @@ jobs:
         run: composer audit
 
       - name: Audit Node dependencies
-        continue-on-error: true
-        run: npm audit --audit-level=high
+        run: npm audit --audit-level=critical
 
       - name: Check plugin version literals
         run: php tools/sync-version.php --check
