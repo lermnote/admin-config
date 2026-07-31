@@ -6,6 +6,27 @@ The format follows Keep a Changelog and the package uses Semantic Versioning onc
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-07-31
+
+### Added
+- `SECURITY.md` with private vulnerability disclosure via GitHub Security Advisories.
+- Tag-triggered release workflow (`release.yml`) that builds assets, generates SHA256 checksums, and publishes a GitHub Release with changelog notes.
+- `composer audit` and `npm audit --audit-level=critical` gates in CI.
+- PHP 8.4 in the CI quality matrix.
+- Public `OptionsPage::lifecycle()` and `OptionsPage::field_control_renderer()` accessors for container integrations.
+
+### Changed
+- Upgraded PHPStan from level 5 to level 7 with file-scoped `ignoreErrors` for array generics.
+- Migrated CommentContainer, MetaboxContainer, ProfileContainer, and TaxonomyContainer to call `ContainerFieldRenderer` and `OptionsPageLifecycle` directly instead of deprecated bridge methods.
+- Validated `add_meta_box` context parameter (`normal`/`side`/`advanced`) in MetaboxContainer and CommentContainer.
+- Pinned all `pages.yml` GitHub Actions to commit SHAs (supply-chain hardening).
+- Updated `wp-coding-standards/wpcs` to 3.4.1 (CVE-2026-45293).
+- Documented `code_editor` field output escaping responsibility for downstream consumers.
+
+### Removed
+- 17 redundant `phpcs:disable WordPress.Files.FileName` file-level comments.
+- Three `.patch` development artifacts from the plugin root.
+
 ## [0.5.1] - 2026-07-09
 
 ### Changed
