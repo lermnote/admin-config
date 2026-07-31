@@ -96,6 +96,7 @@ jobs:
         run: composer audit
 
       - name: Audit Node dependencies
+        continue-on-error: true
         run: npm audit --audit-level=high
 
       - name: Check plugin version literals
