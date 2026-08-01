@@ -9,13 +9,13 @@ description: Runtime targets and compatibility snapshot.
 ## Runtime Targets
 
 - PHP: `>= 8.0`
-- WordPress: modern admin screens plus native capability / nonce APIs
+- WordPress: `>= 6.6`, modern admin screens plus native capability / nonce APIs
 - Modes: plugin-install mode and embedded mode
 - Runtime lifecycle: one isolated `Runtime` per bootstrap call; no process-wide runtime singleton
 
 ## Automated Matrix
 
-- PHP quality gate: PHP `8.0`, `8.1`, `8.2`, `8.3`
+- PHP quality gate: PHP `8.0`, `8.1`, `8.2`, `8.3`, `8.4`
 - Asset build gate: `@wordpress/scripts` compiles `resources/admin/index.js` and `resources/block-panel/index.js` and verifies generated `assets/build` output
 - WordPress integration: default stable `wp-env` environment on PHP `8.2`
 - WordPress multisite automation: dedicated `wp-env` run on ports `8890/8891`

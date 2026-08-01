@@ -24,9 +24,9 @@ Schema-driven WordPress admin configuration infrastructure. Define options pages
 - **Schema-driven** — Declare fields, sections, and containers in PHP arrays; the runtime compiles them into WordPress admin UI
 - **Plugin and embedded modes** — Ship as a standalone plugin or embed inside a theme
 - **Multiple container types** — Options pages, metaboxes, profile screens, taxonomy screens, comment screens, block editor panels
-- **30+ built-in field types** — Text, textarea, switcher, select, checkbox, radio, color, media, typography, icon, accordion, tabbed, and more
+- **35+ built-in field types** — Text, textarea, switcher, select, checkbox, radio, color, media, typography, icon, accordion, tabbed, and more
 - **REST API transport** — Save, import, export, and reset via `lerm-admin-config/v1` namespace
-- **PHP 8.0+ and WordPress 6.5+** — Modern requirements, clean architecture
+- **PHP 8.0+ and WordPress 6.6+** — Modern requirements, clean architecture
 
 ## Quick Start
 

@@ -27,6 +27,7 @@ For the smallest runnable example, see [Minimal Extension Plugin](https://github
 - `is_booted()`
 - `data_sources()`
 - `containers()`
+- `field_modules()`
 
 ## Field types
 
