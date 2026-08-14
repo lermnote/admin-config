@@ -145,6 +145,49 @@ final class ContainerFieldRendererTest extends TestCase {
 		$this->assertStringContainsString( 'Title is required.', $output );
 	}
 
+	public function testNestedTypographyRendersWarningInsteadOfSilentTextInput(): void {
+		$output = $this->render_nested_structured_field( 'typography' );
+
+		$this->assertStringContainsString( 'Typography fields cannot be nested', $output );
+		$this->assertStringNotContainsString( 'type="text"', $output );
+	}
+
+	public function testNestedFieldsetRendersWarningInsteadOfSilentTextInput(): void {
+		$output = $this->render_nested_structured_field( 'fieldset' );
+
+		$this->assertStringContainsString( 'Fieldset fields cannot be nested', $output );
+		$this->assertStringNotContainsString( 'type="text"', $output );
+	}
+
+	public function testNestedGroupRendersWarningInsteadOfSilentTextInput(): void {
+		$output = $this->render_nested_structured_field( 'group' );
+
+		$this->assertStringContainsString( 'Group fields cannot be nested', $output );
+		$this->assertStringNotContainsString( 'type="text"', $output );
+	}
+
+	/**
+	 * Render a group whose single child uses a structured (array-sanitized)
+	 * type that previously fell through to the scalar text-input fallback.
+	 */
+	private function render_nested_structured_field( string $type ): string {
+		$page  = $this->options_page();
+		$field = array(
+			'id'     => 'cards',
+			'type'   => 'group',
+			'label'  => 'Cards',
+			'fields' => array(
+				array(
+					'id'    => 'inner',
+					'type'  => $type,
+					'label' => 'Inner',
+				),
+			),
+		);
+
+		return $this->render_field( $page, $field, array( 'cards' => array( array( 'inner' => array() ) ) ) );
+	}
+
 	private function options_page(): OptionsPage {
 		$field_types = new FieldTypeRegistry();
 

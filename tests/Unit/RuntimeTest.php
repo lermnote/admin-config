@@ -235,4 +235,51 @@ final class RuntimeTest extends TestCase {
 			(string) ( $GLOBALS['lerm_admin_config_doing_it_wrong'][0]['message'] ?? '' )
 		);
 	}
+
+	public function testNormalizeDataSourceResponseTreatsScalarListAsItems(): void {
+		$normalized = $this->runtime()->normalize_data_source_response( array( 'Apple', 'Banana' ) );
+
+		$this->assertSame(
+			array(
+				'items' => array(
+					array(
+						'value' => 'Apple',
+						'label' => 'Apple',
+					),
+					array(
+						'value' => 'Banana',
+						'label' => 'Banana',
+					),
+				),
+				'more'  => false,
+			),
+			$normalized
+		);
+	}
+
+	public function testNormalizeDataSourceResponseKeepsStringKeyedMapsAsValueLabelChoices(): void {
+		$normalized = $this->runtime()->normalize_data_source_response(
+			array(
+				'red'  => 'Red',
+				'blue' => 'Blue',
+			)
+		);
+
+		$this->assertSame(
+			array(
+				'items' => array(
+					array(
+						'value' => 'red',
+						'label' => 'Red',
+					),
+					array(
+						'value' => 'blue',
+						'label' => 'Blue',
+					),
+				),
+				'more'  => false,
+			),
+			$normalized
+		);
+	}
 }

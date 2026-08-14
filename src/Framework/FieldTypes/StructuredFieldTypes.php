@@ -64,13 +64,16 @@ final class StructuredFieldTypes {
 	 */
 	private static function fieldset_definition(): array {
 		return array(
-			'render'   => static function ( array $field, $value, string $field_name, OptionsPage $page ): void {
+			'render'        => static function ( array $field, $value, string $field_name, OptionsPage $page ): void {
 				$page->container_field_renderer()->render_fieldset( $field, $value, $field_name );
 			},
-			'sanitize' => static function ( array $field, $value, bool $strict, OptionStore $store ): array {
+			'render_nested' => static function (): void {
+				self::render_nested_warning( __( 'Fieldset fields cannot be nested inside a fieldset or group.', 'lerm-admin-config' ) );
+			},
+			'sanitize'      => static function ( array $field, $value, bool $strict, OptionStore $store ): array {
 				return NestedFieldSanitizer::sanitize_fieldset( $field, $value, $strict, $store );
 			},
-			'client'   => array(
+			'client'        => array(
 				'control' => 'fieldset',
 			),
 		);
@@ -83,6 +86,9 @@ final class StructuredFieldTypes {
 		return array(
 			'render'             => static function ( array $field, $value, string $field_name, OptionsPage $page ): void {
 				$page->container_field_renderer()->render_group( $field, $value, $field_name );
+			},
+			'render_nested'      => static function (): void {
+				self::render_nested_warning( __( 'Group fields cannot be nested inside a fieldset or group.', 'lerm-admin-config' ) );
 			},
 			'sanitize'           => static function ( array $field, $value, bool $strict, OptionStore $store ): array {
 				return NestedFieldSanitizer::sanitize_group( $field, $value, $strict, $store );

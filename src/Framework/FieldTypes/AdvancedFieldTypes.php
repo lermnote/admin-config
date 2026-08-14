@@ -40,13 +40,16 @@ final class AdvancedFieldTypes {
 	 */
 	private static function typography_definition(): array {
 		return array(
-			'render'   => static function ( array $field, $value, string $field_name, OptionsPage $page ): void {
+			'render'        => static function ( array $field, $value, string $field_name, OptionsPage $page ): void {
 				$page->container_field_renderer()->render_fieldset( self::typography_field( $field ), $value, $field_name );
 			},
-			'sanitize' => static function ( array $field, $value, bool $strict, OptionStore $store ): array {
+			'render_nested' => static function (): void {
+				self::render_nested_warning( __( 'Typography fields cannot be nested inside a fieldset or group.', 'lerm-admin-config' ) );
+			},
+			'sanitize'      => static function ( array $field, $value, bool $strict, OptionStore $store ): array {
 				return NestedFieldSanitizer::sanitize_fieldset( self::typography_field( $field ), $value, $strict, $store );
 			},
-			'client'   => array(
+			'client'        => array(
 				'control' => 'typography',
 			),
 		);

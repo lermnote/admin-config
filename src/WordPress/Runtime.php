@@ -390,7 +390,7 @@ final class Runtime {
 				continue;
 			}
 
-			if ( is_scalar( $key ) && is_scalar( $item ) ) {
+			if ( is_string( $key ) && is_scalar( $item ) ) {
 				$items[] = array(
 					'value' => (string) $key,
 					'label' => (string) $item,
