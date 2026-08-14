@@ -36,9 +36,8 @@ final class FieldTypeRegistry {
 		}
 
 		$current = $this->types[ $type ] ?? array();
-		$replace = ! empty( $definition['replace'] );
 
-		if ( ! empty( $current ) && ! $replace && empty( $definition['override_builtin'] ) ) {
+		if ( ! empty( $current ) ) {
 			$definition = wp_parse_args( $definition, $current );
 		}
 
@@ -132,15 +131,6 @@ final class FieldTypeRegistry {
 	}
 
 	/**
-	 * Return all registered field types.
-	 *
-	 * @return array<string, array<string, mixed>>
-	 */
-	public function all(): array {
-		return $this->types;
-	}
-
-	/**
 	 * Whether values of a field type should be persisted by default.
 	 */
 	public function persists_value( string $type ): bool {
@@ -151,12 +141,5 @@ final class FieldTypeRegistry {
 		}
 
 		return ! array_key_exists( 'persist', $this->types[ $type ] ) || false !== $this->types[ $type ]['persist'];
-	}
-
-	/**
-	 * Whether a type is a framework built-in (registered by register_defaults).
-	 */
-	public function is_builtin( string $type ): bool {
-		return ! empty( $this->types[ sanitize_key( $type ) ]['builtin'] );
 	}
 }

@@ -31,18 +31,6 @@ trait FieldErrorMatcher {
 	}
 
 	/**
-	 * Collect all unique error messages for a field path.
-	 *
-	 * @param array<string, mixed> $field_errors        Field error map.
-	 * @param string               $field_path          Dotted field path.
-	 * @param bool                 $include_descendants Whether to include child-path errors.
-	 * @return array<int, string>
-	 */
-	private function field_error_messages( array $field_errors, string $field_path, bool $include_descendants = false ): array {
-		return FieldErrorLookup::messages( $field_errors, $field_path, $include_descendants );
-	}
-
-	/**
 	 * Check whether a field path has any errors.
 	 *
 	 * @param array<string, mixed> $field_errors        Field error map.

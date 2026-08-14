@@ -2382,16 +2382,6 @@ let confirmDialog;
 
 	/**
 	 * @param {HTMLFormElement} form
-	 * @param {string} type
-	 * @param {string} message
-	 */
-	const showFlash = (form, type, message) => {
-		if (!message) return;
-		setStatus(form, type === 'error' ? 'error' : type === 'success' ? 'success' : 'idle', message);
-	};
-
-	/**
-	 * @param {HTMLFormElement} form
 	 * @param {boolean} busy
 	 * @param {string} label
 	 */

@@ -16,7 +16,6 @@ const {
 	withValues,
 } = require('../core/schema-state');
 const { createDefaultControlRegistry } = require('../controls');
-const { register: registerStore, STORE_NAME } = require('../store');
 const { __, _n, sprintf } = require('../i18n');
 
 const BLOCK_PANEL_CONFIG_GLOBAL = 'lermAdminConfigBlockPanelConfigs';
@@ -83,7 +82,6 @@ const createBlockPanelRuntime = (config = {}, options = {}) => {
 		controls,
 		rest,
 		requestDataSource,
-		storeName: STORE_NAME,
 
 		getContext: () => ({ ...context }),
 		getSchemaId: () => schemaId,
@@ -112,25 +110,14 @@ const createBlockPanelRuntime = (config = {}, options = {}) => {
 			context = contextFromConfig(nextContext);
 			state = withStatus({ ...state, context, schemaId }, 'loading');
 
-			let schemaResponse;
-			let valuesResponse;
-
-			try {
-				schemaResponse = await rest.request(withContext(`schemas/${schemaId}`));
-			} catch (error) {
-				schemaResponse = normalizeRestError(error, 'Unable to load the schema.');
-			}
+			const schemaResponse = await rest.request(withContext(`schemas/${schemaId}`));
 
 			if (!schemaResponse.success) {
 				state = withRestError(state, schemaResponse.data, 'Unable to load the schema.');
 				return schemaResponse;
 			}
 
-			try {
-				valuesResponse = await rest.request(withContext(`schemas/${schemaId}/values`));
-			} catch (error) {
-				valuesResponse = normalizeRestError(error, 'Unable to load the schema values.');
-			}
+			const valuesResponse = await rest.request(withContext(`schemas/${schemaId}/values`));
 
 			if (!valuesResponse.success) {
 				state = withRestError(state, valuesResponse.data, 'Unable to load the schema values.');
@@ -858,8 +845,6 @@ const createPanelComponent = (config, Panel, element) => {
  */
 const registerBlockEditorPanels = (configs = blockPanelConfigsFromWindow()) => {
 	if (typeof window === 'undefined') return false;
-
-	registerStore();
 
 	let plugins, editor, element;
 	try {

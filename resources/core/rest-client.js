@@ -169,8 +169,6 @@ const createAdminConfigRestClient = ({ getConfig }) => {
 
 module.exports = {
 	createAdminConfigRestClient,
-	hasRestConfig,
 	normalizeRestError,
-	normalizeRestSuccess,
 	restUrl,
 };

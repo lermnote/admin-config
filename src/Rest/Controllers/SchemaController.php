@@ -33,24 +33,6 @@ final class SchemaController {
 	) {
 	}
 
-	public function schema( \WP_REST_Request $request ): \WP_REST_Response|\WP_Error {
-		$resolved = $this->resolve_store( $request );
-
-		if ( is_wp_error( $resolved ) ) {
-			return $resolved;
-		}
-
-		[ $schema, $store ] = $resolved;
-		$values             = $store->all();
-
-		return rest_ensure_response(
-			array(
-				'schema' => SchemaSerializer::legacy_client_config( $schema ),
-				'values' => $values,
-			)
-		);
-	}
-
 	public function schema_document( \WP_REST_Request $request ): \WP_REST_Response|\WP_Error {
 		$schema = $this->schema_from_request( $request );
 
@@ -60,14 +42,6 @@ final class SchemaController {
 
 		return ResponseFactory::success(
 			SchemaSerializer::document( $schema, $this->schema_actions( $schema, $request ) )
-		);
-	}
-
-	public function schemas( \WP_REST_Request $request ): \WP_REST_Response {
-		return ResponseFactory::success(
-			array(
-				'schemas' => $this->schema_summaries( $request ),
-			)
 		);
 	}
 

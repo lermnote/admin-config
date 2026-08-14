@@ -112,7 +112,7 @@ final class FieldModuleRegistry {
 	 *
 	 * This only inspects the schema array available at registration time. If
 	 * field types are assembled later from external data, call
-	 * `enable_for_field_types()` or `enable_all()` explicitly.
+	 * `enable_for_field_types()` explicitly.
 	 *
 	 * @param array<string, mixed> $definition
 	 * @return array<int, string>
@@ -192,22 +192,6 @@ final class FieldModuleRegistry {
 		foreach ( $this->modules_for_field_types( $field_types ) as $module_id ) {
 			$this->enable( $module_id );
 		}
-	}
-
-	/**
-	 * Enable every registered module.
-	 */
-	public function enable_all(): void {
-		foreach ( array_keys( $this->modules ) as $module_id ) {
-			$this->enable( $module_id );
-		}
-	}
-
-	/**
-	 * @return array<string, FieldModule>
-	 */
-	public function all(): array {
-		return $this->modules;
 	}
 
 	/**
