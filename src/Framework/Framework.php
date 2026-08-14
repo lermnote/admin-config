@@ -153,14 +153,17 @@ final class Framework implements FrameworkContract {
 	 * per-entity store `mount_options_page()`'s definition+backend cache
 	 * cannot key on. `mount_options_page()` itself delegates here too.
 	 *
-	 * @param array<string, mixed> $definition Page definition.
-	 * @param OptionStore          $store      Already-resolved store.
-	 * @param bool                 $network    Whether this is a network-admin page.
+	 * @param array<string, mixed> $definition      Page definition.
+	 * @param OptionStore          $store           Already-resolved store.
+	 * @param bool                 $register_hooks  Whether to register the admin menu,
+	 *                                              save, and asset hooks. Containers pass
+	 *                                              the default (false) and manage their own
+	 *                                              lifecycle; mount_options_page() passes true.
 	 */
-	public function render_options_page( array $definition, OptionStore $store, bool $network = false ): OptionsPage {
+	public function render_options_page( array $definition, OptionStore $store, bool $register_hooks = false ): OptionsPage {
 		$this->prepare_definition( $definition );
 
-		return new OptionsPage( $definition, $store, $this->field_types, $this->asset_resolver, $network, $this->field_modules );
+		return new OptionsPage( $definition, $store, $this->field_types, $this->asset_resolver, $register_hooks, $this->field_modules );
 	}
 
 	/**
