@@ -92,15 +92,14 @@ final class MetaboxContainer implements Container, BlockEditorPanelContext {
 			return;
 		}
 
-		$schema     = $this->schemas[ $schema_id ];
-		$store      = $this->stores->store( $schema, array( 'post_id' => $post->ID ) );
-		$renderer   = $this->framework->render_options_page( $schema->definition(), $store );
-		$sections   = PageSchema::sections( $schema->definition() );
-		$section_id = (string) array_key_first( $sections );
-		$section    = '' !== $section_id ? ( $sections[ $section_id ] ?? null ) : null;
-		$flash      = $this->consume_flash( 'metabox', $schema, (string) $post->ID, $store );
+		$schema      = $this->schemas[ $schema_id ];
+		$store       = $this->stores->store( $schema, array( 'post_id' => $post->ID ) );
+		$renderer    = $this->framework->render_options_page( $schema->definition(), $store );
+		$sections    = PageSchema::sections( $schema->definition() );
+		$flash       = $this->consume_flash( 'metabox', $schema, (string) $post->ID, $store );
+		$show_titles = count( $sections ) > 1;
 
-		if ( ! is_array( $section ) ) {
+		if ( empty( $sections ) ) {
 			return;
 		}
 
@@ -114,19 +113,29 @@ final class MetaboxContainer implements Container, BlockEditorPanelContext {
 				esc_html( $flash['notice']['message'] )
 			);
 		}
-		$description = isset( $section['description'] ) && is_scalar( $section['description'] ) ? (string) $section['description'] : '';
-		if ( '' !== $description ) {
-			printf( '<p class="description">%s</p>', esc_html( $description ) );
+
+		foreach ( $sections as $section_id => $section ) {
+			$title       = isset( $section['title'] ) && is_scalar( $section['title'] ) ? (string) $section['title'] : '';
+			$description = isset( $section['description'] ) && is_scalar( $section['description'] ) ? (string) $section['description'] : '';
+
+			if ( $show_titles && '' !== $title ) {
+				printf( '<h3>%s</h3>', esc_html( $title ) );
+			}
+
+			if ( '' !== $description ) {
+				printf( '<p class="description">%s</p>', esc_html( $description ) );
+			}
+
+			$renderer->container_field_renderer()->render_fields(
+				PageSchema::section_fields( $section ),
+				$flash['values'],
+				$renderer->field_control_renderer(),
+				(string) $section_id,
+				false,
+				'stack',
+				$flash['errors']
+			);
 		}
-		$renderer->container_field_renderer()->render_fields(
-			PageSchema::section_fields( $section ),
-			$flash['values'],
-			$renderer->field_control_renderer(),
-			$section_id,
-			false,
-			'stack',
-			$flash['errors']
-		);
 		echo '</div>';
 	}
 
