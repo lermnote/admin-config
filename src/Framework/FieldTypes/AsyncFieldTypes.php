@@ -34,16 +34,29 @@ final class AsyncFieldTypes {
 	 */
 	private static function ajax_select_definition(): array {
 		return array(
-			'render'        => static function ( array $field, $value, string $field_name, OptionsPage $page ): void {
+			'render'             => static function ( array $field, $value, string $field_name, OptionsPage $page ): void {
 				self::render_ajax_select( $field, $value, $field_name, (string) ( $field['id'] ?? '' ), $page );
 			},
-			'render_nested' => static function ( array $field, $value, string $field_name, string $input_id, OptionsPage $page, string $name_template = '', string $id_template = '' ): void {
+			'render_nested'      => static function ( array $field, $value, string $field_name, string $input_id, OptionsPage $page, string $name_template = '', string $id_template = '' ): void {
 				self::render_ajax_select( $field, $value, $field_name, $input_id, $page, $name_template, $id_template );
 			},
-			'sanitize'      => static function ( array $field, $value, bool $strict, OptionStore $store ) {
+			'sanitize'           => static function ( array $field, $value, bool $strict, OptionStore $store ) {
 				return self::sanitize_ajax_select_value( $field, $value );
 			},
-			'client'        => array(
+			'missing_submission' => static function ( array $field ): array {
+				if ( empty( $field['multiple'] ) ) {
+					return array(
+						'apply' => false,
+						'value' => null,
+					);
+				}
+
+				return array(
+					'apply' => true,
+					'value' => array(),
+				);
+			},
+			'client'             => array(
 				'control' => 'ajax_select',
 				'nested'  => true,
 				'async'   => true,

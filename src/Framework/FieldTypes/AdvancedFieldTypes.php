@@ -188,12 +188,14 @@ final class AdvancedFieldTypes {
 		$choices = self::icon_choices( $field );
 		$default = self::sanitize_icon_class( PageSchema::scalar_value( $field['default'] ?? '', '', true ) );
 
-		if ( $strict && ! array_key_exists( $choice, $choices ) ) {
-			return array_key_exists( $default, $choices ) ? $default : '';
+		// An explicit empty submission clears the field; a missing key
+		// (null from import) falls back to the schema default.
+		if ( '' === $choice && null !== $value ) {
+			return '';
 		}
 
-		if ( '' === $choice && array_key_exists( $default, $choices ) ) {
-			return $default;
+		if ( $strict && ! array_key_exists( $choice, $choices ) ) {
+			return array_key_exists( $default, $choices ) ? $default : '';
 		}
 
 		return $choice;

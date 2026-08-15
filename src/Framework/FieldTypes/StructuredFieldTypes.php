@@ -15,6 +15,7 @@ use Lerm\AdminConfig\Framework\Storage\OptionStore;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
 use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldRenderHelpers;
 use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldAttributeHelpers;
+use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldValueHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -193,7 +194,6 @@ final class StructuredFieldTypes {
 			},
 			'client'        => array(
 				'control' => 'sorter',
-				'nested'  => true,
 			),
 		);
 	}
@@ -517,27 +517,7 @@ final class StructuredFieldTypes {
 	 * @return array<string, mixed>
 	 */
 	private static function sanitize_media_value( $value ): array {
-		$attachment_id = is_array( $value ) ? absint( $value['id'] ?? 0 ) : absint( $value );
-
-		if ( $attachment_id <= 0 ) {
-			return array();
-		}
-
-		$attachment_url = wp_get_attachment_url( $attachment_id );
-
-		if ( ! $attachment_url ) {
-			return array();
-		}
-
-		$thumbnail_url = wp_get_attachment_image_url( $attachment_id, 'thumbnail' );
-
-		return array_filter(
-			array(
-				'id'        => $attachment_id,
-				'url'       => $attachment_url,
-				'thumbnail' => $thumbnail_url ? $thumbnail_url : '',
-			)
-		);
+		return FieldValueHelper::sanitize_media_value( $value );
 	}
 
 	/**

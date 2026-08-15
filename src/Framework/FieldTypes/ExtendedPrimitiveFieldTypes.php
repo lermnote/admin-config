@@ -272,6 +272,12 @@ final class ExtendedPrimitiveFieldTypes {
 				$options = self::palette_options( $field );
 				$choice  = is_scalar( $value ) ? (string) $value : '';
 
+				// An explicit empty submission clears the field; a missing key
+				// (null from import) falls back to the schema default.
+				if ( '' === $choice && null !== $value ) {
+					return '';
+				}
+
 				if ( ! array_key_exists( $choice, $options ) ) {
 					$default = is_scalar( $field['default'] ?? null ) ? (string) $field['default'] : '';
 					return array_key_exists( $default, $options ) ? $default : '';
@@ -350,7 +356,11 @@ final class ExtendedPrimitiveFieldTypes {
 		$choices = PageSchema::choices( $field );
 		$current = is_array( $value ) ? array_map( 'strval', $value ) : array();
 
-		echo '<fieldset class="lerm-checkbox-list">';
+		if ( $is_root ) {
+			echo '<fieldset class="lerm-checkbox-list"><legend class="screen-reader-text">' . esc_html( (string) ( $field['label'] ?? '' ) ) . '</legend>';
+		} else {
+			echo '<fieldset class="lerm-checkbox-list">';
+		}
 		foreach ( $choices as $choice_value => $choice_label ) {
 			printf(
 				'<label><input type="checkbox" name="%1$s[]" value="%2$s" %3$s%4$s> <span>%5$s</span></label>',
@@ -543,7 +553,7 @@ final class ExtendedPrimitiveFieldTypes {
 			}
 		}
 
-		return sanitize_key( $choice );
+		return $choice;
 	}
 
 	private static function palette_options( array $field ): array {

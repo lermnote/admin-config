@@ -33,6 +33,28 @@ final class StructuredFieldSanitizersTest extends TestCase {
 		);
 	}
 
+	public function testMediaSanitizerPreservesUrlOnlyValue(): void {
+		$store = $this->store();
+		$field = array(
+			'id'   => 'hero_image',
+			'type' => 'media',
+		);
+
+		$this->assertSame(
+			array(
+				'id'        => 0,
+				'url'       => 'https://example.test/uploads/hero.jpg',
+				'thumbnail' => 'https://example.test/uploads/hero.jpg',
+			),
+			$store->sanitize_field(
+				$field,
+				array(
+					'url' => 'https://example.test/uploads/hero.jpg',
+				)
+			)
+		);
+	}
+
 	public function testGallerySanitizerDeduplicatesAndFiltersIds(): void {
 		$store = $this->store();
 		$field = array(
