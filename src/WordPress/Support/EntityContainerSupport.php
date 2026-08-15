@@ -53,11 +53,11 @@ trait EntityContainerSupport {
 	 * Consume the validation flash for a container resource and resolve the
 	 * render inputs: replayed values, field errors, and the section notice.
 	 *
-	 * @param string $resource Flash resource key (entity ID or add-form key).
+	 * @param string $resource_key Flash resource key (entity ID or add-form key).
 	 * @return array{values: array<string, mixed>, errors: array<string, mixed>, notice: array{class: string, message: string}|null}
 	 */
-	protected function consume_flash( string $scope, CompiledSchema $schema, string $resource, OptionStore $store ): array {
-		$flash = ValidationFlash::consume( $scope, $schema->id(), $resource );
+	protected function consume_flash( string $scope, CompiledSchema $schema, string $resource_key, OptionStore $store ): array {
+		$flash = ValidationFlash::consume( $scope, $schema->id(), $resource_key );
 
 		return array(
 			'values' => ValidationFlash::render_values( $store->all(), $flash, $schema->definition(), $this->framework->field_types() ),
