@@ -408,28 +408,7 @@ final class AdvancedFieldTypes {
 	 * @return array<int, array<string, mixed>>
 	 */
 	private static function panel_items( array $field ): array {
-		$items      = is_array( $field['items'] ?? null ) ? $field['items'] : array();
-		$normalized = array();
-
-		foreach ( $items as $index => $item ) {
-			if ( ! is_array( $item ) ) {
-				continue;
-			}
-
-			$item_id    = isset( $item['id'] ) && is_scalar( $item['id'] ) ? sanitize_key( (string) $item['id'] ) : '';
-			$item_title = isset( $item['title'] ) && is_scalar( $item['title'] ) ? (string) $item['title'] : '';
-			$item_id    = '' !== $item_id ? $item_id : 'item_' . (string) ( (int) $index + 1 );
-
-			$normalized[] = array(
-				'id'          => $item_id,
-				'title'       => '' !== $item_title ? $item_title : ucfirst( str_replace( '_', ' ', $item_id ) ),
-				'description' => isset( $item['description'] ) && is_scalar( $item['description'] ) ? (string) $item['description'] : '',
-				'fields'      => is_array( $item['fields'] ?? null ) ? $item['fields'] : array(),
-				'open'        => ! empty( $item['open'] ),
-			);
-		}
-
-		return $normalized;
+		return FieldRenderHelpers::panel_items( $field );
 	}
 
 	/**

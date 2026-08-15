@@ -9,6 +9,7 @@ declare( strict_types=1 );
 
 namespace Lerm\AdminConfig\Compiler;
 
+use Lerm\AdminConfig\Framework\Admin\FieldDependencyEvaluator;
 use Lerm\AdminConfig\Framework\FieldTypes\FieldTypeRegistry;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
 
@@ -401,25 +402,7 @@ final class SchemaCompiler {
 	 * @return array<string, mixed>
 	 */
 	private function compile_dependency( array $field ): array {
-		$dependency = $field['dependency'] ?? null;
-
-		if ( ! is_array( $dependency ) || empty( $dependency[0] ) ) {
-			return array();
-		}
-
-		$controller = sanitize_key( (string) $dependency[0] );
-		$operator   = isset( $dependency[1] ) && is_scalar( $dependency[1] ) ? trim( (string) $dependency[1] ) : '==';
-		$value      = $dependency[2] ?? true;
-
-		if ( '' === $controller ) {
-			return array();
-		}
-
-		return array(
-			'field'    => $controller,
-			'operator' => '' !== $operator ? $operator : '==',
-			'value'    => $value,
-		);
+		return FieldDependencyEvaluator::field_dependency( $field );
 	}
 
 	/**

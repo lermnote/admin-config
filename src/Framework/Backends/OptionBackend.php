@@ -18,28 +18,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-final class OptionBackend implements StorageBackend {
+class OptionBackend implements StorageBackend {
 
-	private string $option_name;
+	protected string $option_name;
 
 	public function __construct( string $option_name ) {
 		$this->option_name = sanitize_key( $option_name );
 	}
 
 	public function read(): array {
-		$data = get_option( $this->option_name, array() );
+		$data = $this->read_raw();
 		return is_array( $data ) ? $data : array();
 	}
 
 	public function write( array $data ): bool {
-		$result = update_option( $this->option_name, $data );
+		$result = $this->persist_raw( $data );
 
 		if ( false === $result ) {
 			// update_option returns false both on DB error AND when the value
 			// hasn't changed. Distinguish the two by re-reading. Compare
 			// normalized JSON to avoid int/string type coercion and key-
 			// reordering false negatives from the serialize round-trip.
-			$stored = get_option( $this->option_name );
+			$stored = $this->read_raw();
 			if ( ! is_array( $stored ) ) {
 				return false;
 			}
@@ -56,6 +56,21 @@ final class OptionBackend implements StorageBackend {
 	}
 
 	public function delete(): bool {
+		return $this->delete_raw();
+	}
+
+	/**
+	 * @return mixed
+	 */
+	protected function read_raw() {
+		return get_option( $this->option_name );
+	}
+
+	protected function persist_raw( array $data ): bool {
+		return update_option( $this->option_name, $data );
+	}
+
+	protected function delete_raw(): bool {
 		return delete_option( $this->option_name );
 	}
 }

@@ -27,13 +27,7 @@ final class FieldErrorLookup {
 		$messages = array();
 
 		foreach ( $field_errors as $path => $raw_messages ) {
-			$is_match = (string) $path === $field_path;
-
-			if ( ! $is_match && $include_descendants ) {
-				$is_match = '' !== $field_path && FieldPath::starts_with( (string) $path, $field_path );
-			}
-
-			if ( ! $is_match ) {
+			if ( ! self::matches_path( (string) $path, $field_path, $include_descendants ) ) {
 				continue;
 			}
 
@@ -63,18 +57,10 @@ final class FieldErrorLookup {
 	 */
 	public static function has_errors( array $field_errors, string $field_path, bool $include_descendants = false ): bool {
 		foreach ( $field_errors as $path => $raw_messages ) {
-			$is_match = (string) $path === $field_path;
-
-			if ( ! $is_match && $include_descendants ) {
-				$is_match = '' !== $field_path && FieldPath::starts_with( (string) $path, $field_path );
-			}
-
-			if ( ! $is_match ) {
+			if ( ! self::matches_path( (string) $path, $field_path, $include_descendants ) ) {
 				continue;
 			}
 
-			// A match exists even if messages array is empty or contains only empties —
-			// the presence of the key itself means the field has errors.
 			if ( ! is_array( $raw_messages ) ) {
 				return true;
 			}
@@ -85,11 +71,20 @@ final class FieldErrorLookup {
 				}
 			}
 
-			// The key matched but all messages were empty. The original trait
-			// would also return false here (empty array after filtering), so
-			// we treat this as no real error.
+			// The key matched but all messages were empty: no real error.
 		}
 
 		return false;
+	}
+
+	/**
+	 * Whether an error path matches the queried field path.
+	 */
+	private static function matches_path( string $path, string $field_path, bool $include_descendants ): bool {
+		if ( $path === $field_path ) {
+			return true;
+		}
+
+		return $include_descendants && '' !== $field_path && FieldPath::starts_with( $path, $field_path );
 	}
 }

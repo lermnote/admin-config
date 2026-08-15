@@ -129,7 +129,7 @@ final class ExtendedPrimitiveFieldTypes {
 				);
 			},
 			'sanitize'      => static function ( array $field, $value, bool $strict, OptionStore $store ) {
-				return esc_url_raw( PageSchema::scalar_value( $value, '', true ) );
+				return FieldValueHelper::sanitize_url_value( $value );
 			},
 			'client'        => array(
 				'control' => 'upload',

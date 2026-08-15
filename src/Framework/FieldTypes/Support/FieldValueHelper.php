@@ -87,4 +87,13 @@ final class FieldValueHelper {
 
 		return array_values( array_unique( $clean ) );
 	}
+
+	/**
+	 * Sanitize a URL-ish field value (shared by the url and upload controls).
+	 *
+	 * @param mixed $value
+	 */
+	public static function sanitize_url_value( $value ): string {
+		return esc_url_raw( PageSchema::scalar_value( $value, '', true ) );
+	}
 }
