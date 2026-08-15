@@ -15,6 +15,7 @@ namespace Lerm\AdminConfig\Framework\Admin;
 
 use Lerm\AdminConfig\Framework\FieldTypes\FieldTypeRegistry;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
+use Lerm\AdminConfig\WordPress\Support\ValidationFlash;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -71,83 +72,19 @@ final class SubmissionStateResolver {
 			return $values;
 		}
 
-		$submitted = is_array( $flash['submitted'] ?? null ) ? $flash['submitted'] : array();
-
-		return $this->merge_section_submitted_values( $section_id, $values, $submitted );
-	}
-
-	/**
-	 * Merge flashed submission data back into one section for non-JS validation retries.
-	 *
-	 * Some controls intentionally submit no key when emptied (for example multi-selects,
-	 * checkbox lists, or an emptied group). A plain `wp_parse_args()` merge would
-	 * resurrect the last saved value after a validation failure, so we replay those
-	 * omissions as their empty state instead.
-	 *
-	 * @param array<string, mixed> $values    Saved values.
-	 * @param array<string, mixed> $submitted Flashed submitted values.
-	 * @return array<string, mixed>
-	 */
-	private function merge_section_submitted_values( string $section_id, array $values, array $submitted ): array {
 		$section = PageSchema::section( $this->definition, $section_id );
 
 		if ( null === $section ) {
 			return $values;
 		}
 
-		foreach ( PageSchema::section_fields( $section ) as $field ) {
-			if ( ! is_array( $field ) || ! isset( $field['id'] ) ) {
-				continue;
-			}
+		$submitted = is_array( $flash['submitted'] ?? null ) ? $flash['submitted'] : array();
 
-			$field_id = (string) $field['id'];
-
-			if ( array_key_exists( $field_id, $submitted ) ) {
-				$values[ $field_id ] = $submitted[ $field_id ];
-				continue;
-			}
-
-			$missing = $this->missing_submission_render_value( $field );
-
-			if ( $missing['apply'] ) {
-				$values[ $field_id ] = $missing['value'];
-			}
-		}
-
-		return $values;
-	}
-
-	/**
-	 * Controls like multi-selects and empty repeaters omit their key entirely.
-	 *
-	 * @param array<string, mixed> $field Field definition.
-	 * @return array{apply: bool, value: mixed}
-	 */
-	private function missing_submission_render_value( array $field ): array {
-		if ( array_key_exists( 'missing_submission_value', $field ) ) {
-			return array(
-				'apply' => true,
-				'value' => $field['missing_submission_value'],
-			);
-		}
-
-		$type     = sanitize_key( (string) ( $field['type'] ?? 'text' ) );
-		$callback = $this->field_types->missing_submission_callback( $type );
-
-		if ( is_callable( $callback ) ) {
-			$missing = call_user_func( $callback, $field );
-
-			if ( is_array( $missing ) ) {
-				return array(
-					'apply' => ! empty( $missing['apply'] ),
-					'value' => $missing['value'] ?? null,
-				);
-			}
-		}
-
-		return array(
-			'apply' => false,
-			'value' => null,
+		return ValidationFlash::merge_submitted_values(
+			$values,
+			$submitted,
+			PageSchema::section_fields( $section ),
+			$this->field_types
 		);
 	}
 

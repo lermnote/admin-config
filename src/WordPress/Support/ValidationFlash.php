@@ -93,10 +93,40 @@ final class ValidationFlash {
 			return wp_parse_args( $submitted, $values );
 		}
 
-		$fields = self::collect_definition_fields( $definition );
+		$merged = self::merge_submitted_values(
+			$values,
+			$submitted,
+			array_values( self::collect_definition_fields( $definition ) ),
+			$field_types
+		);
+
+		// Any submitted keys that are not known fields (e.g. dynamic groups) still win.
+		return wp_parse_args( $submitted, $merged );
+	}
+
+	/**
+	 * Merge flashed submission values back into saved values for a set of fields.
+	 *
+	 * Some controls intentionally submit no key when emptied (for example
+	 * multi-selects, checkbox lists, or an emptied group). A plain
+	 * `wp_parse_args()` merge would resurrect the last saved value after a
+	 * validation failure, so we replay those omissions as their empty state.
+	 *
+	 * @param array<string, mixed>             $values     Saved values.
+	 * @param array<string, mixed>             $submitted  Flashed submitted values.
+	 * @param array<int, array<string, mixed>> $fields     Field definitions to merge.
+	 * @return array<string, mixed>
+	 */
+	public static function merge_submitted_values( array $values, array $submitted, array $fields, FieldTypeRegistry $field_types ): array {
 		$merged = $values;
 
-		foreach ( $fields as $field_id => $field ) {
+		foreach ( $fields as $field ) {
+			if ( ! is_array( $field ) || ! isset( $field['id'] ) ) {
+				continue;
+			}
+
+			$field_id = (string) $field['id'];
+
 			if ( array_key_exists( $field_id, $submitted ) ) {
 				$merged[ $field_id ] = $submitted[ $field_id ];
 				continue;
@@ -109,8 +139,7 @@ final class ValidationFlash {
 			}
 		}
 
-		// Any submitted keys that are not known fields (e.g. dynamic groups) still win.
-		return wp_parse_args( $submitted, $merged );
+		return $merged;
 	}
 
 	/**
@@ -136,9 +165,6 @@ final class ValidationFlash {
 
 	/**
 	 * Resolve the empty-state value for a field that was absent from the submission.
-	 *
-	 * Mirrors the logic in OptionsPage::missing_submission_render_value so
-	 * containers (metabox, taxonomy, profile, comment) get the same behavior.
 	 *
 	 * @param array<string, mixed> $field
 	 * @param FieldTypeRegistry    $field_types
