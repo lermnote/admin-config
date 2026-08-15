@@ -1,6 +1,6 @@
 // @ts-check
 
-const { asRecord } = require('./records');
+const { normalizeErrorData } = require('./errors');
 
 let apiFetch = null;
 
@@ -100,18 +100,11 @@ const normalizeRestSuccess = (parsed) => {
  */
 const normalizeRestError = (error, fallbackMessage) => {
 	const err = /** @type {{ code?: string, message?: string, data?: Record<string, unknown> }} */ (error || {});
-	const errorData = asRecord(err.data);
-	const nestedData = asRecord(errorData.data);
-	const topLevelData = { ...errorData };
-	delete topLevelData.data;
-	const data = {
-		...nestedData,
-		...topLevelData,
-	};
+	const data = { ...normalizeErrorData(err.data) };
+	delete data.data;
 
 	if (!data.message) data.message = err.message || fallbackMessage;
 	if (err.code && !data.code) data.code = err.code;
-	if (errorData.status && !data.status) data.status = errorData.status;
 
 	return {
 		success: false,

@@ -1,7 +1,7 @@
 // @ts-check
 
 const { fieldErrorsFromResponse, messageFromResponse } = require('./errors');
-const { asRecord, asRecordArray } = require('./records');
+const { asRecord, asRecordArray, cloneRecord } = require('./records');
 const { attachmentId: mediaAttachmentId, fieldControlType, galleryIds: galleryAttachmentIds, pathTokens, positiveInteger } = require('./utils');
 
 /**
@@ -16,12 +16,6 @@ const { attachmentId: mediaAttachmentId, fieldControlType, galleryIds: galleryAt
  *   status: 'idle'|'loading'|'saving'|'error'|'ready'
  * }} SchemaState
  */
-
-/**
- * @param {unknown} value
- * @returns {Record<string, unknown>}
- */
-const cloneRecord = (value) => JSON.parse(JSON.stringify(asRecord(value)));
 
 /**
  * @param {unknown} value
