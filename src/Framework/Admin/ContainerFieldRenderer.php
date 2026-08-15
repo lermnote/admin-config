@@ -161,6 +161,18 @@ final class ContainerFieldRenderer {
 			}
 		}
 
+		// An unknown default_tab (typo, renamed item) would leave every
+		// panel hidden; fall back to the first item.
+		$item_ids = array();
+
+		foreach ( $items as $item ) {
+			$item_ids[] = (string) ( $item['id'] ?? '' );
+		}
+
+		if ( ! in_array( $active_tab, $item_ids, true ) ) {
+			$active_tab = (string) ( $items[0]['id'] ?? '' );
+		}
+
 		echo '<div class="lerm-fieldset lerm-tabbed-field' . ( $this->field_has_errors( $this->field_errors, $field_path, true ) ? ' is-invalid' : '' ) . '" data-target="' . esc_attr( $field_id ) . '" data-field-path="' . esc_attr( $field_path ) . '" data-lerm-tabbed data-default-tab="' . esc_attr( $active_tab ) . '">';
 		echo '<div class="lerm-tabbed__nav" role="tablist">';
 

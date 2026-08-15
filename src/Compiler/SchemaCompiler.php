@@ -132,7 +132,9 @@ final class SchemaCompiler {
 			'sections'     => $this->compile_sections( $definition ),
 			'fields'       => $field_metadata,
 			'dependencies' => $dependency_graph,
-			'optionName'   => (string) ( $definition['option_name'] ?? $store['key'] ?? $id ),
+			'optionName'   => is_scalar( $definition['option_name'] ?? null )
+				? (string) $definition['option_name']
+				: ( is_scalar( $store['key'] ?? null ) ? (string) $store['key'] : (string) $id ),
 		);
 
 		return new CompiledSchema(

@@ -132,7 +132,7 @@ final class SubmissionStateResolver {
 			}
 
 			return array(
-				'class'   => 'validation_error' === $this->redirect_status() ? 'notice-error' : 'notice-warning',
+				'class'   => in_array( $this->redirect_status(), array( 'validation_error', 'error' ), true ) ? 'notice-error' : 'notice-warning',
 				'message' => $message,
 			);
 		}

@@ -554,9 +554,12 @@ if ( ! function_exists( 'get_user_meta' ) ) {
 
 if ( ! function_exists( 'update_user_meta' ) ) {
 	function update_user_meta( int $user_id, string $key, $value ): bool {
+		$previous = $GLOBALS['lerm_admin_config_user_meta'][ $user_id ][ $key ] ?? null;
+
 		$GLOBALS['lerm_admin_config_user_meta'][ $user_id ][ $key ] = $value;
 
-		return true;
+		// Mirrors WordPress: false when the stored value is unchanged.
+		return $previous !== $value;
 	}
 }
 

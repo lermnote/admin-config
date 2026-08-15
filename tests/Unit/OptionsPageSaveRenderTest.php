@@ -116,6 +116,27 @@ final class OptionsPageSaveRenderTest extends TestCase {
 		$this->assertArrayNotHasKey( 'options_framework', $GLOBALS['lerm_admin_config_options'] );
 	}
 
+	public function testRenderPageUsesErrorNoticeClassForFailedSaveStatus(): void {
+		ValidationFlash::store(
+			'options_page',
+			'unit_save_render',
+			'unit_save_render',
+			array(
+				'tab'        => 'general',
+				'subsection' => '',
+				'message'    => 'Unable to save these settings right now.',
+			)
+		);
+
+		$_GET['tab']                      = 'general';
+		$_GET['lerm_admin_config_status'] = 'error';
+
+		$output = $this->capture_render( $this->options_page() );
+
+		$this->assertStringContainsString( 'lerm-settings-form-notice notice notice-error inline', $output );
+		$this->assertStringContainsString( 'Unable to save these settings right now.', $output );
+	}
+
 	public function testHandleSaveDeniesUsersWithoutCapability(): void {
 		$GLOBALS['lerm_admin_config_current_user_can'] = false;
 

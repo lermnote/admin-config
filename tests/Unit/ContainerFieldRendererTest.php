@@ -93,6 +93,23 @@ final class ContainerFieldRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-field-path-template="cards.__INDEX__.title"', $output );
 	}
 
+	public function testTabbedRendererFallsBackToFirstItemWhenDefaultTabIsUnknown(): void {
+		$page                 = $this->options_page();
+		$field                = $this->panel_field( 'tabbed' );
+		$field['default_tab'] = 'renamed-panel';
+
+		$output = $this->render_field(
+			$page,
+			$field,
+			array(
+				'panels' => array(),
+			)
+		);
+
+		$this->assertStringContainsString( 'data-default-tab="general"', $output );
+		$this->assertStringContainsString( 'class="lerm-tabbed__trigger is-active"', $output );
+	}
+
 	public function testAccordionRendererOpensInvalidPanel(): void {
 		$page  = $this->options_page();
 		$field = $this->panel_field( 'accordion' );
