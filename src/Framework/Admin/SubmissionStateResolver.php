@@ -15,6 +15,7 @@ namespace Lerm\AdminConfig\Framework\Admin;
 
 use Lerm\AdminConfig\Framework\FieldTypes\FieldTypeRegistry;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
+use Lerm\AdminConfig\Framework\Support\ValidationTargetResolver;
 use Lerm\AdminConfig\WordPress\Support\ValidationFlash;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -194,20 +195,7 @@ final class SubmissionStateResolver {
 	 * @return array{tab: string, subsection: string}
 	 */
 	public function first_validation_target( array $errors ): array {
-		$fallback_tab = (string) array_key_first( PageSchema::sections( $this->definition ) );
-
-		foreach ( array_keys( $errors ) as $path ) {
-			$target = $this->field_target( (string) $path );
-
-			if ( '' !== $target['tab'] ) {
-				return $target;
-			}
-		}
-
-		return array(
-			'tab'        => $fallback_tab,
-			'subsection' => '',
-		);
+		return ValidationTargetResolver::first_validation_target( $this->definition, $errors );
 	}
 
 	// ─── Public: field → section mapping ──────────────────────────────
@@ -232,63 +220,11 @@ final class SubmissionStateResolver {
 	 * @return array<string, array{tab: string, subsection: string}>
 	 */
 	private function field_section_map(): array {
-		if ( null !== $this->field_section_map_cache ) {
-			return $this->field_section_map_cache;
+		if ( null === $this->field_section_map_cache ) {
+			$this->field_section_map_cache = ValidationTargetResolver::field_section_map( $this->definition );
 		}
-
-		$map = array();
-
-		foreach ( PageSchema::sections( $this->definition ) as $section_id => $section ) {
-			$groups       = PageSchema::section_groups( $section );
-			$use_subsects = $this->section_uses_subsections( $section, $groups );
-
-			foreach ( PageSchema::section_fields( $section ) as $field ) {
-				$field_id = (string) ( $field['id'] ?? '' );
-
-				if ( '' === $field_id ) {
-					continue;
-				}
-
-				$subsection = '';
-
-				if ( $use_subsects ) {
-					foreach ( $groups as $group ) {
-						foreach ( (array) ( $group['fields'] ?? array() ) as $gf ) {
-							if ( (string) ( $gf['id'] ?? '' ) === $field_id ) {
-								$subsection = sanitize_key( (string) ( $group['id'] ?? '' ) );
-								break 2;
-							}
-						}
-					}
-				}
-
-				$map[ $field_id ] = array(
-					'tab'        => (string) $section_id,
-					'subsection' => $subsection,
-				);
-			}
-		}
-
-		$this->field_section_map_cache = $map;
 
 		return $this->field_section_map_cache;
-	}
-
-	/**
-	 * Determine whether a section should render secondary navigation.
-	 *
-	 * Inlined from OptionsPage::section_uses_subsections() to avoid a
-	 * cross-class dependency on a private helper.
-	 *
-	 * @param array<string, mixed>             $section Section definition.
-	 * @param array<int, array<string, mixed>> $groups  Section groups.
-	 */
-	private function section_uses_subsections( array $section, array $groups ): bool {
-		if ( array_key_exists( 'use_subsections', $section ) ) {
-			return ! empty( $section['use_subsections'] ) && count( $groups ) > 1;
-		}
-
-		return count( $groups ) > 1;
 	}
 
 	// ─── Public: tab routing ──────────────────────────────────────────
