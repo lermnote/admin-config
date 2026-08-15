@@ -11,14 +11,12 @@ namespace Lerm\AdminConfig\WordPress\Containers;
 
 use Lerm\AdminConfig\Compiler\CompiledSchema;
 use Lerm\AdminConfig\Contracts\Container;
-use Lerm\AdminConfig\Stores\StoreResolver;
 use Lerm\AdminConfig\Framework\Admin\OptionsPage;
 use Lerm\AdminConfig\Framework\Backends\ArrayBackend;
-use Lerm\AdminConfig\Framework\Framework;
 use Lerm\AdminConfig\Framework\Storage\OptionStore;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
 use Lerm\AdminConfig\WordPress\Support\ContainerSaveSupport;
-use Lerm\AdminConfig\WordPress\Support\ValidationFlash;
+use Lerm\AdminConfig\WordPress\Support\EntityContainerSupport;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -26,19 +24,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class CommentContainer implements Container {
 
-	/**
-	 * @var array<string, CompiledSchema>
-	 */
-	private array $schemas = array();
+	use EntityContainerSupport;
 
 	private bool $hooks_registered       = false;
 	private bool $assets_hook_registered = false;
-
-	public function __construct(
-		private Framework $framework,
-		private StoreResolver $stores
-	) {
-	}
 
 	public function type(): string {
 		return 'comment';
@@ -105,19 +94,16 @@ final class CommentContainer implements Container {
 		$store       = $this->stores->store( $schema, array( 'comment_id' => $comment->comment_ID ) );
 		$renderer    = $this->renderer( $schema, $store );
 		$sections    = PageSchema::sections( $schema->definition() );
-		$flash       = ValidationFlash::consume( 'comment', $schema->id(), (string) $comment->comment_ID );
-		$values      = ValidationFlash::render_values( $store->all(), $flash, $schema->definition(), $this->framework->field_types() );
-		$errors      = ValidationFlash::field_errors( $flash );
-		$notice      = ValidationFlash::notice( $flash );
+		$flash       = $this->consume_flash( 'comment', $schema, (string) $comment->comment_ID, $store );
 		$show_titles = count( $sections ) > 1;
 
 		echo '<div class="lerm-comment-metabox lerm-metabox--stack">';
 
-		if ( null !== $notice ) {
+		if ( null !== $flash['notice'] ) {
 			printf(
 				'<div class="notice %1$s inline"><p>%2$s</p></div>',
-				esc_attr( $notice['class'] ),
-				esc_html( $notice['message'] )
+				esc_attr( $flash['notice']['class'] ),
+				esc_html( $flash['notice']['message'] )
 			);
 		}
 
@@ -135,16 +121,16 @@ final class CommentContainer implements Container {
 
 			$renderer->container_field_renderer()->render_fields(
 				PageSchema::section_fields( $section ),
-				$values,
+				$flash['values'],
 				$renderer->field_control_renderer(),
 				(string) $section_id,
 				false,
 				'stack',
-				$errors
+				$flash['errors']
 			);
 		}
 
-		wp_nonce_field( ContainerSaveSupport::nonce_action( 'comment', $schema ), ContainerSaveSupport::nonce_name( 'comment', $schema ) );
+		$this->nonce_field( 'comment', $schema );
 		echo '</div>';
 	}
 
@@ -156,13 +142,7 @@ final class CommentContainer implements Container {
 		}
 
 		foreach ( $this->schemas as $schema ) {
-			$nonce = ContainerSaveSupport::posted_nonce( ContainerSaveSupport::nonce_name( 'comment', $schema ) );
-
-			if ( '' === $nonce || ! wp_verify_nonce( $nonce, ContainerSaveSupport::nonce_action( 'comment', $schema ) ) ) {
-				continue;
-			}
-
-			if ( ! current_user_can( ContainerSaveSupport::capability_for_schema( $schema, 'edit_comment' ), $comment_id ) ) {
+			if ( ! ContainerSaveSupport::authorize_save( 'comment', $schema, 'edit_comment', $comment_id ) ) {
 				continue;
 			}
 

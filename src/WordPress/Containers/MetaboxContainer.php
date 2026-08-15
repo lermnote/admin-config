@@ -11,14 +11,11 @@ namespace Lerm\AdminConfig\WordPress\Containers;
 
 use Lerm\AdminConfig\Compiler\CompiledSchema;
 use Lerm\AdminConfig\Contracts\Container;
-use Lerm\AdminConfig\Stores\StoreResolver;
-use Lerm\AdminConfig\Framework\Framework;
-use Lerm\AdminConfig\Framework\Storage\OptionStore;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
 use Lerm\AdminConfig\WordPress\Support\HasBlockEditorPanel;
 use Lerm\AdminConfig\WordPress\Support\BlockEditorPanelContext;
 use Lerm\AdminConfig\WordPress\Support\ContainerSaveSupport;
-use Lerm\AdminConfig\WordPress\Support\ValidationFlash;
+use Lerm\AdminConfig\WordPress\Support\EntityContainerSupport;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -27,30 +24,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class MetaboxContainer implements Container, BlockEditorPanelContext {
 
 	use HasBlockEditorPanel;
-
-	/**
-	 * @var array<string, CompiledSchema>
-	 */
-	private array $schemas = array();
+	use EntityContainerSupport;
 
 	private bool $hooks_registered = false;
-
-	public function __construct(
-		private Framework $framework,
-		private StoreResolver $stores
-	) {
-	}
-
-	/**
-	 * @return array<string, CompiledSchema>
-	 */
-	public function schemas(): array {
-		return $this->schemas;
-	}
-
-	public function framework(): Framework {
-		return $this->framework;
-	}
 
 	public function container_type_for_block_panel(): string {
 		return 'metabox';
@@ -122,23 +98,20 @@ final class MetaboxContainer implements Container, BlockEditorPanelContext {
 		$sections   = PageSchema::sections( $schema->definition() );
 		$section_id = (string) array_key_first( $sections );
 		$section    = '' !== $section_id ? ( $sections[ $section_id ] ?? null ) : null;
-		$flash      = ValidationFlash::consume( 'metabox', $schema->id(), (string) $post->ID );
-		$values     = ValidationFlash::render_values( $store->all(), $flash, $schema->definition(), $this->framework->field_types() );
-		$errors     = ValidationFlash::field_errors( $flash );
-		$notice     = ValidationFlash::notice( $flash );
+		$flash      = $this->consume_flash( 'metabox', $schema, (string) $post->ID, $store );
 
 		if ( ! is_array( $section ) ) {
 			return;
 		}
 
-		wp_nonce_field( ContainerSaveSupport::nonce_action( 'metabox', $schema ), ContainerSaveSupport::nonce_name( 'metabox', $schema ) );
+		$this->nonce_field( 'metabox', $schema );
 
 		echo '<div class="lerm-metabox lerm-metabox--stack">';
-		if ( null !== $notice ) {
+		if ( null !== $flash['notice'] ) {
 			printf(
 				'<div class="notice %1$s inline"><p>%2$s</p></div>',
-				esc_attr( $notice['class'] ),
-				esc_html( $notice['message'] )
+				esc_attr( $flash['notice']['class'] ),
+				esc_html( $flash['notice']['message'] )
 			);
 		}
 		$description = isset( $section['description'] ) && is_scalar( $section['description'] ) ? (string) $section['description'] : '';
@@ -147,12 +120,12 @@ final class MetaboxContainer implements Container, BlockEditorPanelContext {
 		}
 		$renderer->container_field_renderer()->render_fields(
 			PageSchema::section_fields( $section ),
-			$values,
+			$flash['values'],
 			$renderer->field_control_renderer(),
 			$section_id,
 			false,
 			'stack',
-			$errors
+			$flash['errors']
 		);
 		echo '</div>';
 	}
@@ -170,13 +143,7 @@ final class MetaboxContainer implements Container, BlockEditorPanelContext {
 				continue;
 			}
 
-			$nonce = ContainerSaveSupport::posted_nonce( ContainerSaveSupport::nonce_name( 'metabox', $schema ) );
-
-			if ( '' === $nonce || ! wp_verify_nonce( $nonce, ContainerSaveSupport::nonce_action( 'metabox', $schema ) ) ) {
-				continue;
-			}
-
-			if ( ! current_user_can( ContainerSaveSupport::capability_for_schema( $schema, 'edit_post' ), $post_id ) ) {
+			if ( ! ContainerSaveSupport::authorize_save( 'metabox', $schema, 'edit_post', $post_id ) ) {
 				continue;
 			}
 

@@ -11,13 +11,10 @@ namespace Lerm\AdminConfig\WordPress\Containers;
 
 use Lerm\AdminConfig\Compiler\CompiledSchema;
 use Lerm\AdminConfig\Contracts\Container;
-use Lerm\AdminConfig\Stores\StoreResolver;
 use Lerm\AdminConfig\Framework\Admin\OptionsPage;
-use Lerm\AdminConfig\Framework\Framework;
-use Lerm\AdminConfig\Framework\Storage\OptionStore;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
 use Lerm\AdminConfig\WordPress\Support\ContainerSaveSupport;
-use Lerm\AdminConfig\WordPress\Support\ValidationFlash;
+use Lerm\AdminConfig\WordPress\Support\EntityContainerSupport;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -25,19 +22,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class ProfileContainer implements Container {
 
-	/**
-	 * @var array<string, CompiledSchema>
-	 */
-	private array $schemas = array();
+	use EntityContainerSupport;
 
 	private bool $hooks_registered       = false;
 	private bool $assets_hook_registered = false;
-
-	public function __construct(
-		private Framework $framework,
-		private StoreResolver $stores
-	) {
-	}
 
 	public function type(): string {
 		return 'profile';
@@ -78,19 +66,16 @@ final class ProfileContainer implements Container {
 			$title     = isset( $container['title'] ) && is_scalar( $container['title'] ) ? (string) $container['title'] : __( 'Profile Settings', 'lerm-admin-config' );
 			$store     = $this->stores->store( $schema, array( 'user_id' => $user->ID ) );
 			$renderer  = $this->renderer( $schema, $user->ID );
-			$flash     = ValidationFlash::consume( 'profile', $schema->id(), (string) $user->ID );
-			$values    = ValidationFlash::render_values( $store->all(), $flash, $schema->definition(), $this->framework->field_types() );
-			$errors    = ValidationFlash::field_errors( $flash );
-			$notice    = ValidationFlash::notice( $flash );
+			$flash     = $this->consume_flash( 'profile', $schema, (string) $user->ID, $store );
 
 			echo '<h2>' . esc_html( $title ) . '</h2>';
 			echo '<table class="form-table" role="presentation">';
 
-			if ( null !== $notice ) {
+			if ( null !== $flash['notice'] ) {
 				printf(
 					'<tr class="user-admin-config-notice"><td colspan="2"><div class="notice %1$s inline"><p>%2$s</p></div></td></tr>',
-					esc_attr( $notice['class'] ),
-					esc_html( $notice['message'] )
+					esc_attr( $flash['notice']['class'] ),
+					esc_html( $flash['notice']['message'] )
 				);
 			}
 
@@ -106,12 +91,12 @@ final class ProfileContainer implements Container {
 
 				$renderer->container_field_renderer()->render_fields(
 					PageSchema::section_fields( $section ),
-					$values,
+					$flash['values'],
 					$renderer->field_control_renderer(),
 					(string) $section_id,
 					false,
 					'table',
-					$errors
+					$flash['errors']
 				);
 			}
 
@@ -131,13 +116,7 @@ final class ProfileContainer implements Container {
 		}
 
 		foreach ( $this->schemas as $schema ) {
-			$nonce = ContainerSaveSupport::posted_nonce( ContainerSaveSupport::nonce_name( 'profile', $schema ) );
-
-			if ( '' === $nonce || ! wp_verify_nonce( $nonce, ContainerSaveSupport::nonce_action( 'profile', $schema ) ) ) {
-				continue;
-			}
-
-			if ( ! current_user_can( ContainerSaveSupport::capability_for_schema( $schema, 'edit_user' ), $user_id ) ) {
+			if ( ! ContainerSaveSupport::authorize_save( 'profile', $schema, 'edit_user', $user_id ) ) {
 				continue;
 			}
 
