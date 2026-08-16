@@ -6,6 +6,41 @@ The format follows Keep a Changelog and the package uses Semantic Versioning onc
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-08-16
+
+This release closes out the 2026-08-14 code quality audit (HIGH fixes, dead code, duplication, correctness boundaries, contract drift, test quality, and low-severity findings).
+
+### Added
+- `EntityContainerSupport` trait: shared schema state, flash consumption, and nonce output for the metabox, taxonomy, profile, and comment containers.
+- `ValidationTargetResolver`: single implementation of tab/subsection routing for admin redirects and REST responses.
+- `RuntimeBootstrapper`: unified plugin/embedded boot scheduling (both now boot with a null registrar).
+- `WpDebug::enabled()`: shared `WP_DEBUG` check.
+- `FieldValueHelper::sanitize_media_value()`: unified media payload sanitization (attachments and url-only values).
+- E2E coverage for the non-JS options page form (`classic-form-submit.spec.js`, JavaScript disabled).
+- Unit coverage for `OptionsPage::handle_save()`/`render_page()`, the `FieldDependencyEvaluator` operator matrix, `ValidationFlash`, `register_menu()`, and lifecycle hook ordering.
+
+### Changed
+- typography/fieldset/group nested inside a group/repeater now render an explicit "cannot be nested" warning instead of a silently cleared text input.
+- color/palette/icon sanitizers store explicit empty submissions and only fall back to schema defaults for missing keys.
+- `Framework::render_options_page()` parameter renamed `$network` → `$register_hooks` to match its actual meaning.
+- `MetaBackend::write()` distinguishes no-change updates from real failures (mirrors `OptionBackend`).
+- MetaboxContainer renders every schema section instead of silently dropping all but the first.
+- REST protocol: removed the always-true `supported` field; editable/read-only/unsupported classification is a local client decision.
+- Renamed `I18nStrings` to `AdminPageConfig` (runtime config, not translations).
+- Test stubs now honor action priority and accepted argument counts; `add_submenu_page` stub added.
+- `php_codesniffer` bumped to 3.13.6 (CVE-2026-67434).
+
+### Fixed
+- Data-source responses no longer treat plain lists as key/value maps (values were becoming `'0'`/`'1'`).
+- `MetaBackend::write()` returns `bool` instead of the raw meta id (fixed a fatal on every container save against real WordPress).
+- Tabbed fields fall back to the first panel when `default_tab` names an unknown panel.
+- `image_select` no longer rewrites valid choice keys through `sanitize_key()`.
+- Media fields preserve url-only payloads instead of dropping them.
+- Container registry keys are sanitized on registration, matching the sanitized lookups.
+
+### Removed
+- Dead code: the unused wp.data store (`resources/store/`), `SchemaController::schema()/schemas()`, `legacy_client_config()`, registry `all()/enable_all()/is_builtin()`, the `replace`/`override_builtin` registration flags, and unused JS exports.
+
 ## [0.6.0] - 2026-07-31
 
 ### Added
