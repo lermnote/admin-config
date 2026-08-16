@@ -11,6 +11,8 @@ namespace Lerm\AdminConfig\Tests\Unit;
 
 use Lerm\AdminConfig\Framework\Admin\OptionsPage;
 use Lerm\AdminConfig\Framework\Contracts\AssetResolver;
+use Lerm\AdminConfig\Framework\Framework;
+use Lerm\AdminConfig\Framework\Resolvers\DefaultAssetResolver;
 use Lerm\AdminConfig\Framework\FieldTypes\AdvancedFieldTypes;
 use Lerm\AdminConfig\Framework\FieldTypes\BuiltinFieldTypes;
 use Lerm\AdminConfig\Framework\FieldTypes\FieldTypeRegistry;
@@ -137,6 +139,113 @@ final class OptionsPageSaveRenderTest extends TestCase {
 		$this->assertStringContainsString( 'Unable to save these settings right now.', $output );
 	}
 
+	public function testRegisterMenuAddsSubmenuPageForTheSchema(): void {
+		$this->options_page( null, true );
+
+		do_action( 'admin_menu' );
+
+		$menu = $GLOBALS['lerm_admin_config_submenu_pages'][0] ?? null;
+
+		$this->assertIsArray( $menu );
+		$this->assertSame( 'themes.php', $menu['parent_slug'] );
+		$this->assertSame( 'unit_save_render', $menu['menu_slug'] );
+		$this->assertSame( 'manage_options', $menu['capability'] );
+		$this->assertIsCallable( $menu['callback'] );
+	}
+
+	public function testHandleSaveFiresBeforeAndAfterLifecycleHooksInOrder(): void {
+		$events = array();
+
+		add_action(
+			'lerm_admin_config_before_save',
+			static function ( string $page_id, array $data ) use ( &$events ): void {
+				unset( $data );
+
+				$events[] = array( 'before', $page_id );
+			},
+			10,
+			2
+		);
+		add_action(
+			'lerm_admin_config_after_save',
+			static function ( string $page_id, array $data ) use ( &$events ): void {
+				unset( $data );
+
+				$events[] = array( 'after', $page_id );
+			},
+			10,
+			2
+		);
+
+		$_POST = array(
+			'lerm_settings_tab' => 'general',
+			'_wpnonce'          => 'nonce-lerm_admin_config_unit_save_render_general',
+			'options_framework' => array(
+				'headline' => 'Hooked headline',
+			),
+		);
+
+		$this->assertThrows(
+			\LermAdminConfigRedirectIntercepted::class,
+			function (): void {
+				$this->options_page()->handle_save();
+			}
+		);
+
+		$this->assertSame(
+			array(
+				array( 'before', 'options_framework' ),
+				array( 'after', 'options_framework' ),
+			),
+			$events
+		);
+	}
+
+	public function testHandleSaveFiresNoLifecycleHooksOnNoOpSave(): void {
+		$events = array();
+
+		add_action(
+			'lerm_admin_config_before_save',
+			static function () use ( &$events ): void {
+				$events[] = 'before';
+			}
+		);
+		add_action(
+			'lerm_admin_config_after_save',
+			static function () use ( &$events ): void {
+				$events[] = 'after';
+			}
+		);
+
+		$_POST = array(
+			'lerm_settings_tab' => 'general',
+			'_wpnonce'          => 'nonce-lerm_admin_config_unit_save_render_general',
+			'options_framework' => array(
+				'headline' => 'Same headline',
+			),
+		);
+
+		$this->assertThrows(
+			\LermAdminConfigRedirectIntercepted::class,
+			function (): void {
+				$this->options_page()->handle_save();
+			}
+		);
+
+		$this->assertNotEmpty( $events );
+
+		$events = array();
+
+		$this->assertThrows(
+			\LermAdminConfigRedirectIntercepted::class,
+			function (): void {
+				$this->options_page()->handle_save();
+			}
+		);
+
+		$this->assertSame( array(), $events );
+	}
+
 	public function testHandleSaveDeniesUsersWithoutCapability(): void {
 		$GLOBALS['lerm_admin_config_current_user_can'] = false;
 
@@ -184,7 +293,7 @@ final class OptionsPageSaveRenderTest extends TestCase {
 		$this->assertStringContainsString( 'class="lerm-settings-row is-invalid"', $output );
 	}
 
-	private function options_page( ?FieldTypeRegistry $field_types = null ): OptionsPage {
+	private function options_page( ?FieldTypeRegistry $field_types = null, bool $register_hooks = false ): OptionsPage {
 		$field_types = $field_types ?? $this->field_types();
 		$definition  = array(
 			'id'       => 'unit_save_render',
@@ -216,7 +325,12 @@ final class OptionsPageSaveRenderTest extends TestCase {
 			),
 		);
 
-		$store    = new OptionStore( $definition, $field_types );
+		$store    = new OptionStore(
+			$definition,
+			$field_types,
+			null,
+			new Framework( new DefaultAssetResolver( 'https://example.test/assets/' ) )
+		);
 		$resolver = new class() implements AssetResolver {
 			public function url( string $filename ): string {
 				return 'https://example.test/assets/' . ltrim( $filename, '/' );
@@ -227,7 +341,7 @@ final class OptionsPageSaveRenderTest extends TestCase {
 			}
 		};
 
-		return new OptionsPage( $definition, $store, $field_types, $resolver, false );
+		return new OptionsPage( $definition, $store, $field_types, $resolver, $register_hooks );
 	}
 
 	private function field_types(): FieldTypeRegistry {
