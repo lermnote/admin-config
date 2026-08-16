@@ -127,7 +127,6 @@ Each field is keyed by field ID in `fields`:
     "dependency": null,
     "multiple": false,
     "readOnly": true,
-    "supported": true,
     "ui": {},
     "client": {}
   }
@@ -150,8 +149,6 @@ Stable field keys:
 - `multiple`: whether the field accepts multiple values.
 - `readOnly`: the field is visible but not editable on the current client
   surface.
-- `supported`: the protocol can describe the field. A client without a matching
-  local control may still render it as unsupported.
 - `ui`: client-safe UI metadata.
 - `client`: client-safe field-type or field-level metadata.
 
@@ -173,10 +170,11 @@ does not edit it yet. Block editor panels render read-only field notices for
 advanced, media, structured, async, and layout controls until dedicated React
 controls exist.
 
-`supported: false` is reserved for payloads a client should not try to render as
-an editable field. Most built-in fields currently use `supported: true`; local
-client registries still decide whether a control is editable, read-only, or
-unsupported in that specific surface.
+Whether a field is editable, read-only, or unsupported on a given client surface
+is decided locally: a client registry that provides a matching control marks the
+field editable, a known-but-not-yet-editable control renders a read-only notice,
+and unknown types render an unsupported notice. The server protocol does not
+carry a separate capability flag.
 
 ## Sections And Dependencies
 
