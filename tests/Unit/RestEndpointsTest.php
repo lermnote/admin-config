@@ -79,7 +79,6 @@ final class RestEndpointsTest extends TestCase {
 		$this->assertSame( 'general', $data['fields']['site_title']['section'] );
 		$this->assertSame( 'general', $data['fields']['site_title']['group'] );
 		$this->assertFalse( $data['fields']['site_title']['readOnly'] );
-		$this->assertTrue( $data['fields']['site_title']['supported'] );
 		$this->assertSame( 'campaigns', $data['fields']['campaign']['source'] );
 		$this->assertFalse( $data['fields']['campaign']['readOnly'] );
 		$this->assertSame( 2, $data['fields']['campaign']['min_search_length'] );
@@ -549,118 +548,63 @@ final class RestEndpointsTest extends TestCase {
 		);
 
 		$this->assertInstanceOf( \WP_REST_Response::class, $response );
-		$this->assertSame(
-			array(
-				'site_title'        => 'Default title',
-				'items_per_row'     => 4,
-				'campaign'          => '',
-				'badge'             => array(
-					'label' => 'Featured',
-				),
-				'card_spacing'      => array(
-					'unit'   => 'px',
-					'top'    => '8',
-					'right'  => '',
-					'bottom' => '',
-					'left'   => '',
-				),
-				'card_border'       => array(
-					'style'  => 'solid',
-					'color'  => '#2271b1',
-					'top'    => '1',
-					'right'  => '',
-					'bottom' => '',
-				),
-				'link_colors'       => array(
-					'color' => '#2271b1',
-					'hover' => '#135e96',
-				),
-				'brand_typography'  => array(
-					'font-family'    => 'Inter, system-ui, sans-serif',
-					'font-weight'    => '700',
-					'font-style'     => 'normal',
-					'font-size'      => '2',
-					'unit'           => 'rem',
-					'line-height'    => '1.2',
-					'letter-spacing' => '0',
-					'text-align'     => 'left',
-					'color'          => '#2271b1',
-				),
-				'brand_background'  => array(
-					'background-color'              => '#f8fafc',
-					'background-gradient-color'     => '#e0f2fe',
-					'background-gradient-direction' => 'to right',
-					'background-image'              => array(),
-					'background-position'           => 'center center',
-					'background-repeat'             => 'no-repeat',
-					'background-attachment'         => 'scroll',
-					'background-size'               => 'cover',
-					'background-origin'             => 'padding-box',
-					'background-clip'               => 'border-box',
-					'background-blend-mode'         => 'normal',
-				),
-				'brand_palette'     => 'cool',
-				'brand_image_style' => 'cover',
-				'brand_icon'        => 'dashicons-lightbulb',
+
+		$expected_values = array(
+			'site_title'        => 'Default title',
+			'items_per_row'     => 4,
+			'campaign'          => '',
+			'badge'             => array(
+				'label' => 'Featured',
 			),
-			$response->get_data()['data']['values']
-		);
-		$this->assertSame(
-			array(
-				'site_title'        => 'Default title',
-				'items_per_row'     => 4,
-				'campaign'          => '',
-				'badge'             => array(
-					'label' => 'Featured',
-				),
-				'card_spacing'      => array(
-					'unit'   => 'px',
-					'top'    => '8',
-					'right'  => '',
-					'bottom' => '',
-					'left'   => '',
-				),
-				'card_border'       => array(
-					'style'  => 'solid',
-					'color'  => '#2271b1',
-					'top'    => '1',
-					'right'  => '',
-					'bottom' => '',
-				),
-				'link_colors'       => array(
-					'color' => '#2271b1',
-					'hover' => '#135e96',
-				),
-				'brand_typography'  => array(
-					'font-family'    => 'Inter, system-ui, sans-serif',
-					'font-weight'    => '700',
-					'font-style'     => 'normal',
-					'font-size'      => '2',
-					'unit'           => 'rem',
-					'line-height'    => '1.2',
-					'letter-spacing' => '0',
-					'text-align'     => 'left',
-					'color'          => '#2271b1',
-				),
-				'brand_background'  => array(
-					'background-color'              => '#f8fafc',
-					'background-gradient-color'     => '#e0f2fe',
-					'background-gradient-direction' => 'to right',
-					'background-image'              => array(),
-					'background-position'           => 'center center',
-					'background-repeat'             => 'no-repeat',
-					'background-attachment'         => 'scroll',
-					'background-size'               => 'cover',
-					'background-origin'             => 'padding-box',
-					'background-clip'               => 'border-box',
-					'background-blend-mode'         => 'normal',
-				),
-				'brand_palette'     => 'cool',
-				'brand_image_style' => 'cover',
-				'brand_icon'        => 'dashicons-lightbulb',
+			'card_spacing'      => array(
+				'unit'   => 'px',
+				'top'    => '8',
+				'right'  => '',
+				'bottom' => '',
+				'left'   => '',
 			),
-			$GLOBALS['lerm_admin_config_options']['rest_test_settings']
+			'card_border'       => array(
+				'style'  => 'solid',
+				'color'  => '#2271b1',
+				'top'    => '1',
+				'right'  => '',
+				'bottom' => '',
+			),
+			'link_colors'       => array(
+				'color' => '#2271b1',
+				'hover' => '#135e96',
+			),
+			'brand_typography'  => array(
+				'font-family'    => 'Inter, system-ui, sans-serif',
+				'font-weight'    => '700',
+				'font-style'     => 'normal',
+				'font-size'      => '2',
+				'unit'           => 'rem',
+				'line-height'    => '1.2',
+				'letter-spacing' => '0',
+				'text-align'     => 'left',
+				'color'          => '#2271b1',
+			),
+			'brand_background'  => array(
+				'background-color'              => '#f8fafc',
+				'background-gradient-color'     => '#e0f2fe',
+				'background-gradient-direction' => 'to right',
+				'background-image'              => array(),
+				'background-position'           => 'center center',
+				'background-repeat'             => 'no-repeat',
+				'background-attachment'         => 'scroll',
+				'background-size'               => 'cover',
+				'background-origin'             => 'padding-box',
+				'background-clip'               => 'border-box',
+				'background-blend-mode'         => 'normal',
+			),
+			'brand_palette'     => 'cool',
+			'brand_image_style' => 'cover',
+			'brand_icon'        => 'dashicons-lightbulb',
 		);
+
+		$this->assertSame( $expected_values, $response->get_data()['data']['values'] );
+		$this->assertSame( $expected_values, $GLOBALS['lerm_admin_config_options']['rest_test_settings'] );
 	}
 
 	public function testImportAndExportUseAjaxCompatibleResponseShape(): void {

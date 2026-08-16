@@ -9,6 +9,8 @@ declare( strict_types=1 );
 
 namespace Lerm\AdminConfig\Tests\Unit;
 
+use Lerm\AdminConfig\Client\SchemaSerializer;
+use Lerm\AdminConfig\Compiler\SchemaCompiler;
 use Lerm\AdminConfig\Framework\FieldTypes\AdvancedFieldTypes;
 use Lerm\AdminConfig\Framework\FieldTypes\AsyncFieldTypes;
 use Lerm\AdminConfig\Framework\FieldTypes\BuiltinFieldTypes;
@@ -44,6 +46,42 @@ final class BlockEditorFieldMatrixTest extends TestCase {
 		$this->assertSame( array(), array_values( array_intersect( $matrix['editable'], $matrix['read_only'] ) ) );
 		$this->assertSame( array(), array_values( array_intersect( $matrix['editable'], $matrix['phase_4'] ) ) );
 		$this->assertSame( array(), array_values( array_intersect( $matrix['read_only'], $matrix['phase_4'] ) ) );
+	}
+
+	public function testMatrixClassificationsMatchSerializerReadOnlyBehavior(): void {
+		$matrix    = self::field_matrix();
+		$compiler  = new SchemaCompiler();
+		$serialize = static fn ( string $type ): array => SchemaSerializer::document(
+			$compiler->compile(
+				array(
+					'id'       => 'unit_matrix_behavior',
+					'sections' => array(
+						'general' => array(
+							'fields' => array(
+								array(
+									'id'   => 'probe',
+									'type' => $type,
+								),
+							),
+						),
+					),
+				)
+			)
+		);
+
+		foreach ( $matrix['read_only'] as $type ) {
+			$this->assertTrue(
+				$serialize( $type )['fields']['probe']['readOnly'],
+				sprintf( 'Matrix lists "%s" as read-only but the serializer does not.', $type )
+			);
+		}
+
+		foreach ( $matrix['editable'] as $type ) {
+			$this->assertFalse(
+				$serialize( $type )['fields']['probe']['readOnly'],
+				sprintf( 'Matrix lists "%s" as editable but the serializer marks it read-only.', $type )
+			);
+		}
 	}
 
 	/**

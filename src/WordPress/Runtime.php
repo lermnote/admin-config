@@ -28,6 +28,7 @@ use Lerm\AdminConfig\WordPress\Containers\OptionsPageContainer;
 use Lerm\AdminConfig\WordPress\Containers\ProfileContainer;
 use Lerm\AdminConfig\WordPress\Containers\TaxonomyContainer;
 use Lerm\AdminConfig\Framework\Framework;
+use Lerm\AdminConfig\Framework\Support\WpDebug;
 use Lerm\AdminConfig\Framework\FieldTypes\FieldTypeRegistry;
 use Lerm\AdminConfig\Framework\Storage\OptionStore;
 
@@ -349,7 +350,7 @@ final class Runtime {
 	}
 
 	private function wp_debug_enabled(): bool {
-		return defined( 'WP_DEBUG' ) ? (bool) constant( 'WP_DEBUG' ) : false;
+		return WpDebug::enabled();
 	}
 
 	/**

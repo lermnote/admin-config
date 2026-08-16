@@ -126,10 +126,10 @@ final class SchemaSerializer {
 			'container'       => self::container( $schema ),
 			'store'           => self::store( $schema ),
 			'actions'         => self::actions( $actions ),
-			'defaults'        => self::without_server_only_keys( $schema->defaults() ),
+			'defaults'        => self::without_capabilities( $schema->defaults() ),
 			'sections'        => self::sections( $schema ),
 			'fields'          => self::fields( $schema ),
-			'dependencies'    => self::without_server_only_keys( $schema->dependency_graph() ),
+			'dependencies'    => self::without_capabilities( $schema->dependency_graph() ),
 			'optionName'      => (string) ( $schema->client_config()['optionName'] ?? $schema->id() ),
 			'links'           => self::links( $schema ),
 		);
@@ -160,7 +160,7 @@ final class SchemaSerializer {
 		return array(
 			'schemaId' => $schema->id(),
 			'values'   => $values,
-			'defaults' => self::without_server_only_keys( $schema->defaults() ),
+			'defaults' => self::without_capabilities( $schema->defaults() ),
 			'actions'  => self::actions( $actions ),
 		);
 	}
@@ -222,7 +222,7 @@ final class SchemaSerializer {
 	 * @return array<string|int, mixed>
 	 */
 	private static function sections( CompiledSchema $schema ): array {
-		return self::without_server_only_keys( (array) ( $schema->client_config()['sections'] ?? array() ) );
+		return self::without_capabilities( (array) ( $schema->client_config()['sections'] ?? array() ) );
 	}
 
 	/**
@@ -254,7 +254,7 @@ final class SchemaSerializer {
 	 */
 	private static function field_payload( string $field_id, array $metadata, array $location ): array {
 		$type    = sanitize_key( (string) ( $metadata['type'] ?? 'text' ) );
-		$client  = self::without_server_only_keys( isset( $metadata['client'] ) && is_array( $metadata['client'] ) ? $metadata['client'] : array() );
+		$client  = self::without_capabilities( isset( $metadata['client'] ) && is_array( $metadata['client'] ) ? $metadata['client'] : array() );
 		$control = sanitize_key( (string) ( $client['control'] ?? $type ) );
 
 		if ( '' === $control ) {
@@ -271,12 +271,11 @@ final class SchemaSerializer {
 			'default'     => $metadata['default'] ?? null,
 			'section'     => $location['section'],
 			'group'       => $location['group'],
-			'choices'     => isset( $metadata['choices'] ) && is_array( $metadata['choices'] ) ? self::without_server_only_keys( $metadata['choices'] ) : array(),
-			'dependency'  => isset( $metadata['dependency'] ) && is_array( $metadata['dependency'] ) ? self::without_server_only_keys( $metadata['dependency'] ) : null,
+			'choices'     => isset( $metadata['choices'] ) && is_array( $metadata['choices'] ) ? self::without_capabilities( $metadata['choices'] ) : array(),
+			'dependency'  => isset( $metadata['dependency'] ) && is_array( $metadata['dependency'] ) ? self::without_capabilities( $metadata['dependency'] ) : null,
 			'multiple'    => ! empty( $metadata['multiple'] ),
 			'readOnly'    => self::field_is_read_only( $control, $client ),
-			'supported'   => '' !== $control,
-			'ui'          => isset( $metadata['ui'] ) && is_array( $metadata['ui'] ) ? self::without_server_only_keys( $metadata['ui'] ) : array(),
+			'ui'          => isset( $metadata['ui'] ) && is_array( $metadata['ui'] ) ? self::without_capabilities( $metadata['ui'] ) : array(),
 			'client'      => $client,
 		);
 
@@ -302,7 +301,7 @@ final class SchemaSerializer {
 				continue;
 			}
 
-			$field[ $key ] = self::without_server_only_keys( $metadata[ $key ] );
+			$field[ $key ] = self::without_capabilities( $metadata[ $key ] );
 		}
 
 		return $field;
@@ -457,10 +456,14 @@ final class SchemaSerializer {
 	}
 
 	/**
+	 * Strip capability keys (and only capability keys) from a client payload.
+	 * Server-only keys beyond 'capability' must be added here explicitly before
+	 * they are ever serialized into a client response.
+	 *
 	 * @param array<string|int, mixed> $payload
 	 * @return array<string|int, mixed>
 	 */
-	private static function without_server_only_keys( array $payload ): array {
+	private static function without_capabilities( array $payload ): array {
 		$clean = array();
 
 		foreach ( $payload as $key => $value ) {
@@ -468,7 +471,7 @@ final class SchemaSerializer {
 				continue;
 			}
 
-			$clean[ $key ] = is_array( $value ) ? self::without_server_only_keys( $value ) : $value;
+			$clean[ $key ] = is_array( $value ) ? self::without_capabilities( $value ) : $value;
 		}
 
 		return $clean;

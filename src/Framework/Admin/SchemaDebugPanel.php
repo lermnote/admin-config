@@ -13,6 +13,7 @@ declare( strict_types=1 );
 namespace Lerm\AdminConfig\Framework\Admin;
 
 use Lerm\AdminConfig\Framework\Support\PageSchema;
+use Lerm\AdminConfig\Framework\Support\WpDebug;
 use Lerm\AdminConfig\Registry\FieldModuleRegistry;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -71,7 +72,7 @@ final class SchemaDebugPanel {
 			return ! empty( $view['debug'] );
 		}
 
-		return defined( 'WP_DEBUG' ) ? (bool) constant( 'WP_DEBUG' ) : false;
+		return WpDebug::enabled();
 	}
 
 	/**

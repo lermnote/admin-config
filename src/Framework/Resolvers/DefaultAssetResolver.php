@@ -42,7 +42,7 @@ final class DefaultAssetResolver implements AssetPathResolver {
 	}
 
 	public function url( string $filename ): string {
-		return $this->assets_url . ltrim( $filename, '/' );
+		return $this->assets_url . ltrim( $filename, '/\\' );
 	}
 
 	public function version(): string {

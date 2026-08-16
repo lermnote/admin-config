@@ -11,6 +11,7 @@ namespace Lerm\AdminConfig\WordPress\Containers;
 
 use Lerm\AdminConfig\Compiler\CompiledSchema;
 use Lerm\AdminConfig\Contracts\Container;
+use Lerm\AdminConfig\Framework\Support\WpDebug;
 use Lerm\AdminConfig\Stores\StoreResolver;
 use Lerm\AdminConfig\Framework\Framework;
 
@@ -37,7 +38,7 @@ final class NetworkOptionsPageContainer implements Container {
 			|| ( isset( $definition['capability'] ) && is_scalar( $definition['capability'] ) && '' !== trim( (string) $definition['capability'] ) );
 
 		if ( ! $has_explicit_capability ) {
-			if ( defined( 'WP_DEBUG' ) ? (bool) constant( 'WP_DEBUG' ) : false ) {
+			if ( WpDebug::enabled() ) {
 				_doing_it_wrong(
 					__METHOD__,
 					sprintf(

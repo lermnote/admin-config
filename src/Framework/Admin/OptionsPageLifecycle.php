@@ -14,7 +14,7 @@ namespace Lerm\AdminConfig\Framework\Admin;
 
 use Lerm\AdminConfig\Framework\Contracts\AssetPathResolver;
 use Lerm\AdminConfig\Framework\Contracts\AssetResolver;
-use Lerm\AdminConfig\Framework\Support\I18nStrings;
+use Lerm\AdminConfig\Framework\Support\AdminPageConfig;
 use Lerm\AdminConfig\Framework\Support\PackageAssets;
 use Lerm\AdminConfig\Framework\Support\ScriptAssetMetadata;
 
@@ -145,7 +145,7 @@ final class OptionsPageLifecycle {
 		wp_localize_script(
 			$js_handle,
 			$this->js_global,
-			I18nStrings::for_admin_page( $code_editor_settings )
+			AdminPageConfig::for_admin_page( $code_editor_settings )
 		);
 	}
 

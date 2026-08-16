@@ -84,15 +84,7 @@ final class FieldModuleRegistry {
 		}
 
 		foreach ( $this->modules[ $module_id ]->definitions() as $type => $definition ) {
-			$this->field_types->register(
-				(string) $type,
-				array_merge(
-					$definition,
-					array(
-						'builtin' => true,
-					)
-				)
-			);
+			$this->field_types->register( (string) $type, $definition );
 		}
 
 		$this->enabled[ $module_id ] = true;

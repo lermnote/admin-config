@@ -114,7 +114,10 @@ final class PageSchemaTest extends TestCase {
 
 		$this->assertCount( 1, $fields );
 		$this->assertSame( 'valid_field', $fields[0]['id'] );
-		$this->assertCount( 1, $GLOBALS['lerm_admin_config_doing_it_wrong'] ?? array() );
+
+		// Each invalid entry reports its own notice; WordPress dedupes
+		// repeated messages per session at runtime.
+		$this->assertCount( 2, $GLOBALS['lerm_admin_config_doing_it_wrong'] ?? array() );
 		$this->assertStringContains(
 			'must be arrays with a non-empty "id"',
 			(string) ( $GLOBALS['lerm_admin_config_doing_it_wrong'][0]['message'] ?? '' )

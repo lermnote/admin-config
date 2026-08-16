@@ -48,6 +48,10 @@ final class DesignFieldTypes {
 				self::render_dimensions_field( $field, $value, $field_name, $input_id, $name_template, $id_template );
 			},
 			'sanitize'      => static function ( array $field, $value, bool $strict, OptionStore $store ) {
+				// Design sanitizers validate against their fixed internal shape,
+				// not schema choices, so strict mode does not apply.
+				unset( $strict, $store );
+
 				return self::sanitize_dimensions_value( $field, $value );
 			},
 			'client'        => array(
@@ -69,6 +73,10 @@ final class DesignFieldTypes {
 				self::render_spacing_field( $field, $value, $field_name, $input_id, $name_template, $id_template );
 			},
 			'sanitize'      => static function ( array $field, $value, bool $strict, OptionStore $store ) {
+				// Design sanitizers validate against their fixed internal shape,
+				// not schema choices, so strict mode does not apply.
+				unset( $strict, $store );
+
 				return self::sanitize_spacing_value( $field, $value );
 			},
 			'client'        => array(
@@ -90,6 +98,10 @@ final class DesignFieldTypes {
 				self::render_border_field( $field, $value, $field_name, $input_id, $name_template, $id_template );
 			},
 			'sanitize'      => static function ( array $field, $value, bool $strict, OptionStore $store ) {
+				// Design sanitizers validate against their fixed internal shape,
+				// not schema choices, so strict mode does not apply.
+				unset( $strict, $store );
+
 				return self::sanitize_border_value( $field, $value );
 			},
 			'client'        => array(
@@ -111,6 +123,10 @@ final class DesignFieldTypes {
 				self::render_link_color_field( $field, $value, $field_name, $input_id, $name_template, $id_template );
 			},
 			'sanitize'      => static function ( array $field, $value, bool $strict, OptionStore $store ) {
+				// Design sanitizers validate against their fixed internal shape,
+				// not schema choices, so strict mode does not apply.
+				unset( $strict, $store );
+
 				return self::sanitize_link_color_value( $field, $value );
 			},
 			'client'        => array(
@@ -136,6 +152,10 @@ final class DesignFieldTypes {
 				self::render_background_field( $field, $value, $field_name, $input_id, $name_template, $id_template );
 			},
 			'sanitize'      => static function ( array $field, $value, bool $strict, OptionStore $store ) {
+				// Design sanitizers validate against their fixed internal shape,
+				// not schema choices, so strict mode does not apply.
+				unset( $strict, $store );
+
 				return self::sanitize_background_value( $field, $value );
 			},
 			'client'        => array(

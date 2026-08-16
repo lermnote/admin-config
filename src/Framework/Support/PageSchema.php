@@ -66,7 +66,7 @@ final class PageSchema {
 				$field_id = (string) $field['id'];
 
 				if ( isset( $seen[ $field_id ] ) ) {
-					if ( defined( 'WP_DEBUG' ) ? (bool) constant( 'WP_DEBUG' ) : false ) {
+					if ( WpDebug::enabled() ) {
 						_doing_it_wrong(
 							__METHOD__,
 							sprintf(
@@ -243,8 +243,6 @@ final class PageSchema {
 	 * @return array<int, array<string, mixed>>
 	 */
 	private static function normalize_fields_list( $fields ): array {
-		static $reported_invalid_field_definition = false;
-
 		if ( ! is_array( $fields ) ) {
 			return array();
 		}
@@ -257,13 +255,13 @@ final class PageSchema {
 				continue;
 			}
 
-			if ( ( defined( 'WP_DEBUG' ) ? (bool) constant( 'WP_DEBUG' ) : false ) && ! $reported_invalid_field_definition ) {
+			if ( WpDebug::enabled() ) {
+				// WordPress dedupes repeated _doing_it_wrong messages per session.
 				_doing_it_wrong(
 					__METHOD__,
 					'Admin Config field definitions must be arrays with a non-empty "id". Invalid entries are ignored.',
 					'0.2.0'
 				);
-				$reported_invalid_field_definition = true;
 			}
 		}
 

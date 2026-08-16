@@ -366,7 +366,7 @@ final class OptionStore {
 					$value = $default;
 				}
 			} else {
-				$value = sanitize_text_field( $this->string_value( $value ) );
+				$value = sanitize_text_field( PageSchema::scalar_value( $value ) );
 			}
 
 			$value = $this->validate_field_value( $field, $value, $strict );
@@ -602,19 +602,6 @@ final class OptionStore {
 		}
 
 		return array();
-	}
-
-	/**
-	 * Safely normalize scalar-like values to strings.
-	 *
-	 * Avoids PHP "Array to string conversion" warnings when imported payloads or
-	 * malformed requests send array/object values into scalar fields.
-	 *
-	 * @param mixed  $value Submitted or stored value.
-	 * @param string $fallback Fallback value.
-	 */
-	private function string_value( $value, string $fallback = '', bool $trim = false ): string {
-		return PageSchema::scalar_value( $value, $fallback, $trim );
 	}
 
 	/**

@@ -305,8 +305,13 @@ let confirmDialog;
 
 	// ─── Field Name Helpers ───────────────────────────────────────────────────
 
-	/** @param {HTMLFormElement} form */
-	const getOptionName = (form) => getData(form, 'option-name') || 'options_framework';
+	/**
+	 * The form always renders data-option-name server-side; the attribute is
+	 * the single source of truth (no hardcoded default key to drift).
+	 *
+	 * @param {HTMLFormElement} form
+	 */
+	const getOptionName = (form) => getData(form, 'option-name');
 
 	/**
 	 * @param {HTMLFormElement} form

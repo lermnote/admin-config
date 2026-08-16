@@ -951,9 +951,37 @@ if ( ! function_exists( 'do_action' ) ) {
 			return;
 		}
 
-		foreach ( $GLOBALS['lerm_admin_config_actions'][ $hook ] as $listener ) {
-			call_user_func_array( $listener['callback'], $args );
+		// Mirror WordPress: listeners run in priority order and receive
+		// at most their declared accepted_args count.
+		$listeners = $GLOBALS['lerm_admin_config_actions'][ $hook ];
+
+		usort(
+			$listeners,
+			static fn ( array $a, array $b ): int => ( $a['priority'] ?? 10 ) <=> ( $b['priority'] ?? 10 )
+		);
+
+		foreach ( $listeners as $listener ) {
+			$accepted_args = (int) ( $listener['accepted_args'] ?? 1 );
+			$action_args   = array_slice( $args, 0, max( 1, $accepted_args ) );
+			call_user_func_array( $listener['callback'], $action_args );
 		}
+	}
+}
+
+if ( ! function_exists( 'add_submenu_page' ) ) {
+	function add_submenu_page( string $parent_slug, string $page_title, string $menu_title, string $capability, string $menu_slug, callable $callback = null, int $position = null ): string {
+		unset( $position );
+
+		$GLOBALS['lerm_admin_config_submenu_pages'][] = array(
+			'parent_slug' => $parent_slug,
+			'page_title'  => $page_title,
+			'menu_title'  => $menu_title,
+			'capability'  => $capability,
+			'menu_slug'   => $menu_slug,
+			'callback'    => $callback,
+		);
+
+		return $menu_slug;
 	}
 }
 

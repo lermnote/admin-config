@@ -41,7 +41,7 @@ Field type definitions can provide:
 - `client`
 - `persist`
 
-Field registrations are merged by default, so later calls can extend an existing type with extra validators or client metadata. Use `replace => true` to replace a custom type definition, or `override_builtin => true` to intentionally replace a built-in type.
+Field registrations are merged by default, so later calls can extend an existing type with extra validators or client metadata.
 
 Field-type `client` metadata is merged into each compiled field payload before
 field-level `client` overrides are applied. Use this for reusable protocol hints
@@ -184,15 +184,14 @@ Custom containers can be registered through `register_container()`. The runtime 
 ## Field modules
 
 `field_modules()` returns the module registry used by the runtime. Besides
-automatic activation through `enable_for_definition()`, the public registry now
-also exposes:
+automatic activation through `enable_for_definition()`, the public registry also
+exposes:
 
 - `field_types_for_definition( array $definition )`
 - `modules_for_definition( array $definition )`
 - `module_for_field_type( string $field_type )`
 - `modules_for_field_types( array $field_types )`
 - `enable_for_field_types( array $field_types )`
-- `enable_all()`
 
 That matters when field types are assembled dynamically outside the schema array
 available at registration time. In those cases, pre-enable the needed modules
@@ -202,12 +201,6 @@ before you register or render the schema:
 $runtime->field_modules()->enable_for_field_types(
 	array( 'typography', 'icon', 'accordion' )
 );
-```
-
-Or, when a host intentionally wants every bundled field module available:
-
-```php
-$runtime->field_modules()->enable_all();
 ```
 
 ## Examples

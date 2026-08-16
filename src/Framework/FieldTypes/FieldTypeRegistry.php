@@ -52,7 +52,6 @@ final class FieldTypeRegistry {
 				'serialize'          => null,
 				'client'             => array(),
 				'persist'            => true,
-				'builtin'            => false,
 			)
 		);
 	}
