@@ -23,6 +23,20 @@ const createAdminConfigTransport = ({ getConfig, getData }) => {
 	const restClient = createAdminConfigRestClient({ getConfig: cfg });
 
 	/**
+	 * Maps transport endpoint names to the REST routes registered by
+	 * RestEndpoints. Unknown endpoints pass through unchanged.
+	 *
+	 * @type {Record<string, string>}
+	 */
+	const REST_ROUTE_FOR_ENDPOINT = {
+		save: 'values',
+		reset: 'reset',
+		import: 'import',
+		export: 'export',
+		'data-source': 'data-source',
+	};
+
+	/**
 	 * @param {HTMLFormElement|null} form
 	 * @param {string} endpoint
 	 * @returns {string}
@@ -30,7 +44,7 @@ const createAdminConfigTransport = ({ getConfig, getData }) => {
 	const restActionPath = (form, endpoint) => {
 		const schemaId = form ? getData(form, 'schema-id') : '';
 		const normalizedEndpoint = String(endpoint || '').replace(/^\/+|\/+$/g, '');
-		const routeEndpoint = normalizedEndpoint === 'save' ? 'values' : normalizedEndpoint;
+		const routeEndpoint = REST_ROUTE_FOR_ENDPOINT[normalizedEndpoint] || normalizedEndpoint;
 
 		return schemaId && routeEndpoint ? `schemas/${schemaId}/${routeEndpoint}` : '';
 	};

@@ -180,7 +180,8 @@ final class Framework implements FrameworkContract {
 	private function cache_key( array $definition, ?StorageBackend $backend = null ): string {
 		$page_id = $this->page_id( $definition );
 
-		return null !== $backend ? $page_id . '_' . $backend->key() : $page_id;
+		// '|' cannot appear in sanitize_key() output, so the separator is unambiguous.
+		return null !== $backend ? $page_id . '|' . $backend->key() : $page_id;
 	}
 
 	/**

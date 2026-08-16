@@ -11,6 +11,7 @@ namespace Lerm\AdminConfig\Registry;
 
 use InvalidArgumentException;
 use Lerm\AdminConfig\Compiler\CompiledSchema;
+use Lerm\AdminConfig\Framework\Support\WpDebug;
 use Lerm\AdminConfig\Compiler\SchemaCompiler;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -34,7 +35,7 @@ final class SchemaRegistry {
 		$compiled = $this->compiler->compile( $schema );
 
 		if ( isset( $this->schemas[ $compiled->id() ] ) ) {
-			if ( defined( 'WP_DEBUG' ) ? (bool) constant( 'WP_DEBUG' ) : false ) {
+			if ( WpDebug::enabled() ) {
 				_doing_it_wrong(
 					__METHOD__,
 					sprintf(

@@ -189,7 +189,7 @@ final class OptionsPage {
 	/**
 	 * Delegates to OptionsPageLifecycle for external callers.
 	 *
-	 * @deprecated 0.5.0 Use the lifecycle instance instead.
+	 * @deprecated 0.5.0 Use the lifecycle instance instead. Remove in 1.0.0.
 	 */
 	public function enqueue_support_assets( string $handle_suffix = '' ): void {
 		_deprecated_function( __METHOD__, '0.5.0', 'OptionsPageLifecycle::enqueue_support_assets' );
@@ -209,10 +209,7 @@ final class OptionsPage {
 		$current_tab    = $this->submission->current_tab();
 		$values         = $this->store->all();
 		$flash          = ValidationFlash::consume( 'options_page', $this->schema_id(), $this->submission->flash_resource_key() );
-		$render_control = function ( array $f, array $ctx, array $errs ): void {
-			/** @var array{field_id: string, field_type: string, field_name: string, field_value: mixed} $ctx */
-			$this->render_field_control( $f, $ctx, $errs );
-		};
+		$render_control = $this->field_control_renderer();
 		?>
 		<div class="wrap lerm-settings-wrap">
 			<div class="lerm-settings-shell">
@@ -462,7 +459,7 @@ final class OptionsPage {
 	/**
 	 * Delegates to ContainerFieldRenderer for test backward-compatibility.
 	 *
-	 * @deprecated 0.5.0 Use container_field_renderer()->render_field() instead.
+	 * @deprecated 0.5.0 Use container_field_renderer()->render_field() instead. Remove in 1.0.0.
 	 *
 	 * @param array<string, mixed> $field      Field definition.
 	 * @param array<string, mixed> $values     Saved values.
@@ -481,7 +478,7 @@ final class OptionsPage {
 	/**
 	 * Delegates to ContainerFieldRenderer for external containers.
 	 *
-	 * @deprecated 0.5.0 Use container_field_renderer()->render_fields() instead.
+	 * @deprecated 0.5.0 Use container_field_renderer()->render_fields() instead. Remove in 1.0.0.
 	 *
 	 * @param array<int, array<string, mixed>> $fields     Field definitions.
 	 * @param array<string, mixed>             $values     Saved values.
