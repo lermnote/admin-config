@@ -104,7 +104,8 @@ class MetaBackend implements StorageBackend {
 			return is_string( $stored_json ) && $stored_json === $data_json;
 		}
 
-		return $result;
+		// The meta update functions return the meta id (int) on success.
+		return true;
 	}
 
 	public function key(): string {
