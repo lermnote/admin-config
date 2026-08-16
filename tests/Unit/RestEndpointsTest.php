@@ -79,7 +79,6 @@ final class RestEndpointsTest extends TestCase {
 		$this->assertSame( 'general', $data['fields']['site_title']['section'] );
 		$this->assertSame( 'general', $data['fields']['site_title']['group'] );
 		$this->assertFalse( $data['fields']['site_title']['readOnly'] );
-		$this->assertTrue( $data['fields']['site_title']['supported'] );
 		$this->assertSame( 'campaigns', $data['fields']['campaign']['source'] );
 		$this->assertFalse( $data['fields']['campaign']['readOnly'] );
 		$this->assertSame( 2, $data['fields']['campaign']['min_search_length'] );

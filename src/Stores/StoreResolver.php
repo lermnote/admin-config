@@ -54,7 +54,7 @@ final class StoreResolver {
 		);
 	}
 
-	public function resolve_backend( CompiledSchema $schema, array $context = array() ): ?StorageBackend {
+	public function resolve_backend( CompiledSchema $schema, array $context = array() ): StorageBackend {
 		$store = $schema->store();
 		$type  = sanitize_key( (string) ( $store['type'] ?? 'option' ) );
 		$key   = sanitize_key( (string) ( $store['key'] ?? $schema->id() ) );

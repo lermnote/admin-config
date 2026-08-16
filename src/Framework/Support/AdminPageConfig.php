@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-final class I18nStrings {
+final class AdminPageConfig {
 
 	/**
 	 * Returns runtime config for the admin page JS.

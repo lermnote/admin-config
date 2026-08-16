@@ -339,10 +339,6 @@ const fieldValue = (values, fieldId, fallback = '') => (
  * @returns {'editable'|'read-only'|'unsupported'}
  */
 const fieldControlStatus = (field, controlType, control) => {
-	if (field.supported === false) {
-		return 'unsupported';
-	}
-
 	if (field.readOnly === true) {
 		return 'read-only';
 	}
