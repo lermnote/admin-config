@@ -108,7 +108,7 @@ final class BuiltinFieldTypes {
 				);
 			},
 			'sanitize'      => static function ( array $field, $value, bool $strict, OptionStore $store ) {
-				return esc_url_raw( PageSchema::scalar_value( $value, '', true ) );
+				return FieldValueHelper::sanitize_url_value( $value );
 			},
 			'client'        => array(
 				'control' => 'url',
@@ -210,10 +210,20 @@ final class BuiltinFieldTypes {
 				);
 			},
 			'sanitize'      => static function ( array $field, $value, bool $strict, OptionStore $store ) {
-				$default = is_scalar( $field['default'] ?? null ) ? (string) $field['default'] : '';
-				$color   = sanitize_hex_color( PageSchema::scalar_value( $value ) );
+				$color = sanitize_hex_color( PageSchema::scalar_value( $value ) );
 
-				return $color ? $color : $default;
+				// An explicit empty submission clears the field; a missing key
+				// (null from import) falls back to the schema default.
+				if ( '' === $color && null === $value ) {
+					$default = is_scalar( $field['default'] ?? null ) ? (string) $field['default'] : '';
+					$color   = sanitize_hex_color( $default );
+
+					if ( ! $color ) {
+						$color = '';
+					}
+				}
+
+				return $color;
 			},
 			'client'        => array(
 				'control' => 'color',
@@ -233,7 +243,7 @@ final class BuiltinFieldTypes {
 					$value,
 					$field_name,
 					(string) $field['id'],
-					' data-lerm-controller="1"'
+					$page->dependency_controller_attribute( $field )
 				);
 			},
 			'render_nested' => static function ( array $field, $value, string $field_name, string $input_id, OptionsPage $page, string $name_template = '', string $id_template = '' ): void {
@@ -263,7 +273,7 @@ final class BuiltinFieldTypes {
 	private static function choice_definition( string $type ): array {
 		return array(
 			'render'        => static function ( array $field, $value, string $field_name, OptionsPage $page ) use ( $type ): void {
-				self::render_choice_group( $field, $value, $field_name, true, '', '', $type );
+				self::render_choice_group( $field, $value, $field_name, true, '', $page->dependency_controller_attribute( $field ), $type );
 			},
 			'render_nested' => static function ( array $field, $value, string $field_name, string $input_id, OptionsPage $page, string $name_template = '', string $id_template = '' ) use ( $type ): void {
 				self::render_choice_group( $field, $value, $field_name, false, FieldRenderHelpers::name_attr( $name_template ), FieldRenderHelpers::id_attr( $id_template ), $type );
@@ -284,7 +294,7 @@ final class BuiltinFieldTypes {
 	private static function select_definition(): array {
 		return array(
 			'render'             => static function ( array $field, $value, string $field_name, OptionsPage $page ): void {
-				self::render_select( $field, $value, $field_name, (string) $field['id'], true );
+				self::render_select( $field, $value, $field_name, (string) $field['id'], true, '', '', $page->dependency_controller_attribute( $field ) );
 			},
 			'render_nested'      => static function ( array $field, $value, string $field_name, string $input_id, OptionsPage $page, string $name_template = '', string $id_template = '' ): void {
 				self::render_select( $field, $value, $field_name, $input_id, false, $name_template, $id_template );
@@ -413,7 +423,7 @@ final class BuiltinFieldTypes {
 	/**
 	 * @param mixed $value
 	 */
-	private static function render_choice_group( array $field, $value, string $field_name, bool $is_root, string $name_attr = '', string $id_attr = '', string $type = 'radio' ): void {
+	private static function render_choice_group( array $field, $value, string $field_name, bool $is_root, string $name_attr = '', string $extra_attrs = '', string $type = 'radio' ): void {
 		$choices = PageSchema::choices( $field );
 		$current = is_scalar( $value ) ? (string) $value : '';
 		$class   = 'button_set' === $type ? 'lerm-button-set' : 'lerm-radio-list';
@@ -431,7 +441,7 @@ final class BuiltinFieldTypes {
 				esc_attr( $choice_value ),
 				checked( $current, (string) $choice_value, false ),
 				$name_attr,
-				$is_root ? ' data-lerm-controller="1"' : $id_attr,
+				$extra_attrs,
 				esc_html( $choice_label )
 			);
 		}
@@ -442,7 +452,7 @@ final class BuiltinFieldTypes {
 	/**
 	 * @param mixed $value
 	 */
-	private static function render_select( array $field, $value, string $field_name, string $input_id, bool $is_root, string $name_template = '', string $id_template = '' ): void {
+	private static function render_select( array $field, $value, string $field_name, string $input_id, bool $is_root, string $name_template = '', string $id_template = '', string $root_attrs = '' ): void {
 		$choices          = PageSchema::choices( $field );
 		$multiple         = ! empty( $field['multiple'] );
 		$current          = $multiple && is_array( $value ) ? array_map( 'strval', $value ) : array();
@@ -458,7 +468,7 @@ final class BuiltinFieldTypes {
 			$multiple ? ' multiple="multiple"' : '',
 			$multiple ? ' size="' . esc_attr( (string) min( max( count( $choices ), 4 ), 10 ) ) . '"' : '',
 			$select_name_attr,
-			$is_root ? ' data-lerm-controller="1"' : FieldRenderHelpers::id_attr( $id_template )
+			$is_root ? $root_attrs : FieldRenderHelpers::id_attr( $id_template )
 		);
 
 		foreach ( $choices as $choice_value => $choice_label ) {

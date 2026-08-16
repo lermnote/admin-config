@@ -25,23 +25,7 @@ final class EmbeddedBootstrap {
 			)
 		);
 
-		$boot_runtime = static function () use ( $runtime, $registrar ): void {
-			if ( is_callable( $registrar ) ) {
-				call_user_func( $registrar, $runtime );
-			}
-
-			if ( is_admin() ) {
-				$runtime->boot();
-			}
-
-			do_action( 'lerm_admin_config_booted', $runtime, 'embedded' );
-		};
-
-		if ( function_exists( 'did_action' ) && 0 === did_action( 'init' ) ) {
-			add_action( 'init', $boot_runtime, 0 );
-		} else {
-			$boot_runtime();
-		}
+		RuntimeBootstrapper::schedule( $runtime, $registrar, 'embedded' );
 
 		return $runtime;
 	}

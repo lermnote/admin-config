@@ -34,16 +34,29 @@ final class AsyncFieldTypes {
 	 */
 	private static function ajax_select_definition(): array {
 		return array(
-			'render'        => static function ( array $field, $value, string $field_name, OptionsPage $page ): void {
+			'render'             => static function ( array $field, $value, string $field_name, OptionsPage $page ): void {
 				self::render_ajax_select( $field, $value, $field_name, (string) ( $field['id'] ?? '' ), $page );
 			},
-			'render_nested' => static function ( array $field, $value, string $field_name, string $input_id, OptionsPage $page, string $name_template = '', string $id_template = '' ): void {
+			'render_nested'      => static function ( array $field, $value, string $field_name, string $input_id, OptionsPage $page, string $name_template = '', string $id_template = '' ): void {
 				self::render_ajax_select( $field, $value, $field_name, $input_id, $page, $name_template, $id_template );
 			},
-			'sanitize'      => static function ( array $field, $value, bool $strict, OptionStore $store ) {
+			'sanitize'           => static function ( array $field, $value, bool $strict, OptionStore $store ) {
 				return self::sanitize_ajax_select_value( $field, $value );
 			},
-			'client'        => array(
+			'missing_submission' => static function ( array $field ): array {
+				if ( empty( $field['multiple'] ) ) {
+					return array(
+						'apply' => false,
+						'value' => null,
+					);
+				}
+
+				return array(
+					'apply' => true,
+					'value' => array(),
+				);
+			},
+			'client'             => array(
 				'control' => 'ajax_select',
 				'nested'  => true,
 				'async'   => true,
@@ -161,29 +174,7 @@ final class AsyncFieldTypes {
 	 * @return array<int, string|int|float>
 	 */
 	private static function normalize_selected_values( array $field, $value ): array {
-		$multiple = ! empty( $field['multiple'] );
-		$cast     = (string) ( $field['cast'] ?? '' );
-
-		if ( $multiple ) {
-			$values = is_array( $value ) ? $value : array();
-			$clean  = array();
-
-			foreach ( $values as $item ) {
-				$item = PageSchema::scalar_value( $item, '', true );
-
-				if ( '' === $item ) {
-					continue;
-				}
-
-				$clean[] = FieldValueHelper::cast_scalar_value( $item, $cast );
-			}
-
-			return array_values( array_unique( $clean, SORT_REGULAR ) );
-		}
-
-		$item = PageSchema::scalar_value( $value, '', true );
-
-		return '' === $item ? array() : array( FieldValueHelper::cast_scalar_value( $item, $cast ) );
+		return self::cast_selected_values( ! empty( $field['multiple'] ), (string) ( $field['cast'] ?? '' ), $value );
 	}
 
 	/**
@@ -192,25 +183,38 @@ final class AsyncFieldTypes {
 	 */
 	private static function sanitize_ajax_select_value( array $field, $value ) {
 		$multiple = ! empty( $field['multiple'] );
-		$cast     = (string) ( $field['cast'] ?? '' );
 
 		if ( $multiple ) {
-			$values = is_array( $value ) ? $value : array();
-			$clean  = array();
-
-			foreach ( $values as $item ) {
-				$item = PageSchema::scalar_value( $item, '', true );
-
-				if ( '' === $item ) {
-					continue;
-				}
-
-				$clean[] = FieldValueHelper::cast_scalar_value( $item, $cast );
-			}
-
-			return array_values( array_unique( $clean, SORT_REGULAR ) );
+			return self::cast_selected_values( true, (string) ( $field['cast'] ?? '' ), $value );
 		}
 
-		return FieldValueHelper::cast_scalar_value( PageSchema::scalar_value( $value, '', true ), $cast );
+		return FieldValueHelper::cast_scalar_value( PageSchema::scalar_value( $value, '', true ), (string) ( $field['cast'] ?? '' ) );
+	}
+
+	/**
+	 * @param mixed $value
+	 * @return array<int, string|int|float>
+	 */
+	private static function cast_selected_values( bool $multiple, string $cast, $value ): array {
+		if ( ! $multiple ) {
+			$item = PageSchema::scalar_value( $value, '', true );
+
+			return '' === $item ? array() : array( FieldValueHelper::cast_scalar_value( $item, $cast ) );
+		}
+
+		$values = is_array( $value ) ? $value : array();
+		$clean  = array();
+
+		foreach ( $values as $item ) {
+			$item = PageSchema::scalar_value( $item, '', true );
+
+			if ( '' === $item ) {
+				continue;
+			}
+
+			$clean[] = FieldValueHelper::cast_scalar_value( $item, $cast );
+		}
+
+		return array_values( array_unique( $clean, SORT_REGULAR ) );
 	}
 }

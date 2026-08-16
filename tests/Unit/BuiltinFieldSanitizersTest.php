@@ -16,6 +16,22 @@ use Lerm\AdminConfig\Tests\Support\TestCase;
 
 final class BuiltinFieldSanitizersTest extends TestCase {
 
+	public function testColorSanitizerKeepsEmptyValueEmpty(): void {
+		$store = $this->store();
+
+		$this->assertSame(
+			'',
+			$store->sanitize_field(
+				array(
+					'id'      => 'accent',
+					'type'    => 'color',
+					'default' => '#2271b1',
+				),
+				''
+			)
+		);
+	}
+
 	public function testSelectSanitizerUsesFieldDefinitionForMultipleChoices(): void {
 		$store = $this->store();
 		$field = array(

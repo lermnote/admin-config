@@ -11,14 +11,12 @@ namespace Lerm\AdminConfig\WordPress\Containers;
 
 use Lerm\AdminConfig\Compiler\CompiledSchema;
 use Lerm\AdminConfig\Contracts\Container;
-use Lerm\AdminConfig\Stores\StoreResolver;
 use Lerm\AdminConfig\Framework\Admin\OptionsPage;
 use Lerm\AdminConfig\Framework\Backends\ArrayBackend;
-use Lerm\AdminConfig\Framework\Framework;
 use Lerm\AdminConfig\Framework\Storage\OptionStore;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
 use Lerm\AdminConfig\WordPress\Support\ContainerSaveSupport;
-use Lerm\AdminConfig\WordPress\Support\ValidationFlash;
+use Lerm\AdminConfig\WordPress\Support\EntityContainerSupport;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -26,10 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class TaxonomyContainer implements Container {
 
-	/**
-	 * @var array<string, CompiledSchema>
-	 */
-	private array $schemas = array();
+	use EntityContainerSupport;
 
 	/**
 	 * @var array<string, bool>
@@ -37,12 +32,6 @@ final class TaxonomyContainer implements Container {
 	private array $taxonomy_hooks_registered = array();
 
 	private bool $assets_hook_registered = false;
-
-	public function __construct(
-		private Framework $framework,
-		private StoreResolver $stores
-	) {
-	}
 
 	public function type(): string {
 		return 'taxonomy';
@@ -123,16 +112,13 @@ final class TaxonomyContainer implements Container {
 			);
 			$renderer = $this->renderer( $schema, $store );
 			$sections = PageSchema::sections( $schema->definition() );
-			$flash    = ValidationFlash::consume( 'taxonomy', $schema->id(), $this->add_flash_resource( $taxonomy ) );
-			$values   = ValidationFlash::render_values( $store->all(), $flash, $schema->definition(), $this->framework->field_types() );
-			$errors   = ValidationFlash::field_errors( $flash );
-			$notice   = ValidationFlash::notice( $flash );
+			$flash    = $this->consume_flash( 'taxonomy', $schema, $this->add_flash_resource( $taxonomy ), $store );
 
-			if ( null !== $notice ) {
+			if ( null !== $flash['notice'] ) {
 				printf(
 					'<div class="form-field term-admin-config-notice"><div class="notice %1$s inline"><p>%2$s</p></div></div>',
-					esc_attr( $notice['class'] ),
-					esc_html( $notice['message'] )
+					esc_attr( $flash['notice']['class'] ),
+					esc_html( $flash['notice']['message'] )
 				);
 			}
 
@@ -144,12 +130,12 @@ final class TaxonomyContainer implements Container {
 
 				foreach ( PageSchema::section_fields( $section ) as $field ) {
 					echo '<div class="form-field term-admin-config-field">';
-					$renderer->container_field_renderer()->render_field( $field, $values, $renderer->field_control_renderer(), 'stack', $errors );
+					$renderer->container_field_renderer()->render_field( $field, $flash['values'], $renderer->field_control_renderer(), 'stack', $flash['errors'] );
 					echo '</div>';
 				}
 			}
 
-			wp_nonce_field( ContainerSaveSupport::nonce_action( 'taxonomy', $schema ), ContainerSaveSupport::nonce_name( 'taxonomy', $schema ) );
+			$this->nonce_field( 'taxonomy', $schema );
 		}
 	}
 
@@ -158,16 +144,13 @@ final class TaxonomyContainer implements Container {
 			$store    = $this->stores->store( $schema, array( 'term_id' => $term->term_id ) );
 			$renderer = $this->renderer( $schema, $store );
 			$sections = PageSchema::sections( $schema->definition() );
-			$flash    = ValidationFlash::consume( 'taxonomy', $schema->id(), $this->edit_flash_resource( $term->term_id ) );
-			$values   = ValidationFlash::render_values( $store->all(), $flash, $schema->definition(), $this->framework->field_types() );
-			$errors   = ValidationFlash::field_errors( $flash );
-			$notice   = ValidationFlash::notice( $flash );
+			$flash    = $this->consume_flash( 'taxonomy', $schema, $this->edit_flash_resource( $term->term_id ), $store );
 
-			if ( null !== $notice ) {
+			if ( null !== $flash['notice'] ) {
 				printf(
 					'<tr class="form-field term-admin-config-notice"><td colspan="2"><div class="notice %1$s inline"><p>%2$s</p></div></td></tr>',
-					esc_attr( $notice['class'] ),
-					esc_html( $notice['message'] )
+					esc_attr( $flash['notice']['class'] ),
+					esc_html( $flash['notice']['message'] )
 				);
 			}
 
@@ -182,12 +165,12 @@ final class TaxonomyContainer implements Container {
 
 				$renderer->container_field_renderer()->render_fields(
 					PageSchema::section_fields( $section ),
-					$values,
+					$flash['values'],
 					$renderer->field_control_renderer(),
 					(string) $section_id,
 					false,
 					'table',
-					$errors
+					$flash['errors']
 				);
 			}
 

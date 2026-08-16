@@ -37,20 +37,20 @@ final class RestEndpointsTest extends TestCase {
 		$this->assertContains( 'lerm-admin-config/v1/schemas/(?P<id>[a-z0-9_-]+)/data-source', $routes );
 	}
 
-	public function testSchemaEndpointReturnsClientConfigAndValues(): void {
+	public function testSchemaDocumentAndValuesEndpointsReturnClientConfigAndStoredValues(): void {
 		$runtime = $this->runtime_with_schema();
 
 		$GLOBALS['lerm_admin_config_options']['rest_test_settings'] = array(
 			'site_title' => 'Stored title',
 		);
 
-		$response = ( new SchemaController( $runtime ) )->schema( $this->request( array( 'id' => 'rest_test' ) ) );
+		$document = ( new SchemaController( $runtime ) )->schema_document( $this->request( array( 'id' => 'rest_test' ) ) );
+		$values   = ( new SchemaController( $runtime ) )->values( $this->request( array( 'id' => 'rest_test' ) ) );
 
-		$this->assertInstanceOf( \WP_REST_Response::class, $response );
-		$data = $response->get_data();
-
-		$this->assertSame( 'rest_test', $data['schema']['schemaId'] );
-		$this->assertSame( 'Stored title', $data['values']['site_title'] );
+		$this->assertInstanceOf( \WP_REST_Response::class, $document );
+		$this->assertInstanceOf( \WP_REST_Response::class, $values );
+		$this->assertSame( 'rest_test', $document->get_data()['data']['schemaId'] );
+		$this->assertSame( 'Stored title', $values->get_data()['data']['values']['site_title'] );
 	}
 
 	public function testCanonicalSchemaEndpointReturnsProtocolDocument(): void {
@@ -154,7 +154,7 @@ final class RestEndpointsTest extends TestCase {
 		$this->assertTrue( $schemas[0]['actions']['edit'] );
 	}
 
-	public function testSchemaEndpointDoesNotExposeServerCapabilitiesToClient(): void {
+	public function testSchemaDocumentEndpointDoesNotExposeServerCapabilitiesToClient(): void {
 		$runtime = $this->runtime();
 		$runtime->register(
 			array(
@@ -182,11 +182,11 @@ final class RestEndpointsTest extends TestCase {
 			)
 		);
 
-		$response = ( new SchemaController( $runtime ) )->schema( $this->request( array( 'id' => 'private_rest_test' ) ) );
+		$response = ( new SchemaController( $runtime ) )->schema_document( $this->request( array( 'id' => 'private_rest_test' ) ) );
 
 		$this->assertInstanceOf( \WP_REST_Response::class, $response );
 
-		$schema = $response->get_data()['schema'];
+		$schema = $response->get_data()['data'];
 
 		$this->assertArrayNotHasKey( 'capability', $schema['container'] );
 		$this->assertArrayNotHasKey( 'capability', $schema['fields']['secret_title'] );
@@ -504,16 +504,6 @@ final class RestEndpointsTest extends TestCase {
 		$this->assertStringContainsString( 'requires one of', $response->get_error_data()['data']['message'] );
 	}
 
-	public function testSchemaEndpointReturnsMissingContextForObjectBackedStore(): void {
-		$response = ( new SchemaController( $this->runtime_with_meta_schema() ) )->schema(
-			$this->request( array( 'id' => 'rest_meta' ) )
-		);
-
-		$this->assertInstanceOf( \WP_Error::class, $response );
-		$this->assertSame( 'missing_store_context', $response->get_error_code() );
-		$this->assertSame( 400, $response->get_error_data()['status'] );
-	}
-
 	public function testValuesEndpointReturnsMissingContextForObjectBackedStore(): void {
 		$response = ( new SchemaController( $this->runtime_with_meta_schema() ) )->values(
 			$this->request( array( 'id' => 'rest_meta' ) )
@@ -795,7 +785,7 @@ final class RestEndpointsTest extends TestCase {
 	}
 
 	public function testMissingSchemaReturnsRestError(): void {
-		$response = ( new SchemaController( $this->runtime() ) )->schema( $this->request( array( 'id' => 'missing' ) ) );
+		$response = ( new SchemaController( $this->runtime() ) )->schema_document( $this->request( array( 'id' => 'missing' ) ) );
 
 		$this->assertInstanceOf( \WP_Error::class, $response );
 		$this->assertSame( 'schema_not_found', $response->get_error_code() );

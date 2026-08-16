@@ -23,6 +23,22 @@ if ( ! defined( 'MINUTE_IN_SECONDS' ) ) {
 	define( 'MINUTE_IN_SECONDS', 60 );
 }
 
+/**
+ * Thrown by the wp_safe_redirect() stub to unwind before the caller's exit().
+ */
+if ( ! class_exists( 'LermAdminConfigRedirectIntercepted' ) ) {
+	class LermAdminConfigRedirectIntercepted extends Exception {
+	}
+}
+
+/**
+ * Thrown by the wp_die() stub to unwind before the caller's exit().
+ */
+if ( ! class_exists( 'LermAdminConfigWpDieIntercepted' ) ) {
+	class LermAdminConfigWpDieIntercepted extends Exception {
+	}
+}
+
 if ( ! class_exists( 'WP_Error' ) ) {
 	class WP_Error {
 
@@ -538,9 +554,12 @@ if ( ! function_exists( 'get_user_meta' ) ) {
 
 if ( ! function_exists( 'update_user_meta' ) ) {
 	function update_user_meta( int $user_id, string $key, $value ): bool {
+		$previous = $GLOBALS['lerm_admin_config_user_meta'][ $user_id ][ $key ] ?? null;
+
 		$GLOBALS['lerm_admin_config_user_meta'][ $user_id ][ $key ] = $value;
 
-		return true;
+		// Mirrors WordPress: false when the stored value is unchanged.
+		return $previous !== $value;
 	}
 }
 
@@ -684,6 +703,84 @@ if ( ! function_exists( 'wp_parse_args' ) ) {
 if ( ! function_exists( 'wp_unslash' ) ) {
 	function wp_unslash( $value ) {
 		return $value;
+	}
+}
+
+if ( ! function_exists( 'add_query_arg' ) ) {
+	function add_query_arg( ...$args ): string {
+		if ( is_array( $args[0] ?? null ) ) {
+			$pairs = $args[0];
+			$url   = (string) ( $args[1] ?? '' );
+		} else {
+			$pairs = array( (string) ( $args[0] ?? '' ) => (string) ( $args[1] ?? '' ) );
+			$url   = (string) ( $args[2] ?? '' );
+		}
+
+		$query = http_build_query( $pairs, '', '&', PHP_QUERY_RFC3986 );
+
+		if ( '' === $query ) {
+			return $url;
+		}
+
+		return $url . ( false === strpos( $url, '?' ) ? '?' : '&' ) . $query;
+	}
+}
+
+if ( ! function_exists( 'check_admin_referer' ) ) {
+	function check_admin_referer( string $action, string $query_arg = '_wpnonce' ): void {
+		unset( $query_arg );
+
+		$GLOBALS['lerm_admin_config_checked_referers'][] = $action;
+	}
+}
+
+if ( ! function_exists( 'wp_safe_redirect' ) ) {
+	function wp_safe_redirect( string $location, int $status = 302, string $x_redirect_by = 'WordPress' ): void {
+		unset( $status, $x_redirect_by );
+
+		$GLOBALS['lerm_admin_config_redirects'][] = $location;
+
+		throw new LermAdminConfigRedirectIntercepted();
+	}
+}
+
+if ( ! function_exists( 'wp_die' ) ) {
+	function wp_die( string $message, string $title = '', array $args = array() ): void {
+		unset( $title, $args );
+
+		$GLOBALS['lerm_admin_config_wp_die'][] = $message;
+
+		throw new LermAdminConfigWpDieIntercepted();
+	}
+}
+
+if ( ! function_exists( '_n' ) ) {
+	function _n( string $single, string $plural, int $number, string $domain = 'default' ): string {
+		unset( $domain );
+
+		return 1 === $number ? $single : $plural;
+	}
+}
+
+if ( ! function_exists( 'number_format_i18n' ) ) {
+	function number_format_i18n( $number ): string {
+		return (string) $number;
+	}
+}
+
+if ( ! function_exists( 'esc_html_e' ) ) {
+	function esc_html_e( string $text, string $domain = 'default' ): void {
+		unset( $domain );
+
+		echo esc_html( $text ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- stub echoes escaped text.
+	}
+}
+
+if ( ! function_exists( 'esc_attr_e' ) ) {
+	function esc_attr_e( string $text, string $domain = 'default' ): void {
+		unset( $domain );
+
+		echo esc_attr( $text ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- stub echoes escaped text.
 	}
 }
 

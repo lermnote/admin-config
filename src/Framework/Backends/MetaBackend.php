@@ -93,7 +93,19 @@ class MetaBackend implements StorageBackend {
 
 	public function write( array $data ): bool {
 		$result = ( $this->config['write'] )( $this->object_id, $this->meta_key, $data );
-		return false !== $result;
+
+		if ( false === $result ) {
+			// The meta update functions return false both on DB error AND
+			// when the value hasn't changed. Distinguish the two by
+			// re-reading and comparing normalized JSON.
+			$stored      = $this->read();
+			$stored_json = wp_json_encode( $stored );
+			$data_json   = wp_json_encode( $data );
+			return is_string( $stored_json ) && $stored_json === $data_json;
+		}
+
+		// The meta update functions return the meta id (int) on success.
+		return true;
 	}
 
 	public function key(): string {

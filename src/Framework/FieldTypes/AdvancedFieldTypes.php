@@ -40,13 +40,16 @@ final class AdvancedFieldTypes {
 	 */
 	private static function typography_definition(): array {
 		return array(
-			'render'   => static function ( array $field, $value, string $field_name, OptionsPage $page ): void {
+			'render'        => static function ( array $field, $value, string $field_name, OptionsPage $page ): void {
 				$page->container_field_renderer()->render_fieldset( self::typography_field( $field ), $value, $field_name );
 			},
-			'sanitize' => static function ( array $field, $value, bool $strict, OptionStore $store ): array {
+			'render_nested' => static function (): void {
+				self::render_nested_warning( __( 'Typography fields cannot be nested inside a fieldset or group.', 'lerm-admin-config' ) );
+			},
+			'sanitize'      => static function ( array $field, $value, bool $strict, OptionStore $store ): array {
 				return NestedFieldSanitizer::sanitize_fieldset( self::typography_field( $field ), $value, $strict, $store );
 			},
-			'client'   => array(
+			'client'        => array(
 				'control' => 'typography',
 			),
 		);
@@ -185,12 +188,14 @@ final class AdvancedFieldTypes {
 		$choices = self::icon_choices( $field );
 		$default = self::sanitize_icon_class( PageSchema::scalar_value( $field['default'] ?? '', '', true ) );
 
-		if ( $strict && ! array_key_exists( $choice, $choices ) ) {
-			return array_key_exists( $default, $choices ) ? $default : '';
+		// An explicit empty submission clears the field; a missing key
+		// (null from import) falls back to the schema default.
+		if ( '' === $choice && null !== $value ) {
+			return '';
 		}
 
-		if ( '' === $choice && array_key_exists( $default, $choices ) ) {
-			return $default;
+		if ( $strict && ! array_key_exists( $choice, $choices ) ) {
+			return array_key_exists( $default, $choices ) ? $default : '';
 		}
 
 		return $choice;
@@ -405,28 +410,7 @@ final class AdvancedFieldTypes {
 	 * @return array<int, array<string, mixed>>
 	 */
 	private static function panel_items( array $field ): array {
-		$items      = is_array( $field['items'] ?? null ) ? $field['items'] : array();
-		$normalized = array();
-
-		foreach ( $items as $index => $item ) {
-			if ( ! is_array( $item ) ) {
-				continue;
-			}
-
-			$item_id    = isset( $item['id'] ) && is_scalar( $item['id'] ) ? sanitize_key( (string) $item['id'] ) : '';
-			$item_title = isset( $item['title'] ) && is_scalar( $item['title'] ) ? (string) $item['title'] : '';
-			$item_id    = '' !== $item_id ? $item_id : 'item_' . (string) ( (int) $index + 1 );
-
-			$normalized[] = array(
-				'id'          => $item_id,
-				'title'       => '' !== $item_title ? $item_title : ucfirst( str_replace( '_', ' ', $item_id ) ),
-				'description' => isset( $item['description'] ) && is_scalar( $item['description'] ) ? (string) $item['description'] : '',
-				'fields'      => is_array( $item['fields'] ?? null ) ? $item['fields'] : array(),
-				'open'        => ! empty( $item['open'] ),
-			);
-		}
-
-		return $normalized;
+		return FieldRenderHelpers::panel_items( $field );
 	}
 
 	/**

@@ -15,6 +15,7 @@ use Lerm\AdminConfig\Framework\Storage\OptionStore;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
 use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldRenderHelpers;
 use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldAttributeHelpers;
+use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldValueHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -64,13 +65,16 @@ final class StructuredFieldTypes {
 	 */
 	private static function fieldset_definition(): array {
 		return array(
-			'render'   => static function ( array $field, $value, string $field_name, OptionsPage $page ): void {
+			'render'        => static function ( array $field, $value, string $field_name, OptionsPage $page ): void {
 				$page->container_field_renderer()->render_fieldset( $field, $value, $field_name );
 			},
-			'sanitize' => static function ( array $field, $value, bool $strict, OptionStore $store ): array {
+			'render_nested' => static function (): void {
+				self::render_nested_warning( __( 'Fieldset fields cannot be nested inside a fieldset or group.', 'lerm-admin-config' ) );
+			},
+			'sanitize'      => static function ( array $field, $value, bool $strict, OptionStore $store ): array {
 				return NestedFieldSanitizer::sanitize_fieldset( $field, $value, $strict, $store );
 			},
-			'client'   => array(
+			'client'        => array(
 				'control' => 'fieldset',
 			),
 		);
@@ -83,6 +87,9 @@ final class StructuredFieldTypes {
 		return array(
 			'render'             => static function ( array $field, $value, string $field_name, OptionsPage $page ): void {
 				$page->container_field_renderer()->render_group( $field, $value, $field_name );
+			},
+			'render_nested'      => static function (): void {
+				self::render_nested_warning( __( 'Group fields cannot be nested inside a fieldset or group.', 'lerm-admin-config' ) );
 			},
 			'sanitize'           => static function ( array $field, $value, bool $strict, OptionStore $store ): array {
 				return NestedFieldSanitizer::sanitize_group( $field, $value, $strict, $store );
@@ -187,7 +194,6 @@ final class StructuredFieldTypes {
 			},
 			'client'        => array(
 				'control' => 'sorter',
-				'nested'  => true,
 			),
 		);
 	}
@@ -511,27 +517,7 @@ final class StructuredFieldTypes {
 	 * @return array<string, mixed>
 	 */
 	private static function sanitize_media_value( $value ): array {
-		$attachment_id = is_array( $value ) ? absint( $value['id'] ?? 0 ) : absint( $value );
-
-		if ( $attachment_id <= 0 ) {
-			return array();
-		}
-
-		$attachment_url = wp_get_attachment_url( $attachment_id );
-
-		if ( ! $attachment_url ) {
-			return array();
-		}
-
-		$thumbnail_url = wp_get_attachment_image_url( $attachment_id, 'thumbnail' );
-
-		return array_filter(
-			array(
-				'id'        => $attachment_id,
-				'url'       => $attachment_url,
-				'thumbnail' => $thumbnail_url ? $thumbnail_url : '',
-			)
-		);
+		return FieldValueHelper::sanitize_media_value( $value );
 	}
 
 	/**

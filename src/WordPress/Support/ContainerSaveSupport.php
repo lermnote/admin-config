@@ -33,6 +33,19 @@ final class ContainerSaveSupport {
 	}
 
 	/**
+	 * Verify the posted nonce and capability for a container save request.
+	 */
+	public static function authorize_save( string $scope, CompiledSchema $schema, string $fallback_capability, int $object_id ): bool {
+		$nonce = self::posted_nonce( self::nonce_name( $scope, $schema ) );
+
+		if ( '' === $nonce || ! wp_verify_nonce( $nonce, self::nonce_action( $scope, $schema ) ) ) {
+			return false;
+		}
+
+		return current_user_can( self::capability_for_schema( $schema, $fallback_capability ), $object_id );
+	}
+
+	/**
 	 * @return array<string, mixed>
 	 */
 	public static function submitted_values( OptionStore $store ): array {

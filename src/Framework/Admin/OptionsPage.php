@@ -13,6 +13,7 @@ use Lerm\AdminConfig\Framework\FieldTypes\FieldTypeRegistry;
 use Lerm\AdminConfig\Framework\Storage\OptionStore;
 use Lerm\AdminConfig\Framework\Contracts\AssetResolver;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
+use Lerm\AdminConfig\Framework\Support\ValidationTargetResolver;
 use Lerm\AdminConfig\Registry\FieldModuleRegistry;
 use Lerm\AdminConfig\WordPress\Support\ValidationFlash;
 
@@ -389,11 +390,7 @@ final class OptionsPage {
 	 * @param array<int, array<string, mixed>>   $groups  Section groups.
 	 */
 	private function section_uses_subsections( array $section, array $groups ): bool {
-		if ( array_key_exists( 'use_subsections', $section ) ) {
-			return ! empty( $section['use_subsections'] ) && count( $groups ) > 1;
-		}
-
-		return count( $groups ) > 1;
+		return ValidationTargetResolver::section_uses_subsections( $section, $groups );
 	}
 
 	/**

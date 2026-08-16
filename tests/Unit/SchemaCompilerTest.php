@@ -390,6 +390,21 @@ final class SchemaCompilerTest extends TestCase {
 		$this->assertSame( 'fallback_schema', $schema_id_fallback->store()['key'] );
 	}
 
+	public function testClientOptionNameFallsBackWhenOptionNameIsNotScalar(): void {
+		$compiled = ( new SchemaCompiler() )->compile(
+			array(
+				'id'          => 'unit_option_name_guard',
+				'option_name' => array( 'not', 'scalar' ),
+				'store'       => array(
+					'type' => 'option',
+					'key'  => 'unit_option_name_store',
+				),
+			)
+		);
+
+		$this->assertSame( 'unit_option_name_store', $compiled->client_config()['optionName'] );
+	}
+
 	public function testStoreDefaultsInvalidTypeAndPreservesContextualProperties(): void {
 		$compiled = ( new SchemaCompiler() )->compile(
 			array(

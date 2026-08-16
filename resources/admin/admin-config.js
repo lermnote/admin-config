@@ -9,6 +9,7 @@ const { resolveAdminConfig } = require('../core/config');
 const { createFormStateHelpers } = require('./form-state');
 const { createAdminConfigTransport } = require('./transport');
 const { dependencyMatches: coreDependencyMatches } = require('../core/dependencies');
+const { CONTEXT_KEYS } = require('../core/context');
 const { __ } = require('../i18n');
 
 // ─── Confirm Dialog (wp.components.Modal bridge for vanilla JS) ──────
@@ -1051,7 +1052,7 @@ let confirmDialog;
 		if (!form) return {};
 
 		/** @type {Record<string, string[]>} */
-		const map = {
+		const inputNamesByContextKey = {
 			post_id: ['post_ID'],
 			term_id: ['tag_ID', 'term_id'],
 			user_id: ['user_id', 'user_ID'],
@@ -1062,8 +1063,8 @@ let confirmDialog;
 		/** @type {Record<string, string>} */
 		const context = {};
 
-		for (const [contextKey, inputNames] of Object.entries(map)) {
-			for (const inputName of inputNames) {
+		for (const contextKey of CONTEXT_KEYS) {
+			for (const inputName of inputNamesByContextKey[contextKey] ?? []) {
 				const input = /** @type {HTMLInputElement|null} */ (dom.find(`input[name="${inputName}"]`, form));
 				const value = String(input?.value ?? '').trim();
 				if (!/^\d+$/.test(value) || Number(value) <= 0) continue;
@@ -2378,16 +2379,6 @@ let confirmDialog;
 		if (!pill) return;
 		pill.dataset['lermStatus'] = state;
 		pill.textContent = message;
-	};
-
-	/**
-	 * @param {HTMLFormElement} form
-	 * @param {string} type
-	 * @param {string} message
-	 */
-	const showFlash = (form, type, message) => {
-		if (!message) return;
-		setStatus(form, type === 'error' ? 'error' : type === 'success' ? 'success' : 'idle', message);
 	};
 
 	/**

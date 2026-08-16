@@ -14,6 +14,7 @@ use Lerm\AdminConfig\Framework\Storage\OptionStore;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
 use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldRenderHelpers;
 use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldAttributeHelpers;
+use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldValueHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -592,34 +593,7 @@ final class DesignFieldTypes {
 	 * @param mixed $value
 	 */
 	private static function sanitize_media_like( $value ): array {
-		if ( is_array( $value ) ) {
-			$attachment_id = absint( $value['id'] ?? 0 );
-			if ( $attachment_id > 0 ) {
-				$url = (string) wp_get_attachment_url( $attachment_id );
-				if ( '' !== $url ) {
-					return array_filter(
-						array(
-							'id'        => $attachment_id,
-							'url'       => $url,
-							'thumbnail' => (string) wp_get_attachment_image_url( $attachment_id, 'thumbnail' ),
-						)
-					);
-				}
-			}
-
-			$url = esc_url_raw( PageSchema::scalar_value( $value['url'] ?? '', '', true ) );
-
-			if ( '' !== $url ) {
-				return array(
-					'id'        => 0,
-					'url'       => $url,
-					'thumbnail' => esc_url_raw( PageSchema::scalar_value( $value['thumbnail'] ?? $url, '', true ) ),
-				);
-			}
-
-			return array();
-		}
-		return array();
+		return FieldValueHelper::sanitize_media_value( $value );
 	}
 
 	/**

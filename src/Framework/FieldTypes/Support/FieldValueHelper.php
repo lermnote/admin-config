@@ -59,7 +59,7 @@ final class FieldValueHelper {
 			$number = $max;
 		}
 
-		return 'float' === $cast ? $number : (int) round( $number );
+		return ( '' === $cast || 'float' === $cast ) ? $number : (int) round( $number );
 	}
 
 	/**
@@ -86,5 +86,60 @@ final class FieldValueHelper {
 		}
 
 		return array_values( array_unique( $clean ) );
+	}
+
+	/**
+	 * Sanitize a URL-ish field value (shared by the url and upload controls).
+	 *
+	 * @param mixed $value
+	 */
+	public static function sanitize_url_value( $value ): string {
+		return esc_url_raw( PageSchema::scalar_value( $value, '', true ) );
+	}
+
+	/**
+	 * Sanitize a media value into the {id, url, thumbnail} payload shape.
+	 *
+	 * Accepts an attachment id (scalar or array 'id'), or a url-only payload
+	 * for externally hosted media. Shared by the media and background-image
+	 * controls.
+	 *
+	 * @param mixed $value
+	 * @return array<string, int|string>
+	 */
+	public static function sanitize_media_value( $value ): array {
+		$attachment_id = 0;
+		$url           = '';
+
+		if ( is_array( $value ) ) {
+			$attachment_id = absint( $value['id'] ?? 0 );
+			$url           = esc_url_raw( PageSchema::scalar_value( $value['url'] ?? '', '', true ) );
+		} elseif ( is_scalar( $value ) ) {
+			$attachment_id = absint( $value );
+		}
+
+		if ( $attachment_id > 0 ) {
+			$attachment_url = (string) wp_get_attachment_url( $attachment_id );
+
+			if ( '' !== $attachment_url ) {
+				return array_filter(
+					array(
+						'id'        => $attachment_id,
+						'url'       => $attachment_url,
+						'thumbnail' => (string) wp_get_attachment_image_url( $attachment_id, 'thumbnail' ),
+					)
+				);
+			}
+		}
+
+		if ( '' !== $url ) {
+			return array(
+				'id'        => 0,
+				'url'       => $url,
+				'thumbnail' => is_array( $value ) ? esc_url_raw( PageSchema::scalar_value( $value['thumbnail'] ?? $url, '', true ) ) : $url,
+			);
+		}
+
+		return array();
 	}
 }

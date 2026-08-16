@@ -93,9 +93,11 @@ final class Framework implements FrameworkContract {
 	/**
 	 * Fire a framework lifecycle hook.
 	 *
-	 * Used internally by the OptionStore after a successful write.
-	 * External code can hook 'lerm_admin_config_before_save' and
-	 * 'lerm_admin_config_after_save' to observe saves.
+	 * Used internally by the OptionStore around write attempts:
+	 * 'lerm_admin_config_before_save' fires before the write, and
+	 * 'lerm_admin_config_after_save' fires after a successful write.
+	 * No-op saves (payload identical to the stored value) skip the
+	 * write and therefore fire neither hook.
 	 *
 	 * @param string               $hook    Short hook name ('before_save' or 'after_save').
 	 * @param string               $page_id The page / store identifier.
@@ -153,14 +155,17 @@ final class Framework implements FrameworkContract {
 	 * per-entity store `mount_options_page()`'s definition+backend cache
 	 * cannot key on. `mount_options_page()` itself delegates here too.
 	 *
-	 * @param array<string, mixed> $definition Page definition.
-	 * @param OptionStore          $store      Already-resolved store.
-	 * @param bool                 $network    Whether this is a network-admin page.
+	 * @param array<string, mixed> $definition      Page definition.
+	 * @param OptionStore          $store           Already-resolved store.
+	 * @param bool                 $register_hooks  Whether to register the admin menu,
+	 *                                              save, and asset hooks. Containers pass
+	 *                                              the default (false) and manage their own
+	 *                                              lifecycle; mount_options_page() passes true.
 	 */
-	public function render_options_page( array $definition, OptionStore $store, bool $network = false ): OptionsPage {
+	public function render_options_page( array $definition, OptionStore $store, bool $register_hooks = false ): OptionsPage {
 		$this->prepare_definition( $definition );
 
-		return new OptionsPage( $definition, $store, $this->field_types, $this->asset_resolver, $network, $this->field_modules );
+		return new OptionsPage( $definition, $store, $this->field_types, $this->asset_resolver, $register_hooks, $this->field_modules );
 	}
 
 	/**
@@ -192,7 +197,14 @@ final class Framework implements FrameworkContract {
 
 		$option_name = isset( $definition['option_name'] ) ? sanitize_key( (string) $definition['option_name'] ) : '';
 
-		return '' !== $option_name ? $option_name : 'admin-config-page';
+		if ( '' !== $option_name ) {
+			return $option_name;
+		}
+
+		// Degenerate schemas without any identifier: fingerprint the
+		// definition so two distinct schemas never share one store.
+		$fingerprint = (string) wp_json_encode( $definition );
+		return 'admin-config-page-' . substr( md5( $fingerprint ), 0, 8 );
 	}
 
 	/**

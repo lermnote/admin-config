@@ -134,7 +134,7 @@ final class FieldDependencyEvaluator {
 	 * @param array<string, mixed> $field Field definition.
 	 * @return array<string, mixed>
 	 */
-	public function field_dependency( array $field ): array {
+	public static function field_dependency( array $field ): array {
 		$dependency = $field['dependency'] ?? null;
 
 		if ( ! is_array( $dependency ) || empty( $dependency[0] ) ) {

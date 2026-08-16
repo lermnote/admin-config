@@ -24,25 +24,7 @@ final class PluginBootstrap {
 			)
 		);
 
-		if ( ! is_callable( $registrar ) ) {
-			return $runtime;
-		}
-
-		$boot_runtime = static function () use ( $runtime, $registrar ): void {
-			call_user_func( $registrar, $runtime );
-
-			if ( is_admin() ) {
-				$runtime->boot();
-			}
-
-			do_action( 'lerm_admin_config_booted', $runtime, 'plugin' );
-		};
-
-		if ( function_exists( 'did_action' ) && 0 === did_action( 'init' ) ) {
-			add_action( 'init', $boot_runtime, 0 );
-		} else {
-			$boot_runtime();
-		}
+		RuntimeBootstrapper::schedule( $runtime, $registrar, 'plugin' );
 
 		return $runtime;
 	}

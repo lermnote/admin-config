@@ -54,6 +54,53 @@ final class OptionsPageDependencyTest extends TestCase {
 		$this->assertStringNotContainsString( ' hidden', $output );
 	}
 
+	public function testChoiceControlsOnlyEmitControllerAttributeWhenTheyDriveDependencies(): void {
+		$definition = array(
+			'id'       => 'unit_choice_controller_conditional',
+			'store'    => array(
+				'type' => 'option',
+				'key'  => 'unit_choice_controller_conditional',
+			),
+			'sections' => array(
+				'general' => array(
+					'fields' => array(
+						array(
+							'id'      => 'layout',
+							'type'    => 'radio',
+							'choices' => array(
+								'grid' => 'Grid',
+								'list' => 'List',
+							),
+						),
+						array(
+							'id'      => 'density',
+							'type'    => 'select',
+							'choices' => array(
+								'compact' => 'Compact',
+								'loose'   => 'Loose',
+							),
+						),
+						array(
+							'id'         => 'columns',
+							'type'       => 'text',
+							'default'    => '',
+							'dependency' => array( 'layout', '==', 'grid' ),
+						),
+					),
+				),
+			),
+		);
+		$page       = $this->options_page( $definition );
+		$fields     = $definition['sections']['general']['fields'];
+		$values     = array(
+			'layout'  => 'grid',
+			'density' => 'compact',
+		);
+
+		$this->assertStringContainsString( 'data-lerm-controller="1"', $this->render_field( $page, $fields[0], $values ) );
+		$this->assertStringNotContainsString( 'data-lerm-controller="1"', $this->render_field( $page, $fields[1], $values ) );
+	}
+
 	public function testBuiltInChoiceControlsCanDriveDependencies(): void {
 		$definition = $this->choice_controller_definition();
 		$page       = $this->options_page( $definition );

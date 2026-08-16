@@ -9,14 +9,13 @@ declare( strict_types=1 );
 
 namespace Lerm\AdminConfig\Tests\Unit;
 
-use Lerm\AdminConfig\Framework\Admin\OptionsPage;
-use Lerm\AdminConfig\Framework\Contracts\AssetResolver;
 use Lerm\AdminConfig\Framework\FieldTypes\BuiltinFieldTypes;
 use Lerm\AdminConfig\Framework\FieldTypes\ExtendedPrimitiveFieldTypes;
 use Lerm\AdminConfig\Framework\FieldTypes\FieldTypeRegistry;
 use Lerm\AdminConfig\Framework\FieldTypes\StructuredFieldTypes;
-use Lerm\AdminConfig\Framework\Storage\OptionStore;
+use Lerm\AdminConfig\Framework\Support\PageSchema;
 use Lerm\AdminConfig\Tests\Support\TestCase;
+use Lerm\AdminConfig\WordPress\Support\ValidationFlash;
 
 final class OptionsPageSubmissionStateTest extends TestCase {
 
@@ -85,9 +84,8 @@ final class OptionsPageSubmissionStateTest extends TestCase {
 				),
 			),
 		);
-		$page       = $this->options_page( $definition );
 		$merged     = $this->merge_section_submitted_values(
-			$page,
+			$definition,
 			'general',
 			array(
 				'channels'  => array( 'news' ),
@@ -117,44 +115,28 @@ final class OptionsPageSubmissionStateTest extends TestCase {
 	}
 
 	/**
+	 * Merge flashed submission values through the shared ValidationFlash
+	 * implementation, restricted to one section's fields.
+	 *
 	 * @param array<string, mixed> $definition
+	 * @param array<string, mixed> $values
+	 * @param array<string, mixed> $submitted
+	 * @return array<string, mixed>
 	 */
-	private function options_page( array $definition ): OptionsPage {
+	private function merge_section_submitted_values( array $definition, string $section_id, array $values, array $submitted ): array {
 		$field_types = new FieldTypeRegistry();
 
 		foreach ( array_merge( BuiltinFieldTypes::definitions(), ExtendedPrimitiveFieldTypes::definitions(), StructuredFieldTypes::definitions() ) as $type => $field_type_definition ) {
 			$field_types->register( (string) $type, $field_type_definition );
 		}
 
-		$store    = new OptionStore( $definition, $field_types );
-		$resolver = new class() implements AssetResolver {
-			public function url( string $filename ): string {
-				return 'https://example.test/assets/' . ltrim( $filename, '/' );
-			}
+		$section = PageSchema::section( $definition, $section_id );
 
-			public function version(): string {
-				return 'unit-version';
-			}
-		};
-
-		return new OptionsPage( $definition, $store, $field_types, $resolver, false );
-	}
-
-	/**
-	 * @param array<string, mixed> $values
-	 * @param array<string, mixed> $submitted
-	 * @return array<string, mixed>
-	 */
-	private function merge_section_submitted_values( OptionsPage $page, string $section_id, array $values, array $submitted ): array {
-		$property = new \ReflectionProperty( $page, 'submission' );
-		$property->setAccessible( true );
-		$resolver = $property->getValue( $page );
-
-		$method = new \ReflectionMethod( $resolver, 'merge_section_submitted_values' );
-		$method->setAccessible( true );
-
-		$result = $method->invoke( $resolver, $section_id, $values, $submitted );
-
-		return is_array( $result ) ? $result : array();
+		return ValidationFlash::merge_submitted_values(
+			$values,
+			$submitted,
+			null !== $section ? PageSchema::section_fields( $section ) : array(),
+			$field_types
+		);
 	}
 }

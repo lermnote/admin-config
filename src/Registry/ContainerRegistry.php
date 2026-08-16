@@ -24,7 +24,7 @@ final class ContainerRegistry {
 	private array $containers = array();
 
 	public function register( Container $container ): void {
-		$this->containers[ $container->type() ] = $container;
+		$this->containers[ sanitize_key( $container->type() ) ] = $container;
 	}
 
 	public function has( string $type ): bool {

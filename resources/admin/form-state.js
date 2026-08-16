@@ -1,5 +1,7 @@
 // @ts-check
 
+const { cloneRecord } = require('../core/records');
+
 /**
  * @param {string} token
  * @returns {boolean}
@@ -102,7 +104,7 @@ const createFormStateHelpers = ({ getOptionName }) => {
 	 * @param {unknown} value
 	 * @returns {Record<string, unknown>}
 	 */
-	const cloneState = (value) => /** @type {Record<string, unknown>} */ (JSON.parse(JSON.stringify(value ?? {})));
+	const cloneState = (value) => cloneRecord(value);
 
 	return {
 		assignStateValue,

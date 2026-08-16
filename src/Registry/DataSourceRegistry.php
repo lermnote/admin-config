@@ -58,11 +58,4 @@ final class DataSourceRegistry {
 	public function resolve( string $source_id, array $args = array() ) {
 		return call_user_func( $this->get( $source_id ), $args );
 	}
-
-	/**
-	 * @return array<string, callable>
-	 */
-	public function all(): array {
-		return $this->sources;
-	}
 }

@@ -9,6 +9,7 @@ declare( strict_types=1 );
 
 namespace Lerm\AdminConfig\Framework\Admin;
 
+use Lerm\AdminConfig\Framework\FieldTypes\Support\FieldRenderHelpers;
 use Lerm\AdminConfig\Framework\Support\FieldPath;
 use Lerm\AdminConfig\Framework\Support\PageSchema;
 
@@ -158,6 +159,18 @@ final class ContainerFieldRenderer {
 				$active_tab = $item_id;
 				break;
 			}
+		}
+
+		// An unknown default_tab (typo, renamed item) would leave every
+		// panel hidden; fall back to the first item.
+		$item_ids = array();
+
+		foreach ( $items as $item ) {
+			$item_ids[] = (string) ( $item['id'] ?? '' );
+		}
+
+		if ( ! in_array( $active_tab, $item_ids, true ) ) {
+			$active_tab = (string) ( $items[0]['id'] ?? '' );
 		}
 
 		echo '<div class="lerm-fieldset lerm-tabbed-field' . ( $this->field_has_errors( $this->field_errors, $field_path, true ) ? ' is-invalid' : '' ) . '" data-target="' . esc_attr( $field_id ) . '" data-field-path="' . esc_attr( $field_path ) . '" data-lerm-tabbed data-default-tab="' . esc_attr( $active_tab ) . '">';
@@ -352,28 +365,7 @@ final class ContainerFieldRenderer {
 	 * @return array<int, array<string, mixed>>
 	 */
 	private function panel_items( array $field ): array {
-		$items      = is_array( $field['items'] ?? null ) ? $field['items'] : array();
-		$normalized = array();
-
-		foreach ( $items as $index => $item ) {
-			if ( ! is_array( $item ) ) {
-				continue;
-			}
-
-			$item_id    = isset( $item['id'] ) && is_scalar( $item['id'] ) ? sanitize_key( (string) $item['id'] ) : '';
-			$item_title = isset( $item['title'] ) && is_scalar( $item['title'] ) ? (string) $item['title'] : '';
-			$item_id    = '' !== $item_id ? $item_id : 'item_' . (string) ( (int) $index + 1 );
-
-			$normalized[] = array(
-				'id'          => $item_id,
-				'title'       => '' !== $item_title ? $item_title : ucfirst( str_replace( '_', ' ', $item_id ) ),
-				'description' => isset( $item['description'] ) && is_scalar( $item['description'] ) ? (string) $item['description'] : '',
-				'fields'      => is_array( $item['fields'] ?? null ) ? $item['fields'] : array(),
-				'open'        => ! empty( $item['open'] ),
-			);
-		}
-
-		return $normalized;
+		return FieldRenderHelpers::panel_items( $field );
 	}
 
 	// ── Flat field rendering ──────────────────────────────────────────
